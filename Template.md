@@ -4032,7 +4032,130 @@ signed main() {
     return 0;
 } 
 ```
+#### 十二重计数法
+```C++
+#include <bits/stdc++.h>
+using namespace std;
+#define IOS ios::sync_with_stdio(false),cin.tie(nullptr)
+#define rep(i, x, y) for(int i=(x), _=(y);i<=_;i++)
+#define rrep(i, x, y) for(int i=(x), _=(y);i>=_;i--)
+#define all(x) x.begin(),x.end()
+#define PII pair<int, int>
+#define x first
+#define y second
+#define ll long long
+#define int long long
+#define endl '\n'
+using i64 = long long;
+int n, m; 
+const int N = 2e5 + 10;
+const int mod = 998244353;
+int fac[N], invfac[N];
+int qmi(int a, int b, int p){
+    a %= p;
+    int res = 1;
+    while (b) {     
+        if(b & 1) res = res * a % p;
+        b >>= 1;
+        a = a * a % p;
+    }
+    return res;
+}
+int inv(int x) {
+    return qmi(x, mod - 2, mod);
+}
+void init() {
+    fac[0] = invfac[0] = 1;
+    for (int i = 1; i < N; i++) {
+        fac[i] = fac[i - 1] * i % mod;
+        invfac[i] = invfac[i - 1] * inv(i) % mod;
+    }
+}
+int C(int n, int r) {
+    if (r > n) return 0;
+    return fac[n] * invfac[r] % mod * invfac[n - r] % mod;
+}
 
+//I：球之间互不相同，盒子之间互不相同。
+void solve1(){
+    int ans = qmi(m, n, mod);
+    cout << ans << '\n';
+}   
+
+
+//II：球之间互不相同，盒子之间互不相同，每个盒子至多装一个球
+void solve2(){
+    int ans = 1;
+    for (int i = 0; i < n; i++) {
+        ans = ans * (m - i) % mod;
+    }
+    cout << ans << '\n';
+}   
+
+
+//III：球之间互不相同，盒子之间互不相同，每个盒子至少装一个球。
+//考虑容斥：枚举多少个盒子空了，然后剩下的部分就是第一个部分了。
+void solve3(){
+    int ans = 0;
+    for (int i = 0; i < m; i++) {
+        ans += ((i & 1? mod - C(m, i): C(m, i)) * qmi(m - i, n, mod)) % mod;
+        ans %= mod;
+    }
+    cout << ans << '\n';
+}   
+
+//IV：球之间互不相同，盒子全部相同。
+//考虑第二类斯特林数
+int Stirling[N];
+void solve4(){
+    
+}   
+void solve5(){
+
+}   
+void solve6(){
+
+}   
+void solve7(){
+
+}   
+void solve8(){
+
+}   
+void solve9(){
+
+}   
+void solve10(){
+
+}   
+void solve11(){
+
+}   
+
+void solve12(){
+
+}   
+
+signed main() {
+    IOS;
+    init();
+    cin >> n >> m;
+    solve1();
+    solve2();
+    solve3();
+    solve4();
+    solve5();
+    solve6();
+    solve7();
+    solve8();
+    solve9();
+    solve10();
+    solve11();
+    solve12();
+
+    return 0;
+} 
+```
 
 ## 母函数
 
