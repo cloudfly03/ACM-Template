@@ -3920,6 +3920,119 @@ signed main() {
 # 组合数学
 
 ## 排列组合
+### 组合数
+#### dp
+```C++
+const int N = 1e3 + 10;
+const int mod = 998244353;
+int C[N][N];
+void init() {
+    for (int i = 0; i < N; i++) C[i][0] = 1, C[i][1] = i;
+    for (int i = 2; i < N; i++) {
+        for (int j = 2; j <= i; j++) {
+            C[i][j] = (C[i - 1][j] + C[i - 1][j - 1]) % mod;
+        }
+    }
+}
+```
+
+#### 预处理法
+```C++
+const int N = 1e6 + 10;
+const int mod = 998244353;
+int fac[N], invfac[N];
+int qmi(int a, int b, int p){
+    a %= p;
+    int res = 1;
+    while (b) {     
+        if(b & 1) res = res * a % p;
+        b >>= 1;
+        a = a * a % p;
+    }
+    return res;
+}
+int inv(int x) {
+    return qmi(x, mod - 2, mod);
+}
+void init() {
+    fac[0] = invfac[0] = 1;
+    for (int i = 1; i < N; i++) {
+        fac[i] = fac[i - 1] * i % mod;
+        invfac[i] = invfac[i - 1] * inv(i) % mod;
+    }
+}
+int C(int n, int r) {
+    if (r > n) return 0;
+    return fac[n] * invfac[r] % mod * invfac[n - r] % mod;
+}
+```
+
+#### Lucas定理
+```C++
+//模板题：https://www.luogu.com.cn/problem/P3807
+#include <bits/stdc++.h>
+using namespace std;
+#define IOS ios::sync_with_stdio(false),cin.tie(nullptr)
+#define rep(i, x, y) for(int i=(x), _=(y);i<=_;i++)
+#define rrep(i, x, y) for(int i=(x), _=(y);i>=_;i--)
+#define all(x) x.begin(),x.end()
+#define PII pair<int, int>
+#define x first
+#define y second
+#define ll long long
+#define int long long
+#define endl '\n'
+using i64 = long long;
+
+const int N = 1e5 + 10;
+int mod = 998244353;
+int fac[N], invfac[N];
+int qmi(int a, int b, int p){
+    a %= p;
+    int res = 1;
+    while (b) {     
+        if(b & 1) res = res * a % p;
+        b >>= 1;
+        a = a * a % p;
+    }
+    return res;
+}
+int inv(int x) {
+    return qmi(x, mod - 2, mod);
+}
+void init() {
+    fac[0] = invfac[0] = 1;
+    for (int i = 1; i < N; i++) {
+        fac[i] = fac[i - 1] * i % mod;
+        invfac[i] = invfac[i - 1] * inv(i) % mod;
+    }
+}
+int C(int n, int r) {
+    if (r > n) return 0;
+    return fac[n] * invfac[r] % mod * invfac[n - r] % mod;
+}
+
+int Lucas(int n, int r) {
+    if (r == 0) return 1;
+    return C(n % mod, r % mod) * Lucas(n / mod, r / mod) % mod;  
+}
+void solve(){
+    int n, m, p; cin >> n >> m >> p;
+    mod = p;
+    init();
+    cout << Lucas(n + m, n) << '\n';
+}   
+
+signed main() {
+    IOS;
+    int T; cin >> T;
+    while (T--)
+        solve();
+
+    return 0;
+} 
+```
+
 
 ## 母函数
 
@@ -3933,7 +4046,7 @@ signed main() {
 ```c++
 int qmi(int a, int b, int p){
     a %= p;
-    int res=1;
+    int res = 1;
     while (b) {     
         if(b & 1) res = res * a % p;
         b >>= 1;
