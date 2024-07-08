@@ -4669,8 +4669,9 @@ $φ(p) = p - 1$
 
 1. $gcd(a, p) = 1$, $a ^ {b} \ mod \ p =  a ^ {b \ mod \ φ(p)} \ mod \ p$
 2. $gcd(a, p) != 1$ ,
+
     若 $b < φ(p)$ , $a ^ {b} \ mod \ p = a ^ {b} \ mod \ p$ ;
-    
+
     若 $b >= φ(p)$ , $a ^ {b} \ mod \ p = a ^ {b \ mod \ φ(p) + φ(p)} \ mod \ p$
 
 ## 除法取模
