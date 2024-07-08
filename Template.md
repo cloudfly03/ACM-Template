@@ -3917,6 +3917,472 @@ signed main() {
 }
 ```
 
+# 取模类（MLong & MInt）
+```c++
+using i64 = long long;
+template<class T>
+constexpr T power(T a, i64 b) {
+    T res = 1;
+    for (; b; b /= 2, a *= a) {
+        if (b % 2) {
+            res *= a;
+        }
+    }
+    return res;
+}
+
+constexpr i64 mul(i64 a, i64 b, i64 p) {
+    i64 res = a * b - i64(1.L * a * b / p) * p;
+    res %= p;
+    if (res < 0) {
+        res += p;
+    }
+    return res;
+}
+template<i64 P>
+struct MLong {
+    i64 x;
+    constexpr MLong() : x{} {}
+    constexpr MLong(i64 x) : x{norm(x % getMod())} {}
+    
+    static i64 Mod;
+    constexpr static i64 getMod() {
+        if (P > 0) {
+            return P;
+        } else {
+            return Mod;
+        }
+    }
+    constexpr static void setMod(i64 Mod_) {
+        Mod = Mod_;
+    }
+    constexpr i64 norm(i64 x) const {
+        if (x < 0) {
+            x += getMod();
+        }
+        if (x >= getMod()) {
+            x -= getMod();
+        }
+        return x;
+    }
+    constexpr i64 val() const {
+        return x;
+    }
+    explicit constexpr operator i64() const {
+        return x;
+    }
+    constexpr MLong operator-() const {
+        MLong res;
+        res.x = norm(getMod() - x);
+        return res;
+    }
+    constexpr MLong inv() const {
+        assert(x != 0);
+        return power(*this, getMod() - 2);
+    }
+    constexpr MLong &operator*=(MLong rhs) & {
+        x = mul(x, rhs.x, getMod());
+        return *this;
+    }
+    constexpr MLong &operator+=(MLong rhs) & {
+        x = norm(x + rhs.x);
+        return *this;
+    }
+    constexpr MLong &operator-=(MLong rhs) & {
+        x = norm(x - rhs.x);
+        return *this;
+    }
+    constexpr MLong &operator/=(MLong rhs) & {
+        return *this *= rhs.inv();
+    }
+    friend constexpr MLong operator*(MLong lhs, MLong rhs) {
+        MLong res = lhs;
+        res *= rhs;
+        return res;
+    }
+    friend constexpr MLong operator+(MLong lhs, MLong rhs) {
+        MLong res = lhs;
+        res += rhs;
+        return res;
+    }
+    friend constexpr MLong operator-(MLong lhs, MLong rhs) {
+        MLong res = lhs;
+        res -= rhs;
+        return res;
+    }
+    friend constexpr MLong operator/(MLong lhs, MLong rhs) {
+        MLong res = lhs;
+        res /= rhs;
+        return res;
+    }
+    friend constexpr std::istream &operator>>(std::istream &is, MLong &a) {
+        i64 v;
+        is >> v;
+        a = MLong(v);
+        return is;
+    }
+    friend constexpr std::ostream &operator<<(std::ostream &os, const MLong &a) {
+        return os << a.val();
+    }
+    friend constexpr bool operator==(MLong lhs, MLong rhs) {
+        return lhs.val() == rhs.val();
+    }
+    friend constexpr bool operator!=(MLong lhs, MLong rhs) {
+        return lhs.val() != rhs.val();
+    }
+};
+
+template<>
+i64 MLong<0LL>::Mod = i64(1E18) + 9;
+
+template<int P>
+struct MInt {
+    int x;
+    constexpr MInt() : x{} {}
+    constexpr MInt(i64 x) : x{norm(x % getMod())} {}
+    
+    static int Mod;
+    constexpr static int getMod() {
+        if (P > 0) {
+            return P;
+        } else {
+            return Mod;
+        }
+    }
+    constexpr static void setMod(int Mod_) {
+        Mod = Mod_;
+    }
+    constexpr int norm(int x) const {
+        if (x < 0) {
+            x += getMod();
+        }
+        if (x >= getMod()) {
+            x -= getMod();
+        }
+        return x;
+    }
+    constexpr int val() const {
+        return x;
+    }
+    explicit constexpr operator int() const {
+        return x;
+    }
+    constexpr MInt operator-() const {
+        MInt res;
+        res.x = norm(getMod() - x);
+        return res;
+    }
+    constexpr MInt inv() const {
+        assert(x != 0);
+        return power(*this, getMod() - 2);
+    }
+    constexpr MInt &operator*=(MInt rhs) & {
+        x = 1LL * x * rhs.x % getMod();
+        return *this;
+    }
+    constexpr MInt &operator+=(MInt rhs) & {
+        x = norm(x + rhs.x);
+        return *this;
+    }
+    constexpr MInt &operator-=(MInt rhs) & {
+        x = norm(x - rhs.x);
+        return *this;
+    }
+    constexpr MInt &operator/=(MInt rhs) & {
+        return *this *= rhs.inv();
+    }
+    friend constexpr MInt operator*(MInt lhs, MInt rhs) {
+        MInt res = lhs;
+        res *= rhs;
+        return res;
+    }
+    friend constexpr MInt operator+(MInt lhs, MInt rhs) {
+        MInt res = lhs;
+        res += rhs;
+        return res;
+    }
+    friend constexpr MInt operator-(MInt lhs, MInt rhs) {
+        MInt res = lhs;
+        res -= rhs;
+        return res;
+    }
+    friend constexpr MInt operator/(MInt lhs, MInt rhs) {
+        MInt res = lhs;
+        res /= rhs;
+        return res;
+    }
+    friend constexpr std::istream &operator>>(std::istream &is, MInt &a) {
+        i64 v;
+        is >> v;
+        a = MInt(v);
+        return is;
+    }
+    friend constexpr std::ostream &operator<<(std::ostream &os, const MInt &a) {
+        return os << a.val();
+    }
+    friend constexpr bool operator==(MInt lhs, MInt rhs) {
+        return lhs.val() == rhs.val();
+    }
+    friend constexpr bool operator!=(MInt lhs, MInt rhs) {
+        return lhs.val() != rhs.val();
+    }
+};
+
+template<>
+int MInt<0>::Mod = 998244353;
+
+template<int V, int P>
+constexpr MInt<P> CInv = MInt<P>(V).inv();
+
+constexpr int P = 1000000007;
+using Z = MInt<P>;
+```
+
+# 组合数学
+
+## 排列组合
+### 组合数
+#### dp
+```C++
+const int N = 1e3 + 10;
+const int mod = 998244353;
+int C[N][N];
+void init() {
+    for (int i = 0; i < N; i++) C[i][0] = 1, C[i][1] = i;
+    for (int i = 2; i < N; i++) {
+        for (int j = 2; j <= i; j++) {
+            C[i][j] = (C[i - 1][j] + C[i - 1][j - 1]) % mod;
+        }
+    }
+}
+```
+
+#### 预处理法
+```C++
+const int N = 1e6 + 10;
+const int mod = 998244353;
+int fac[N], invfac[N];
+int qmi(int a, int b, int p){
+    a %= p;
+    int res = 1;
+    while (b) {     
+        if(b & 1) res = res * a % p;
+        b >>= 1;
+        a = a * a % p;
+    }
+    return res;
+}
+int inv(int x) {
+    return qmi(x, mod - 2, mod);
+}
+void init() {
+    fac[0] = invfac[0] = 1;
+    for (int i = 1; i < N; i++) {
+        fac[i] = fac[i - 1] * i % mod;
+        invfac[i] = invfac[i - 1] * inv(i) % mod;
+    }
+}
+int C(int n, int r) {
+    if (r > n) return 0;
+    return fac[n] * invfac[r] % mod * invfac[n - r] % mod;
+}
+```
+
+#### Lucas定理
+```C++
+//模板题：https://www.luogu.com.cn/problem/P3807
+#include <bits/stdc++.h>
+using namespace std;
+#define IOS ios::sync_with_stdio(false),cin.tie(nullptr)
+#define rep(i, x, y) for(int i=(x), _=(y);i<=_;i++)
+#define rrep(i, x, y) for(int i=(x), _=(y);i>=_;i--)
+#define all(x) x.begin(),x.end()
+#define PII pair<int, int>
+#define x first
+#define y second
+#define ll long long
+#define int long long
+#define endl '\n'
+using i64 = long long;
+
+const int N = 1e5 + 10;
+int mod = 998244353;
+int fac[N], invfac[N];
+int qmi(int a, int b, int p){
+    a %= p;
+    int res = 1;
+    while (b) {     
+        if(b & 1) res = res * a % p;
+        b >>= 1;
+        a = a * a % p;
+    }
+    return res;
+}
+int inv(int x) {
+    return qmi(x, mod - 2, mod);
+}
+void init() {
+    fac[0] = invfac[0] = 1;
+    for (int i = 1; i < N; i++) {
+        fac[i] = fac[i - 1] * i % mod;
+        invfac[i] = invfac[i - 1] * inv(i) % mod;
+    }
+}
+int C(int n, int r) {
+    if (r > n) return 0;
+    return fac[n] * invfac[r] % mod * invfac[n - r] % mod;
+}
+
+int Lucas(int n, int r) {
+    if (r == 0) return 1;
+    return C(n % mod, r % mod) * Lucas(n / mod, r / mod) % mod;  
+}
+void solve(){
+    int n, m, p; cin >> n >> m >> p;
+    mod = p;
+    init();
+    cout << Lucas(n + m, n) << '\n';
+}   
+
+signed main() {
+    IOS;
+    int T; cin >> T;
+    while (T--)
+        solve();
+
+    return 0;
+} 
+```
+#### 十二重计数法
+```C++
+#include <bits/stdc++.h>
+using namespace std;
+#define IOS ios::sync_with_stdio(false),cin.tie(nullptr)
+#define rep(i, x, y) for(int i=(x), _=(y);i<=_;i++)
+#define rrep(i, x, y) for(int i=(x), _=(y);i>=_;i--)
+#define all(x) x.begin(),x.end()
+#define PII pair<int, int>
+#define x first
+#define y second
+#define ll long long
+#define int long long
+#define endl '\n'
+using i64 = long long;
+int n, m; 
+const int N = 2e5 + 10;
+const int mod = 998244353;
+int fac[N], invfac[N];
+int qmi(int a, int b, int p){
+    a %= p;
+    int res = 1;
+    while (b) {     
+        if(b & 1) res = res * a % p;
+        b >>= 1;
+        a = a * a % p;
+    }
+    return res;
+}
+int inv(int x) {
+    return qmi(x, mod - 2, mod);
+}
+void init() {
+    fac[0] = invfac[0] = 1;
+    for (int i = 1; i < N; i++) {
+        fac[i] = fac[i - 1] * i % mod;
+        invfac[i] = invfac[i - 1] * inv(i) % mod;
+    }
+}
+int C(int n, int r) {
+    if (r > n) return 0;
+    return fac[n] * invfac[r] % mod * invfac[n - r] % mod;
+}
+
+//I：球之间互不相同，盒子之间互不相同。
+void solve1(){
+    int ans = qmi(m, n, mod);
+    cout << ans << '\n';
+}   
+
+
+//II：球之间互不相同，盒子之间互不相同，每个盒子至多装一个球
+void solve2(){
+    int ans = 1;
+    for (int i = 0; i < n; i++) {
+        ans = ans * (m - i) % mod;
+    }
+    cout << ans << '\n';
+}   
+
+
+//III：球之间互不相同，盒子之间互不相同，每个盒子至少装一个球。
+//考虑容斥：枚举多少个盒子空了，然后剩下的部分就是第一个部分了。
+void solve3(){
+    int ans = 0;
+    for (int i = 0; i < m; i++) {
+        ans += ((i & 1? mod - C(m, i): C(m, i)) * qmi(m - i, n, mod)) % mod;
+        ans %= mod;
+    }
+    cout << ans << '\n';
+}   
+
+//IV：球之间互不相同，盒子全部相同。
+//考虑第二类斯特林数
+int Stirling[N];
+void solve4(){
+    
+}   
+void solve5(){
+
+}   
+void solve6(){
+
+}   
+void solve7(){
+
+}   
+void solve8(){
+
+}   
+void solve9(){
+
+}   
+void solve10(){
+
+}   
+void solve11(){
+
+}   
+
+void solve12(){
+
+}   
+
+signed main() {
+    IOS;
+    init();
+    cin >> n >> m;
+    solve1();
+    solve2();
+    solve3();
+    solve4();
+    solve5();
+    solve6();
+    solve7();
+    solve8();
+    solve9();
+    solve10();
+    solve11();
+    solve12();
+
+    return 0;
+} 
+```
+
+## 母函数
+
+## 容斥原理与鸽巢原理
+
+
 # 数论
 
 ## 快速幂
@@ -3924,7 +4390,7 @@ signed main() {
 ```c++
 int qmi(int a, int b, int p){
     a %= p;
-    int res=1;
+    int res = 1;
     while (b) {     
         if(b & 1) res = res * a % p;
         b >>= 1;
@@ -3937,6 +4403,7 @@ int qmi(int a, int b, int p){
 ## 矩阵快速幂加速递推
 
 ```C++
+//https://codeforces.com/group/mey3UXMrvB/contest/515223/problem/B
 struct mat {
     int row, col;
     int a[4][4];
@@ -4118,17 +4585,17 @@ void sieve(int n) {
 
 ```c++
 vector<int> breakdown(int N) {
-  vector<int> result;
-  for (int i = 2; i * i <= N; i++) {
-    if (N % i == 0) {  // 如果 i 能够整除 N，说明 i 为 N 的一个质因子。
-      while (N % i == 0) N /= i;
-      result.push_back(i);
+    vector<int> result;
+    for (int i = 2; i * i <= N; i++) {
+      if (N % i == 0) {  // 如果 i 能够整除 N，说明 i 为 N 的一个质因子。
+        while (N % i == 0) N /= i;
+        result.push_back(i);
+      }
     }
-  }
-  if (N != 1) {  // 说明再经过操作之后 N 留下了一个素数
-    result.push_back(N);
-  }
-  return result;
+    if (N != 1) {  // 说明再经过操作之后 N 留下了一个素数
+      result.push_back(N);
+    }
+    return result;
 }
 ```
 
@@ -4377,228 +4844,6 @@ void solve() {
 }
 ```
 
-
-
-# 组合数学
-
-## 快速幂求组合数 
-
-```c++
-const int mod = 1e9 + 7;
-const int N = 1e6 + 10;
-int qmi(int a, int b, int p) {
-    int ans = 1;
-    a %= p;
-    while (b) {
-        if (b & 1) ans = ans * a % p;
-        b >>= 1;
-        a = a * a % p;
-    }
-    return ans;
-}
-int inv(int x) {
-    return qmi(x, mod - 2, mod);
-}
-int fac[N], invfac[N];
-void init() {
-    fac[0] = invfac[0] = 1;
-    for (int i = 1; i < N; i++) {
-        fac[i] = fac[i - 1] * i % mod;
-        invfac[i] = invfac[i - 1] * inv(i) % mod;
-    }
-}
-int C(int n, int m) {
-    return fac[n] * invfac[m] % mod * invfac[n - m] % mod;
-}
-```
-
-## 卢卡斯定理求组合数 
-
-```C++
-ll quick( ll a, ll b, ll p )
-{
-    ll ans = 1LL;
-    while( b )
-    {
-        if( b & 1 ) ans = ( ans * a ) % p ;
-        a = ( a * a ) % p ;
-        b >>= 1 ;
-    }
-    return ans ;
-}
- 
-ll fac( ll x, ll p )
-{
-    ll ans = 1;
-    for( int i = 2 ; i <= x ; i ++ ) ans = ( ans * i ) % p;
-    return ans;
-}
- 
-ll C( ll n, ll m, ll p )
-{
-    if( m < 0 || n < m ) return 0;
-    if( m == 0 ) return 1 ;
-    m = min( m, n - m );
-    ll a = 1LL, b = 1LL;
-    for( ll i = 1 ; i <= m ; i++ )
-    {
-        a =   a * (n - i + 1) % p ;
-        b = ( b * i ) % p;
-    }
-    return a * quick( b, p - 2, p ) % p ;
-}
- 
- 
-ll Lucas( ll n, ll m, ll p )
-{
-    return m ? C( n % p, m % p, p ) * Lucas( n / p, m / p, p ) % p : 1 ;
-}
-```
-
-## 组合数递推实现
-
-```c++
-C[n][m] = C[n - 1][m - 1] + C[n - 1][m];
-```
-
-## 第一类斯特林数 斯特林轮换数
-
-```c++
-s[n][m] = s[n - 1][m - 1] + (n - 1) * s[n - 1][m];
-```
-
-## 第二类斯特林数 斯特林子集数
-
-```c++
-s[n][m] = s[n - 1][m - 1] + m * s[n - 1][m];
-```
-
-## 大数取余板子
-
-```C++
-const int N = 2e5 + 10;
-template<const int T>
-struct ModInt {
-    const static int mod = T;
-    int x;
-    ModInt(int x = 0) : x(x % mod) {}
-    ModInt(long long x) : x(int(x % mod)) {}
-    int val() { return x; }
-    ModInt operator + (const ModInt &a) const { int x0 = x + a.x; return ModInt(x0 < mod ? x0 : x0 - mod); }
-    ModInt operator - (const ModInt &a) const { int x0 = x - a.x; return ModInt(x0 < 0 ? x0 + mod : x0); }
-    ModInt operator * (const ModInt &a) const { return ModInt(1LL * x * a.x % mod); }
-    ModInt operator / (const ModInt &a) const { return *this * a.inv(); }
-    bool operator == (const ModInt &a) const { return x == a.x; };
-    bool operator != (const ModInt &a) const { return x != a.x; };
-    void operator += (const ModInt &a) { x += a.x; if (x >= mod) x -= mod; }
-    void operator -= (const ModInt &a) { x -= a.x; if (x < 0) x += mod; }
-    void operator *= (const ModInt &a) { x = 1LL * x * a.x % mod; }
-    void operator /= (const ModInt &a) { *this = *this / a; }
-    friend ModInt operator + (int y, const ModInt &a){ int x0 = y + a.x; return ModInt(x0 < mod ? x0 : x0 - mod); }
-    friend ModInt operator - (int y, const ModInt &a){ int x0 = y - a.x; return ModInt(x0 < 0 ? x0 + mod : x0); }
-    friend ModInt operator * (int y, const ModInt &a){ return ModInt(1LL * y * a.x % mod);}
-    friend ModInt operator / (int y, const ModInt &a){ return ModInt(y) / a;}
-    friend ostream &operator<<(ostream &os, const ModInt &a) { return os << a.x;}
-    friend istream &operator>>(istream &is, ModInt &t){return is >> t.x;}
-
-    ModInt pow(int64_t n) const {
-        if(n == 0) return 1;
-        ModInt res(1), mul(x);
-        while(n){
-            if (n & 1) res *= mul;
-            mul *= mul;
-            n >>= 1;
-        }
-        return res;
-    }
-
-    ModInt inv() const {
-        int a = x, b = mod, u = 1, v = 0;
-        while (b) {
-            int t = a / b;
-            a -= t * b; swap(a, b);
-            u -= t * v; swap(u, v);
-        }
-        if (u < 0) u += mod;
-        return u;
-    }
-
-};
-using mint = ModInt<1000000007>;
-
-mint fact[N], invfact[N];
-void init(){
-    fact[0] = invfact[0] = 1;
-    for(int i = 1; i < N; i ++) fact[i] = fact[i - 1] * i;
-    invfact[N - 1] = fact[N - 1].inv();
-    for(int i = N - 2; i; i --)
-        invfact[i] = invfact[i + 1] * (i + 1);
-}
-inline mint C(int a, int b){
-    if (a < 0 || b < 0 || a < b) return 0;
-    return fact[a] * invfact[b] * invfact[a - b];
-}
-```
-
-# 博弈论
-
-## nim游戏
-
-```c++
-SG(s1) ^ SG(s2) ^ SG(s3) ^ ... ^ SG(sn) != 0 先手win，先手lose
-
-若区间为[a, b], SG(x) = (x % (a + b)) / b;
-```
-
-## 求sg函数
-
-```C++
-int sg[N];
-void init() {
-    set<int> s;
-    //sg[0] = 0;
-    for (int i = 1; i < N; i++) {
-        s.clear();
-        s.insert(0);
-        if (i > 1) s.insert(sg[i - 1]);
-        if (i > 2) s.insert(sg[i - 2]);
-        int k = 0;
-        while (s.find(k) != s.end()) k++;
-        sg[i] = k;
-    }
-}
-```
-
-## chomp游戏
-
-```c++
-结论：当n = m = 1时，先手玩家必败，否则先手玩家必胜
-```
-
-
-
-# 计算几何
-
-## 点坐标表示
-
-```C++
-const double PI = acos(-1.0);
-struct Point{ 
-	double x, y; //横纵坐标
-	Point(){}
-	Point(double _x, double _y) {x = _x; y = _y;}
-  	Point operator +(const Point &b) const {return Point(x + b.x, y + b.y);} //加
-	Point operator -(const Point &b) const {return Point(x - b.x, y - b.y);} //减 
-	double operator ^(const Point &b) const {return x * b.y - y * b.x;} //叉积 
-	double operator *(const Point &b) const {return x * b.x + y * b.y;} //点积 
-	void transXY(double B){ //求点旋转B弧度后的坐标(90度为π/2弧度)
-		double tx = x,ty = y;
-		x = tx * cos(B) - ty * sin(B); 
-		y = tx * sin(B) + ty * cos(B);
-	}
-};
-```
-
 # 黑科技
 
 ## bitset
@@ -4696,8 +4941,6 @@ signed main() {
 }
  
 ```
-
-
 
 ## 分块
 
@@ -4955,11 +5198,11 @@ int block[N];
 int res,last,ans[N],cnt[N],c[N];
 int B;
 struct Q{
-  int l,r,id;
-  bool operator<(Q &b){
-    if(block[l] != block[b.l])return l < b.l;
-    return r < b.r;
-  }
+    int l,r,id;
+    bool operator<(Q &b){
+      if(block[l] != block[b.l])return l < b.l;
+      return r < b.r;
+    }
 }q[N];
 
 int calc(int l, int r) {
@@ -5051,131 +5294,116 @@ void link(int u,int v){ //连边
 int fa[N],son[N],siz[N],dep[N],top[N];
 int tim,in[N],out[N],a[N<<1];
 void dfs1(int u,int f){ //树链剖分
-  fa[u]=f;siz[u]=1;dep[u]=dep[f]+1;
-  for(int i=head[u];i;i=ne[i]){
-    int v=to[i];
-    if(v==f) continue;
-    dfs1(v,u);
-    siz[u]+=siz[v];
-    if(siz[son[u]]<siz[v])son[u]=v;
-  }
+    fa[u]=f;siz[u]=1;dep[u]=dep[f]+1;
+    for(int i=head[u];i;i=ne[i]){
+      int v=to[i];
+      if(v==f) continue;
+      dfs1(v,u);
+      siz[u]+=siz[v];
+      if(siz[son[u]]<siz[v])son[u]=v;
+    }
 }
 void dfs2(int u,int t){
-  in[u]=++tim; //进u时刻
-  a[tim]=u;    //括号序
-  top[u]=t;
-  if(son[u]) dfs2(son[u],t);
-  for(int i=head[u];i;i=ne[i]){
-    int v=to[i];
-    if(v==fa[u]||v==son[u])continue;
-    dfs2(v,v);
-  }
-  out[u]=++tim; //出u时刻
-  a[tim]=u;     //括号序  
+    in[u]=++tim; //进u时刻
+    a[tim]=u;    //括号序
+    top[u]=t;
+    if(son[u]) dfs2(son[u],t);
+    for(int i=head[u];i;i=ne[i]){
+      int v=to[i];
+      if(v==fa[u]||v==son[u])continue;
+      dfs2(v,v);
+    }
+    out[u]=++tim; //出u时刻
+    a[tim]=u;     //括号序  
 }
 int LCA(int u,int v){
-  while(top[u]!=top[v]){
-    if(dep[top[u]]<dep[top[v]])swap(u,v);
-    u=fa[top[u]];
-  }
-  return dep[u]<dep[v]?u:v;
+    while(top[u]!=top[v]){
+      if(dep[top[u]]<dep[top[v]])swap(u,v);
+      u=fa[top[u]];
+    }
+    return dep[u]<dep[v]?u:v;
 }
 
 int n,m,k,B,tot,V[N],W[N],C[N];
 int pos[N],newC[N],vis[N],cnt[N];
 LL ans[N],sum;
 struct Q{
-  int l,r,t,id,lca;
-  bool operator<(Q &b){
-    if(l/B!=b.l/B)return l<b.l;
-    if(r/B!=b.r/B)return r<b.r;
-    return t<b.t;
-  }
+    int l,r,t,id,lca;
+    bool operator<(Q &b){
+        if(l/B!=b.l/B)return l<b.l;
+        if(r/B!=b.r/B)return r<b.r;
+        return t<b.t;
+    }
 }q[N];
 
 void add(int x){
-  vis[x]^=1;  //访问x点的次数
-  // 一次扩展 加上贡献，两次扩展 减去贡献
-  if(vis[x]) sum+=1ll*W[++cnt[C[x]]]*V[C[x]];
-  else       sum-=1ll*W[cnt[C[x]]--]*V[C[x]];
+    vis[x]^=1;  //访问x点的次数
+    // 一次扩展 加上贡献，两次扩展 减去贡献
+    if(vis[x]) sum+=1ll*W[++cnt[C[x]]]*V[C[x]];
+    else       sum-=1ll*W[cnt[C[x]]--]*V[C[x]];
 }
 int main(){
-  scanf("%d%d%d",&n,&m,&k); //点,糖果种类,操作
-  for(int i=1;i<=m;++i)scanf("%d",&V[i]);//美味
-  for(int i=1;i<=n;++i)scanf("%d",&W[i]);//新奇
-  for(int i=1,u,v;i<n;++i) //连边
-    scanf("%d%d",&u,&v),link(u,v),link(v,u);
-  // 预处理括号序和LCA
-  dfs1(1,0);dfs2(1,1);
-  for(int i=1;i<=n;++i)scanf("%d",&C[i]);//糖果类型
-  // 预处理操作
-  for(int i=1,t=0,Type,x,y;i<=k;++i){
-    scanf("%d%d%d",&Type,&x,&y); 
-    if(Type==1){ //区查
-      int lca=LCA(x,y);
-      q[++tot].t=t;
-      q[tot].id=tot; 
-      if(in[x]>in[y])swap(x,y); //先x后y
-      if(lca==x){ //直链情况
-        q[tot].l=in[x];
-        q[tot].r=in[y];
+    scanf("%d%d%d",&n,&m,&k); //点,糖果种类,操作
+    for(int i=1;i<=m;++i)scanf("%d",&V[i]);//美味
+    for(int i=1;i<=n;++i)scanf("%d",&W[i]);//新奇
+    for(int i=1,u,v;i<n;++i) //连边
+      scanf("%d%d",&u,&v),link(u,v),link(v,u);
+    // 预处理括号序和LCA
+    dfs1(1,0);dfs2(1,1);
+    for(int i=1;i<=n;++i)scanf("%d",&C[i]);//糖果类型
+    // 预处理操作
+    for(int i=1,t=0,Type,x,y;i<=k;++i){
+      scanf("%d%d%d",&Type,&x,&y); 
+      if(Type==1){ //区查
+        int lca=LCA(x,y);
+        q[++tot].t=t;
+        q[tot].id=tot; 
+        if(in[x]>in[y])swap(x,y); //先x后y
+        if(lca==x){ //直链情况
+            q[tot].l=in[x];
+            q[tot].r=in[y];
+        }
+        else{ //折链情况
+            q[tot].l=out[x];
+            q[tot].r=in[y];
+            q[tot].lca=lca; //以便补偿
+        }
       }
-      else{ //折链情况
-        q[tot].l=out[x];
-        q[tot].r=in[y];
-        q[tot].lca=lca; //以便补偿
+      else{ //点修
+            pos[++t]=x; //位置
+            newC[t]=y;  //修改值
       }
     }
-    else{ //点修
-      pos[++t]=x; //位置
-      newC[t]=y;  //修改值
-    }
-  }
-  // 树上带修莫队
-  B=pow(2*n,0.66);
-  sort(q+1,q+tot+1);
-  for(int i=1,l=1,r=0,t=0;i<=tot;++i){
-    while(l>q[i].l)add(a[--l]);
-    while(r<q[i].r)add(a[++r]);
-    while(l<q[i].l)add(a[l++]);
-    while(r>q[i].r)add(a[r--]);
-    while(t<q[i].t){ //时间戳变大则替换
-      ++t;
-      if(vis[pos[t]]){
-        add(pos[t]);
-        swap(C[pos[t]],newC[t]); //换成修改值
-        add(pos[t]);
-      }
-      else swap(C[pos[t]],newC[t]);
-    }    
-    while(t>q[i].t){ //时间戳变小则还原
-      if(vis[pos[t]]){
-        add(pos[t]);
-        swap(C[pos[t]],newC[t]); //还原修改值
-        add(pos[t]);
-      }
-      else swap(C[pos[t]],newC[t]);
-      t--;
-    }
-    ans[q[i].id]=sum;
-    if(q[i].lca) ans[q[i].id]+= //补上lca的
-        1ll*W[cnt[C[q[i].lca]]+1]*V[C[q[i].lca]];
-  }   
-  for(int i=1;i<=tot;++i)printf("%lld\n",ans[i]);
+    // 树上带修莫队
+    B=pow(2*n,0.66);
+    sort(q+1,q+tot+1);
+    for(int i=1,l=1,r=0,t=0;i<=tot;++i){
+        while(l>q[i].l)add(a[--l]);
+        while(r<q[i].r)add(a[++r]);
+        while(l<q[i].l)add(a[l++]);
+        while(r>q[i].r)add(a[r--]);
+        while(t<q[i].t){ //时间戳变大则替换
+            ++t;
+            if(vis[pos[t]]){
+              add(pos[t]);
+              swap(C[pos[t]],newC[t]); //换成修改值
+              add(pos[t]);
+            }
+            else swap(C[pos[t]],newC[t]);
+        }    
+        while(t>q[i].t){ //时间戳变小则还原
+            if(vis[pos[t]]){
+              add(pos[t]);
+              swap(C[pos[t]],newC[t]); //还原修改值
+              add(pos[t]);
+            }
+            else swap(C[pos[t]],newC[t]);
+            t--;
+        }
+        ans[q[i].id]=sum;
+        if(q[i].lca) ans[q[i].id]+= //补上lca的
+            1ll*W[cnt[C[q[i].lca]]+1]*V[C[q[i].lca]];
+    }   
+    for(int i=1;i<=tot;++i) printf("%lld\n",ans[i]);
 }
-```
-
-
-
-# 杂题
-
-## 约瑟夫环
-
-```c++
-//n 个人的编号是 1~n，如果他们依编号按顺时针排成一个圆圈，从编号是1的人开始顺时针报数。（报数是从1报起）当报到 m 的时候，这个人就退出游戏圈。下一个人重新从1开始报数。求最后剩下的人的编号。这就是著名的约瑟夫环问题。
-int pos = 0;
-for (int i = 2; i <= n; i++) {
-	pos = (pos + m) % i;
-}
-cout << pos + 1 << endl;
 ```
