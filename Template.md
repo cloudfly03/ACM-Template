@@ -224,6 +224,23 @@ signed main() {
 }
 ```
 
+## 线性判定排列逆序数的奇偶性
+```c++
+int parity(const vector<int> &a) {
+    const int n = a.size();
+    vector<int> vis(n);
+    int p = n % 2;
+    for (int i = 0; i < n; i++) {
+        if (vis[i]) continue;
+        for (int j = i; !vis[j]; j = a[j]) {
+            vis[j] = 1;
+        }
+        p ^= 1;
+    }
+    return p;
+}
+```
+
 
 # 高精度算法
 
