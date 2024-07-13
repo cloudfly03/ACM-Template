@@ -1050,6 +1050,92 @@ signed main() {
 
 ## 字符串哈希
 
+### 线性哈希
+```c++
+//例题: https://codeforces.com/contest/1979/problem/D
+#include <bits/stdc++.h>
+using namespace std;
+#define int long long
+#define rep(i, x, y) for(int i=(x), _=(y);i<=_;i++)
+#define rrep(i, x, y) for(int i=(x), _=(y);i>=_;i--)
+#define all(x) x.begin(),x.end()
+#define PII pair<int, int>
+#define x first
+#define y second
+#define ll long long
+#define endl '\n'
+
+using ull = unsigned long long;
+
+/* next is main_solve */
+char out[2][10] = {"No", "Yes"};
+const int N = 1e6 + 10;
+int a[N];
+int ans[N];
+
+ull pre[N], suf[N];
+ull base = 131;
+ull pw[N];
+char s1[N], s2[N];
+char ss[N];
+char rev(char ch) {
+    return ch == '0'? '1': '0';
+}
+void solve(){
+    int n, k; cin >> n >> k;
+    string s; cin >> s;
+    s = ' ' + s;
+    for (int i = 1; i <= k; i++) {
+        s1[i] = '1';
+        s2[i] = '0';
+    }
+    for (int i = k + 1; i <= n; i++) {
+        s1[i] = rev(s1[i - k]);
+        s2[i] = rev(s2[i - k]);
+    }
+
+    ull h1 = 0, h2 = 0;
+    for (int i = 1; i <= n; i++) {
+        h1 = h1 * base + s1[i];
+        h2 = h2 * base + s2[i];
+    }
+
+    for (int i = 1; i <= n; i++) {
+        ss[i] = s[n - i + 1];
+    }
+
+    for (int i = 1; i <= n; i++) {
+        pre[i] = pre[i - 1] * base + s[i];
+        suf[i] = suf[i - 1] * base + ss[i];
+    }
+
+
+    int ans = -1;
+    for (int i = 1; i <= n; i++) {
+        ull t = (pre[n] - pre[i] * pw[n - i]) * pw[i] + (suf[n] - suf[n - i] * pw[i]);
+        if (t == h1 || t == h2) {
+            ans = i;
+            break;
+        }
+    }
+
+    cout << ans << '\n';
+}
+
+signed main() {
+    ios::sync_with_stdio(false),cin.tie(nullptr);
+    pw[0] = 1;
+    for (int i = 1; i < N; i++) {
+        pw[i] = pw[i - 1] * base;
+    }
+    int t; cin >> t;
+    while (t--)
+        solve();
+    return 0;
+}
+```
+
+### 树上路径哈希
 ```C++
 #include <bits/stdc++.h>
 using namespace std;
@@ -1160,18 +1246,16 @@ void solve() {
 
 signed main() {
     ios::sync_with_stdio(false), cin.tie(0);
-
     // int T; cin >> T;
     // while (T--) 
         solve();
-
     return 0;
 }
 ```
 
 ## manacher
 
-```
+```c++
 //马拉车算法：求最长回文子串的算法
 //注意：这里的N要开三倍
 char a[N];
