@@ -1308,6 +1308,128 @@ vector<int> find_occurrences(string text, string pattern) {
 }
 ```
 
+## AC自动机
+```c++
+#include <bits/stdc++.h>
+using namespace std;
+//#define int long long
+#define rep(i, x, y) for(int i=(x), _=(y);i<=_;i++)
+#define rrep(i, x, y) for(int i=(x), _=(y);i>=_;i--)
+#define all(x) x.begin(),x.end()
+#define PII pair<int, int>
+#define x first
+#define y second
+#define ll long long
+#define endl '\n'
+using ull = unsigned long long;
+char out[2][10] = {"No", "Yes"};
+const int N = 1e6 + 10;
+/* next is main_solve */
+
+int n, trie[N][26], fail[N], cnt, in[N], vis[N], ans1[N];
+int ans2[N];
+vector <int> flag[N]; //点对应的字符串
+void add (string x, int id) { //建trie树
+    int len = x.length (), now = 0;
+    for (int i = 0; i < len; i++) {
+        int c = x[i] - 'a';
+        if (!trie[now][c])
+            trie[now][c] = ++cnt;
+        now = trie[now][c];
+    }
+    flag[now].push_back (id);
+}
+
+void get_fail () { //添加fail边
+    queue <int> q;
+    for (int i = 0; i < 26; i++)
+        if (trie[0][i])
+            q.push (trie[0][i]);
+    while (!q.empty ()) {
+        int u = q.front ();
+        q.pop ();
+        for (int i = 0; i < 26; i++) {
+            if (trie[u][i]) {
+                fail[trie[u][i]] = trie[fail[u]][i];
+                in[fail[trie[u][i]]]++; //fail边指向的点入度+1
+                q.push (trie[u][i]);
+            }
+            else trie[u][i] = trie[fail[u]][i];
+        }
+    }
+}
+
+void query (string x) { //查询答案
+    int len = x.length (), now = 0;
+    for (int i = 0; i < len; i++) {
+        int c = x[i] - 'a';
+        now = trie[now][c];
+        vis[now]++; //不需跳fail边
+    }
+}
+
+void topu () { //拓扑排序
+    queue <int> q;
+    for (int i = 1; i <= cnt; i++)
+        if (!in[i])
+            q.push (i);
+    while (!q.empty ()) {
+        int u = q.front ();
+        q.pop ();
+        for (auto it = flag[u].begin (); it != flag[u].end (); it++)
+            ans1[*it] = vis[u];
+        int v = fail[u];
+        vis[v] += vis[u];
+        in[v]--;
+        if (!in[v])
+            q.push (v);
+    }
+}
+
+
+void solve(){
+    int n; cin >> n;
+    string a, c; cin >> a >> c;
+    for (int i = 0; i <= a.size(); i++) {
+        for (int j = 0; j < 26; j++) {
+            trie[i][j] = 0;
+        }
+        fail[i] = in[i] = vis[i] = 0;
+        flag[i].clear();
+    }
+
+    for (int i = 1; i <= n; i++) {
+        ans1[i] = ans2[i] = 0;
+    }
+
+    for (int i = 1; i <= n; i++) {
+        string s1, s2; cin >> s1 >> s2;
+        add(s1, i);
+        if (s2.find(c) != string::npos) ans2[i] = 1;
+    }
+
+    get_fail();
+    query(a);
+    topu();
+    for (int i = 1; i <= n; i++) {
+        if (ans1[i] > 0 && ans2[i] > 0) {
+            cout << i << ' ';
+        }
+    }
+    cout << '\n';
+}
+
+signed main() {
+    ios::sync_with_stdio(false),cin.tie(nullptr);
+    // freopen("C:\\Users\\ie_fe\\Desktop\\acm\\src\\in.in", "r", stdin);
+    // freopen("C:\\Users\\ie_fe\\Desktop\\acm\\src\\out.out", "w", stdout);
+    int t; cin >> t;
+    while (t--)
+        solve();
+    return 0;
+}
+```
+
 # 图论
 
 ## 链式前向星 
