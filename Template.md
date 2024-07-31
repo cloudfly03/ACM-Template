@@ -399,7 +399,7 @@ int main()
 }
 ```
 
-## 高精度乘高精度（O（n^2)）
+## 高精度乘高精度$（O（n^2））$
 
 ```C++
 #include<bits/stdc++.h>
@@ -441,7 +441,7 @@ int main()
 }
 ```
 
-## 高精度乘高精度（O（nlogn)）
+## 高精度乘高精度（O（nlogn））
 luogu P1919 【模板】A*B Problem 升级版（FFT 快速傅里叶变换）
 ```C++
 
