@@ -3908,6 +3908,7 @@ signed main() {
 
 ### 主席树
 
+## 求区间第k大
 ```C++
 #include <bits/stdc++.h>
 using namespace std;
@@ -3994,6 +3995,169 @@ signed main() {
  
     return 0;
 }
+```
+
+## 主席树二分
+题目链接: https://codeforces.com/contest/1997/problem/E
+```c++
+#include <bits/stdc++.h>
+using namespace std;
+#define int long long
+#define ll long long
+#define ull unsigned long long
+#define all(x) x.begin(), x.end()
+#define pb push_back
+#define PII pair<int, int>
+#define x first
+#define y second
+#define endl '\n'
+
+inline int read() {int c; cin >> c; return c;}
+inline void readn(int a[], int n) {
+    for_each(a + 1, a + n + 1, [](int &x) {cin >> x;});
+}
+inline void writen(int a[], int n) {
+    for_each(a + 1, a + n + 1, [](int &x) { cout << x << ' '; });
+    cout << endl;
+}
+template<typename T, typename... Args>
+void write(const T &first, const Args &...args) {
+    cout << first;
+    ((cout << ' ' << args), ...);
+    cout << endl;
+}
+template<typename T, typename... Args>
+void ewrite(const T& first, const Args&... args) {
+    cerr << '*';
+    cerr << first;
+    ((cerr << ' ' << args), ...);
+    cerr << endl;
+}
+char out[2][10] = {"No", "Yes"};
+const double eps = 1e-6;
+const int N = 1e6 + 10;
+const int M = N << 1;
+const int mod = 998244353;
+
+/* next is main_solve */
+int n;
+int a[N];
+
+
+struct node {
+    int l, r, sum;
+} o[N * 30];
+int rt[N];
+int tot;
+int add(int x, int l, int r, int v) {
+    int t = ++tot;
+    o[t] = o[x];
+    o[t].sum++;
+    if (l == r)
+        return t;
+    int mid = (l + r) / 2;
+    if (v <= mid)
+        o[t].l = add(o[t].l, l, mid, v);
+    else
+        o[t].r = add(o[t].r, mid + 1, r, v);
+    return t;
+}
+
+int asksum(int x, int l, int r, int ql, int qr)
+{
+    if (x == 0)
+        return 0;
+    if (ql <= l && r <= qr)
+        return o[x].sum;
+    int mid = l + r >> 1;
+    if (ql <= mid && qr > mid)
+        return asksum(o[x].l, l, mid, ql, qr) + asksum(o[x].r, mid + 1, r, ql, qr);
+    else if (ql <= mid)
+        return asksum(o[x].l, l, mid, ql, qr);
+    else
+        return asksum(o[x].r, mid + 1, r, ql, qr);
+}
+int ask(int x, int l, int r, int cnt)
+{
+    if (l == r)
+        return l;
+    int mid = l + r >> 1;
+    if (o[o[x].l].sum >= cnt)
+        return ask(o[x].l, l, mid, cnt);
+    else
+        return ask(o[x].r, mid + 1, r, cnt - o[o[x].l].sum);
+
+}
+int ask(int beg, int i, int k)
+{
+
+    int sum = o[rt[i]].sum; //总的大于等于i的位置的数量
+    int suml;
+    if (beg == 1)
+        suml = 0;
+    else
+        suml = asksum(rt[i], 1, n, 1, beg - 1);//beg前面有几个大于等于i
+
+    if (sum - suml < k) //如果剩下的数量不足k个则无法升级，返回n+1
+        return n + 1;
+
+    return ask(rt[i], 1, n, suml + k); //区间里第一个等于suml+k的位置
+}
+
+vector<int> sb[N];
+vector<int> pos[N];
+
+void solve() {
+    n = read();
+    int q;
+    q = read();
+    readn(a, n);
+
+    for (int i = 1; i <= n; i++) {
+        sb[a[i]].pb(i);
+    }
+
+    for (int i = 200000; i >= 1; i--) {
+        rt[i] = rt[i + 1];
+        for (auto x : sb[i]) {
+            rt[i] = add(rt[i], 1, n, x);
+        }
+    }
+
+    for (int k = 1; k <= n; k++) {
+        for (int l = 1, r, i = 1; l <= n; i++) {
+            r = ask(l, i, k);
+            pos[k].pb(r);
+            l = r + 1;
+        }
+    }
+
+    while (q--) {
+        int p, k;
+        p = read(), k = read();
+        int t = lower_bound(all(pos[k]), p) - pos[k].begin() + 1;
+        if (a[p] >= t) {
+            cout << "YES\n";
+        }
+        else {
+            cout << "NO\n";
+        }
+    }
+}
+
+void cloud_fly() {
+    // int t;
+    // cin >> t;
+    // while (t--)
+    solve();
+}
+
+signed main() {
+    ios::sync_with_stdio(false), cin.tie(nullptr);
+    cloud_fly();
+    return 0;
+}
+
 ```
 
 ### 扫描线
