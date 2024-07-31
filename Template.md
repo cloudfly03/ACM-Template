@@ -144,11 +144,13 @@ void merge_sort(int a[],int l,int r){
 ```
 
 ## 单调队列
+如果一个选手比你小还比你强，你就可以退役了。”——单调队列
 
+单调队列：擅长维护区间最大/最小值，最小值对应着递增队列，最大值对应着递减队列
+
+例题：https://www.luogu.com.cn/problem/P1714
 ```C++
-//如果一个选手比你小还比你强，你就可以退役了。”——单调队列
-//单调队列：擅长维护区间最大/最小值，最小值对应着递增队列，最大值对应着递减队列
-//例题：https://www.luogu.com.cn/problem/P1714
+
 #include <bits/stdc++.h>
 using namespace std;
 #define int long long
@@ -187,10 +189,11 @@ signed main() {
 ```
 
 ## 单调栈
+栈是单调的
 
+单调栈：：擅长维护最近大于/小于关系，从左侧先入栈就是维护左侧最近关系，从右侧先入栈就是维护右侧最近关系
 ```C++
-// 栈是单调的
-// 单调栈：：擅长维护最近大于/小于关系，从左侧先入栈就是维护左侧最近关系，从右侧先入栈就是维护右侧最近关系
+
 #include <bits/stdc++.h>
 using namespace std;
 #define int long long
@@ -439,9 +442,9 @@ int main()
 ```
 
 ## 高精度乘高精度（O（nlogn)）
-
+luogu P1919 【模板】A*B Problem 升级版（FFT 快速傅里叶变换）
 ```C++
-//luogu P1919 【模板】A*B Problem 升级版（FFT 快速傅里叶变换）
+
 const double PI = acos(-1.0);
 struct Complex{
     double x, y;
@@ -516,7 +519,7 @@ void solve() {
 
 ## 基本线性dp
 
-### 最长上升子序列I  O（n ^ 2)
+### 最长上升子序列I  O（$n ^ 2$)
 
 ```c++
 int f[N];
@@ -538,7 +541,7 @@ void solve() {
 }
 ```
 
-### 最长上升子序列II O(nlogn) 贪心+二分
+### 最长上升子序列II O($nlogn$) 贪心+二分
 
 ```C++
 int a[N];
@@ -566,7 +569,7 @@ void solve() {
 ```
 
 ### 最长公共子序列
-
+时间复杂度 O($ n^2 $)
 ```c++
 int f[N][N];//f[i][j]：a中前i个字符， b中前j个字符的最长公共子序列的最大长度
 char a[N], b[N];
@@ -589,10 +592,8 @@ void solve() {
 ## 背包
 
 ### 背包求组合种类
-
-
+和顺序无关，先遍历物品再遍历背包
 ```C++
-//和顺序无关，先遍历物品再遍历背包
 class Solution {
 public:
     int change(int m, vector<int>& a) {
@@ -610,9 +611,8 @@ public:
 ```
 
 ### 背包求排列种类
-
+和顺序有关，先遍历背包再遍历物品
 ```C++
-//和顺序有关，先遍历背包再遍历物品
 class Solution {
 public:
     int combinationSum4(vector<int>& a, int m) {
@@ -631,9 +631,9 @@ public:
 ```
 
 ### 超大背包问题
-
+折半搜索
 ```C++
-//折半搜索
+
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -697,11 +697,11 @@ signed main() {
 ```
 
 ## 区间dp
+石子合并：有$n$堆石子排成一排，每次只能合并相邻的两堆，花费为这两堆石子的总数。求最终合为一堆的最小花费。
 
+dp设计：$dp[i][j]:合并第i堆到第j堆的最小花费$
 ```C++
-// 石子合并：有n堆石子排成一排，每次只能合并相邻的两堆，花费为这两堆石子的总数。求最终合为一堆的最小花费。
-// dp设计：
-// dp[i][j]:合并第i堆到第j堆的最小花费
+
 状态转移方程：dp[i][j] = min(dp[i][j], dp[i][k] + dp[k + 1][j] + s[j] - s[i - 1]);
 #include<bits/stdc++.h>
 using namespace std;
@@ -734,12 +734,18 @@ signed main() {
 ```
 
 ## 树形dp
+问题：
+
+小红拿到了一棵树，初始所有节点都是白色。
+
+小红希望染红若干个节点，使得不存在两个白色节点相邻。
+
+小红想知道，共有多少种不同的染色方案？
+
+由于答案过大，请对1e9 + 7取模。
 
 ```C++
-// 小红拿到了一棵树，初始所有节点都是白色。
-// 小红希望染红若干个节点，使得不存在两个白色节点相邻。
-// 小红想知道，共有多少种不同的染色方案？
-// 由于答案过大，请对1e9 + 7取模。
+
 #include <bits/stdc++.h>
 using namespace std;
 #define int long long
@@ -798,13 +804,16 @@ signed main() {
 
 
 ## 状压dp
+给定一个有权无向图，包括$n$个点，从 $0$ 到 $n - 1$，以及连接$n$个点的边，求从起点$0$到终点$n - 1$的最短哈密顿路径。 ($n <= 20$)
+
+dp设计：设$S$是图的一个子集，dp[S][j]:集合S的最短哈密顿路径，即表示从起点$0$出发，经过$S$中的所有点，到达终点$j$的最短路径，集合$S$中包含$j$点。
+
+适用:（1）子集问题,元素无先后关系,有$2^n$个子集;（2）排列问题：对所有元素进行全排列,有$n!$ 个全排列.
+
+$dp[1][0] = 0;$
 
 ```C++
-// 给定一个有权无向图，包括n个点，从 0 到 n - 1，以及连接n个点的边，求从起点0到终点n - 1的最短哈密顿路径。 (n <= 20)
-// dp设计：
-// 设S是图的一个子集，dp[S][j]:集合S的最短哈密顿路径，即表示从起点0出发，经过S中的所有点，到达终点j的最短路径，集合S中包含j点。
-// 适用:（1）子集问题,元素无先后关系,有2^n个子集;（2）排列问题：对所有元素进行全排列,有n！个全排列.
-//dp[1][0] = 0;
+
 for (int i = 1; i < (1 << n); i++) {//从小集合扩展到大集合
 	for (int j = 0; j < n; j++) //枚举点
     {
@@ -824,92 +833,6 @@ int ans = dp[(1 << n) - 1][n - 1];
 ## 数位统计dp
 
 ```c++
-// 状态设计
-// 如果理解了上述过程，我们需要考虑的就是怎样判断现在在哪一层，怎样判断当前的状态——这就需要我们传进一些参量。
-
-// dfs函数需要哪些参量?
-
-// 首先是数位dp基本的量数字位数 pos ，记录答案的 st ，最高位限制 limit （这个后面会讲）
-// 我们还需要一个判断判断前导0的标记 lead （这个后面也会讲）
-// 由于数位dp解决的大多是数字组成问题，所以经常要比较当前位和前一位或前几位的关系（根据题意而定），所以一般在dfs()中也要记录前一位或前几位数 pre 方便比较。
-// 除此之外还可以传进更多参量以区分状态，视题意而定。
-// 数位dp的状态能记录的最好都记录上 ——lwz dalao
-
-// 【细节分析】
-
-// 一、前导0标记lead
-
-// 由于我们要搜的数可能很长，所以我们的直接最高位搜起
-
-// 举个例子：假如我们要从 [0,1000] 找任意相邻两数相等的数
-
-// 显然 111,222,888 等等是符合题意的数
-
-// 但是我们发现右端点 1000 是四位数
-
-// 因此我们搜索的起点是 0000 ，而三位数的记录都是 0111,0222,0888 等等
-
-// 而这种情况下如果我们直接找相邻位相等则 0000 符合题意而 0111,0222,0888 都不符合题意了
-
-// 所以我们要加一个前导0标记
-
-// 如果当前位 lead=1 而且当前位也是0，那么当前位也是前导0， pos+1 继续搜；
-// 如果当前位 lead=1 但当前位不是0，则本位作为当前数的最高位， pos+1 继续搜；（注意这次根据题意st或其他参数可能发生变化）
-// 当然前导 0 有时候是不需要判断的，上述的例子是一个有关数字结构上的性质，0会影响数字的结构，所以必须判断前导0；而如果我们研究的是数字的组成（例如这个数字有多少个 1 之类的问题），0并不影响我们的判断，这样就不需要前导0标记了。总之，这个因题而异，并不是必须要标记（当然记了肯定是不会出错的）
-
-// 最高位标记limit
-// 我们知道在搜索的数位搜索范围可能发生变化；
-
-// 举个例子：我们在搜索 [0,555] 的数时，显然最高位搜索范围是 0 ~ 5 ，而后面的位数的取值范围会根据上一位发生变化：
-
-// 当最高位是 1 ~ 4 时，第二位取值为 [0,9] ;
-// 当最高位是 5 时，第二位取值为 [0,5] （再往上取就超出右端点范围了）
-// 为了分清这两种情况，我们引入了 \text{limit} 标记：
-
-// 若当前位 limit=1 而且已经取到了能取到的最高位时，下一位 limit=1 ；
-// 若当前位 limit=1 但是没有取到能取到的最高位时，下一位 limit=0 ；
-// 若当前位 limit=0 时，下一位 limit=0 。
-// 我们设这一位的标记为 limit ，这一位能取到的最大值为 res ，则下一位的标记就是 i==res && limit （ i 枚举这一位填的数）
-
-// dp值的记录和使用
-// 最后我们考虑dp数组下标记录的值
-
-// 本文介绍数位dp是在记忆化搜索的框架下进行的，每当找到一种情况我们就可以这种情况记录下来，等到搜到后面遇到相同的情况时直接使用当前记录的值。
-
-// dp数组的下标表示的是一种状态，只要当前的状态和之前搜过的某个状态完全一样，我们就可以直接返回原来已经记录下来的dp值。
-
-// 再举个例子
-
-// 假如我们找 [0,123456] 中符合某些条件的数
-
-// 假如当我们搜到 1000jQuery33108684357930728313_1541404441669 时，dfs从下返上来的数值就是当前位是第 5 位，前一位是 0 时的方案种数，搜完这位会向上反，这是我们可以记录一下：当前位第 5 位，前一位是 0 时，有这么多种方案种数
-
-// 当我们继续搜到 1010?? 时，我们发现当前状态又是搜到了第 5 位，并且上一位也是 0 ，这与我们之前记录的情况相同，这样我们就可以不继续向下搜，直接把上次的dp值返回就行了。
-
-// 注意，我们返回的dp值必须和当前处于完全一样的状态，这就是为什么dp数组下标要记录 pos,pre 等参量了。
-
-// 最重要的来了——
-
-// 接着上面的例子，范围 [0,123456]
-
-// 如果我们搜到了 1234?? ，我们能不能直接返回之前记录的：当前第 5 位，前一位是 4 时的dp值？
-
-// 答案是否定的
-
-// 我们发现，这个状态的dp值被记录时，当前位也就是第 5 位的取值是 [0,9] ，而这次当前位的取值是 [0,5] ，方案数一定比之前记录的dp值要小。
-
-// 当前位的取值范围为什么会和原来不一样呢？
-
-// 如果你联想到了之前所讲的知识，你会发现：现在的 limit=1 ，最高位有取值的限制。
-
-// 因此我们可以得到一个结论：当 limit=1 时，不能记录和取用dp值！
-
-// 类似上述的分析过程，我们也可以得出：当 lead=1 时，也不能记录和取用dp值！
-
-// p.s.当然没有这么绝对的说……因题而异的说……
-
-// 以上就是计划搜索的完整步骤。
-    
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -1049,10 +972,9 @@ signed main() {
 ```
 
 ## 字符串哈希
-
+例题: https://codeforces.com/contest/1979/problem/D
 ### 线性哈希
 ```c++
-//例题: https://codeforces.com/contest/1979/problem/D
 #include <bits/stdc++.h>
 using namespace std;
 #define int long long
@@ -1139,7 +1061,6 @@ signed main() {
 ```C++
 #include <bits/stdc++.h>
 using namespace std;
-
 #define int long long
 const int N = 1e5 + 10;
 int n;
@@ -1254,10 +1175,11 @@ signed main() {
 ```
 
 ## manacher
+马拉车算法：求最长回文子串的算法
 
+注意：这里的N要开三倍
 ```c++
-//马拉车算法：求最长回文子串的算法
-//注意：这里的N要开三倍
+
 char a[N];
 char s[N];
 int d[N];//回文半径
@@ -1292,10 +1214,11 @@ int manacher() {
 ```
 
 ## kmp
+Knuth–Morris–Pratt 算法：给定一个文本 t 和一个字符串 s，我们尝试找到并展示 s 在 t 中的所有出现（$occurrence$）。
 
+为了简便起见，我们用 $n$ 表示字符串 $s$ 的长度，用$ m $表示文本 $ t $的长度。
 ```C++
-//Knuth–Morris–Pratt 算法：给定一个文本 t 和一个字符串 s，我们尝试找到并展示 s 在 t 中的所有出现（occurrence）。
-//为了简便起见，我们用 n 表示字符串 s 的长度，用 m 表示文本 t 的长度。
+
 vector<int> find_occurrences(string text, string pattern) {
     string cur = pattern + '#' + text;
     int sz1 = text.size(), sz2 = pattern.size();
@@ -1421,8 +1344,6 @@ void solve(){
 
 signed main() {
     ios::sync_with_stdio(false),cin.tie(nullptr);
-    // freopen("C:\\Users\\ie_fe\\Desktop\\acm\\src\\in.in", "r", stdin);
-    // freopen("C:\\Users\\ie_fe\\Desktop\\acm\\src\\out.out", "w", stdout);
     int t; cin >> t;
     while (t--)
         solve();
@@ -1489,15 +1410,22 @@ int dijkstra(int s){
 ```
 
 ## bellmanford
+时间复杂度为 O($ n * m$)。
 
+先介绍 Bellman–Ford 算法要用到的松弛操作（Dijkstra 算法也会用到松弛操作）。
+
+对于边 $(u,v)$，松弛操作对应下面的式子：$dis(v) = \min(dis(v), dis(u) + w(u, v))$
+
+这么做的含义是显然的：我们尝试用 $S \to u \to v$（其中 $S \to u$ 的路径取最短路）这条路径去更新$ v $点最短路的长度，如果这条路径更优，就进行更新。
+
+Bellman–Ford 算法所做的，就是不断尝试对图上每一条边进行松弛。我们每进行一轮循环，就对图上所有的边都尝试进行一次松弛操作，当一次循环中没有成功的松弛操作时，算法停止。
+
+每次循环是 O($m$) 的，那么最多会循环多少次呢？
+在最短路存在的情况下，由于一次松弛操作会使最短路的边数至少 + 1，而最短路的边数最多为 $n-1$，因此整个算法最多执行 n-1 轮松弛操作。故总时间复杂度为 O($ n * m$)。
+
+但还有一种情况，如果从 S 点出发，抵达一个负环时，松弛操作会无休止地进行下去。注意到前面的论证中已经说明了，对于最短路存在的图，松弛操作最多只会执行 $n-1$ 轮，因此如果第 $n$ 轮循环时仍然存在能松弛的边，说明从 $S$ 点出发，能够抵达一个负环。
 ```c++
-// 先介绍 Bellman–Ford 算法要用到的松弛操作（Dijkstra 算法也会用到松弛操作）。
-// 对于边 (u,v)，松弛操作对应下面的式子：dis(v) = \min(dis(v), dis(u) + w(u, v))。
-// 这么做的含义是显然的：我们尝试用 S \to u \to v（其中 S \to u 的路径取最短路）这条路径去更新 v 点最短路的长度，如果这条路径更优，就进行更新。
-// Bellman–Ford 算法所做的，就是不断尝试对图上每一条边进行松弛。我们每进行一轮循环，就对图上所有的边都尝试进行一次松弛操作，当一次循环中没有成功的松弛操作时，算法停止。
-// 每次循环是 O(m) 的，那么最多会循环多少次呢？
-// 在最短路存在的情况下，由于一次松弛操作会使最短路的边数至少 +1，而最短路的边数最多为 n-1，因此整个算法最多执行 n-1 轮松弛操作。故总时间复杂度为 O(nm)。
-// 但还有一种情况，如果从 S 点出发，抵达一个负环时，松弛操作会无休止地进行下去。注意到前面的论证中已经说明了，对于最短路存在的图，松弛操作最多只会执行 n-1 轮，因此如果第 n 轮循环时仍然存在能松弛的边，说明从 S 点出发，能够抵达一个负环。
+
 struct Edge {
   int u, v, w;
 };
@@ -1531,13 +1459,17 @@ bool bellmanford(int n, int s) {
 ```
 
 ## spfa
+即 Shortest Path Faster Algorithm。
 
+很多时候我们并不需要那么多无用的松弛操作。
+
+很显然，只有上一次被松弛的结点，所连接的边，才有可能引起下一次的松弛操作。
+
+那么我们用队列来维护「哪些结点可能会引起松弛操作」，就能只访问必要的边了。
+
+SPFA 也可以用于判断 s 点是否能抵达一个负环，只需记录最短路经过了多少条边，当经过了至少 n 条边时，说明 s 点可以抵达一个负环。
 ```c++
-// 即 Shortest Path Faster Algorithm。
-// 很多时候我们并不需要那么多无用的松弛操作。
-// 很显然，只有上一次被松弛的结点，所连接的边，才有可能引起下一次的松弛操作。
-// 那么我们用队列来维护「哪些结点可能会引起松弛操作」，就能只访问必要的边了。
-// SPFA 也可以用于判断 s 点是否能抵达一个负环，只需记录最短路经过了多少条边，当经过了至少 n 条边时，说明 s 点可以抵达一个负环。
+
 struct edge {
   int v, w;
 };
@@ -1585,8 +1517,10 @@ void floyd() {
 ```
 
 ## Johnson
+全源最短路径算法
+
+时间复杂度 O($ n * m * logm + n * m $)
 ```C++
-//Johnson 全源最短路径算法
 #include <bits/stdc++.h>
 using namespace std;
 #define int long long
@@ -1687,8 +1621,9 @@ signed main() {
 ```
 
 ## kruskal最小生成树
-
+时间复杂度 O($ n * logn $)
 ```c++
+//并查集贪心
 struct edge{
     int u, v, w;
     bool operator <(const edge &t) const{
@@ -1712,11 +1647,136 @@ bool kruskal() {
 }
 ```
 
-## 换根dp
+## 二分图染色法
+时间复杂度 O($n$)
 
+该算法可以用来判断一个图是不是二分图以及是否含有奇环
+
+题目链接: https://codeforces.com/contest/1991/problem/E
+```C++
+
+#include <bits/stdc++.h>
+using namespace std;
+#define int long long
+#define ll long long
+#define ull unsigned long long
+#define all(x) x.begin(),x.end()
+#define PII pair<int, int>
+#define x first
+#define y second
+// #define endl '\n'
+inline int read() {int c;cin>>c;return c;}
+inline void readn(int a[], int n){
+    for_each(a + 1, a + n + 1, [](int &x){cin>>x;});
+}
+inline void printn(int a[], int n){
+    for_each(a + 1, a + n + 1, [](int &x){
+        cout<<x<<' ';
+    });
+    cout<<endl;
+}
+template<typename T, typename... Args>
+void write(const T& first, const Args&... args) {
+    cout << first;
+    ((cout << ' ' << args), ...);
+    cout << endl;
+}
+char out[2][10] = {"No", "Yes"};
+const int N = 1e6 + 10;
+/* next is main_solve */
+int a[N];
+vector<int> e[N];
+int color[N];
+int dfs(int x,int col,int fa){
+    color[x]=col;
+    for(auto y:e[x]){
+        if(y==fa)continue;
+        if(!color[y]){
+            if(dfs(y,3-col,x)) return 1;
+        }else{
+            if(color[y]==col){
+                return 1;
+            }
+        }
+    }
+    return 0;
+}
+
+vector<int> sb[3];
+
+void solve() {
+    int n, m; cin >> n >> m;
+    for (int i = 1; i <= n; i++) {
+        e[i].clear();
+        color[i] = 0;
+    }
+    for (int i = 1; i <= m; i++) {
+        int u, v; cin >> u >> v;
+        e[u].push_back(v);
+        e[v].push_back(u);
+    }
+
+    for (int i = 1; i <= 2; i++) sb[i].clear();
+
+    if (dfs(1, 1, 0)) {
+        cout << "Alice" << endl;
+        for (int i = 1; i <= n; i++) {
+            cout << 1 << ' ' << 2 << endl;
+            read(), read();
+        }
+    }
+    else {
+        for (int i = 1; i <= n; i++) sb[color[i]].push_back(i);
+        cout << "Bob" << endl;
+        for (int i = 1; i <= n; i++) {
+            int x = read(), y = read();
+            if (x > y) swap(x, y);
+            if (sb[1].size() && sb[2].size()) {
+                if (x == 1) {
+                    int v = sb[1].back();
+                    sb[1].pop_back();
+                    cout << v << ' ' << 1 << endl;
+                }
+                else {
+                    int v = sb[2].back();
+                    sb[2].pop_back();
+                    cout << v << ' ' << 2 << endl;
+                }
+            }
+            else {
+                if (sb[1].size()) {
+                    int v = sb[1].back();
+                    sb[1].pop_back();
+                    if (x == 2) cout << v << ' ' << y << endl;
+                    else cout << v << ' ' << x << endl;
+                }
+                else {
+                    int v = sb[2].back();
+                    sb[2].pop_back();
+                    if (x == 1) cout << v << ' ' << y << endl;
+                    else cout << v << ' ' << x << endl;
+                }
+            }
+        }
+    }
+}
+
+signed main() {
+    ios::sync_with_stdio(false),cin.tie(nullptr);
+    int t; cin >> t;
+    while (t--)
+        solve();
+    return 0;
+}
+```
+
+## 换根dp
+也叫二次扫描法。先处理以每个节点为根节点的f。显然， 最终要求的并不是只包括子节点，还包括父节点。但是在第一次dfs中我们可以知道：$ ans[1] = f[1] $
+我们可以再次dfs2， 从u节点的答案转换到v节点
+
+题目链接：https://www.luogu.com.cn/problem/P1364
 ```c++
-//也叫二次扫描法。先处理以每个节点为根节点的f。显然， 最终要求的并不是只包括子节点，还包括父节点。但是在第一次dfs中我们可以知道：ans[1] = f[1]我们可以再次dfs2， 从u节点的答案转换到v节点
-//链接：https://www.luogu.com.cn/problem/P1364
+
 
 #include<bits/stdc++.h>
 using namespace std;
@@ -1779,14 +1839,20 @@ signed main() {
 
 
 ## kruskal重构树
+时间复杂度 O($ n * logn $)
+不妨设求最小生成树，Kruskal 重构树有如下性质：
 
+重构树是一棵恰有 n 个叶子节点的完满二叉树，每个非叶子节点都恰有 2 个儿子，重构树的点数为 $ 2 * n - 1$
+
+重构树的点权符合大根堆的性质。
+
+原图中两点间所有简单路径的最大边权最小值，等于最小生成树上两点之间边权最大值，等于重构树上两点 LCA 的点权。
+
+到点u的简单路径上最大边权最小值 ≤k的所有节点v均在重构树上的某棵子树内，且恰为该子树内的所有叶子节点。
+
+题目链接：https://www.luogu.com.cn/problem/P1967
 ```C++
-// 不妨设求最小生成树，Kruskal 重构树有如下性质：
-// 重构树是一棵恰有 n 个叶子节点的完满二叉树，每个非叶子节点都恰有 2 个儿子，重构树的点数为 2n−1。
-// 重构树的点权符合大根堆的性质。
-// 原图中两点间所有简单路径的最大边权最小值，等于最小生成树上两点之间边权最大值，等于重构树上两点 LCA 的点权。
-// 到点u的简单路径上最大边权最小值 ≤k的所有节点v均在重构树上的某棵子树内，且恰为该子树内的所有叶子节点。
-//例题：https://www.luogu.com.cn/problem/P1967
+
 int n, m, q;
 struct edge{
     int u, v, w;
@@ -2025,12 +2091,10 @@ int main() {
 
 
 ## 树上点前缀和
+$ dist(x, y) = s[x] + s[y] - s[lca] - s[fa[lca]] $
 
+luogu P4427 [BJOI2018] 求和
 ```c++
-//d(x, y) = s[x] + s[y] - s[lca] - s[fa[lca]]
-
-//luogu P4427 [BJOI2018] 求和
-
 #include<bits/stdc++.h>
 using namespace std;
 #define int long long
@@ -2114,10 +2178,9 @@ signed main() {
 ```
 
 ## 树上边前缀和
+$ dist(x, y) = s[x] + s[y] - 2 * s[lca]$
 
 ```c++
-//d(x, y) = s[x] + s[y] - 2 * s[lca]
-
 int s[N];
 void dfs1(int u, int fa) {
     for (auto v: e[u]) {
@@ -2129,9 +2192,9 @@ void dfs1(int u, int fa) {
 ```
 
 ## 树上点差分
-
+$(x, y) 上的点+1: diff[x] + 1, diff[y] + 1, diff[lca] - 1,diff[fa[lca]] - 1$
 ```c++
-//(x, y) 上的点+1: diff[x] + 1, diff[y] + 1, diff[lca] - 1,diff[fa[lca]] - 1
+
 #include<bits/stdc++.h>
 using namespace std;
 #define int long long
@@ -2206,11 +2269,13 @@ signed main(){
 ```
 
 ## 树上边差分
+首先我们需要一种叫做“边权转点权”的方法，就是对于每个点我们认为其点权代表这个点与其父节点之间的边的边权，
 
+对于每条边我们认为其边权是这条边所连两个点中深度较大的点的点权，根节点点权无意义
+
+$diff[x]++, diff[y]++, diff[lca] -= 2$
 ```c++
-// 首先我们需要一种叫做“边权转点权”的方法，就是对于每个点我们认为其点权代表这个点与其父节点之间的边的边权，
-// 对于每条边我们认为其边权是这条边所连两个点中深度较大的点的点权，根节点点权无意义
-//diff[x]++, diff[y]++, diff[lca]-=2
+
 #include<bits/stdc++.h>
 using namespace std;
 #define int long long
@@ -2277,10 +2342,7 @@ void solve() {
 }
 
 signed main(){
-	//freopen("in.txt", "r", stdin);
-    
     solve();
-
 	return 0;
 }
 ```
@@ -2399,14 +2461,18 @@ void tarjan(int x) {
 ```
 
 ### 割点
+对于一个无向图，如果把一个点删除后这个图的极大连通分量数增加了，那么这个点就是这个图的割点（又称割顶）。
 
+$low[u]$表示顶点u及其子树中的点，通过非父子边（回边），能够回溯到的最早的点$（dfn最小）的dfn$值（但不能通过连接$u$与其父节点的边）。对于边$(u, v)$，如果low[v]>=dfn[u]，此时u就是割点。
+证明前提是其不是一条链，不然没有意义。由于割点同时与割后的两个图相连，它的 $low$ 值必然是两个图中较小的 $low $值。
+
+假设我们取 $low[u]=min(low[u],low[v])$，若后遍历的图的割点的儿子 $v$ 可回溯至割点，那么就会把割点的$ low $值传递回 $v$,那么它的 $ low $值就不正确了
+
+证明了 $low[u]=min(low[u],low[v])$ 的错误，我们也来证明一下 $low[u]=min(low[u],dfn[v])$ 的正确性。由于儿子未遍历情况的取小值的方式，我们知道 $low $值是可以传递回去的。
+
+那么其实对于 v ，它只要可以搜索到一个比$ u $时间戳小的点即可，不必通过该点继续往上寻找即可证明$ u $为割点，所以这也是具有正确性的。
 ```C++
-// 对于一个无向图，如果把一个点删除后这个图的极大连通分量数增加了，那么这个点就是这个图的割点（又称割顶）。
-//low[u]表示顶点u及其子树中的点，通过非父子边（回边），能够回溯到的最早的点（dfn最小）的dfn值（但不能通过连接u与其父节点的边）。对于边(u, v)，如果low[v]>=dfn[u]，此时u就是割点。
-// 证明前提是其不是一条链，不然没有意义。由于割点同时与割后的两个图相连，它的 low 值必然是两个图中较小的 low 值。
-// 假设我们取 low[u]=min(low[u],low[v])，若后遍历的图的割点的儿子 v 可回溯至割点，那么就会把割点的 low 值传递回 v,那么它的 low 值就不正确了。
-// 证明了 low[u]=min(low[u],low[v]) 的错误，我们也来证明一下 low[u]=min(low[u],dfn[v]) 的正确性。由于儿子未遍历情况的取小值的方式，我们知道 low 值是可以传递回去的。
-// 那么其实对于 v ，它只要可以搜索到一个比 u 时间戳小的点即可，不必通过该点继续往上寻找即可证明 u 为割点，所以这也是具有正确性的。
+
 const int N = 1e6 + 10;
 vector<int> e[N];
 int dfn[N], low[N]; 
@@ -2652,11 +2718,13 @@ signed main() {
 ```
 
 ### 树形dp求树的直径
+$我们定义 dp[u]：以 u 为根的子树中，从 u 出发的最长路径。那么容易得出转移方程：dp[u] = max(dp[u], dp[v] + w(u, v))，其中的 v 为 u 的子节点，w(u, v) 表示所经过边的权重$
 
+树形$ dp $可以在存在负权边的情况下求解出树的直径
+
+$对于树的直径，实际上是可以通过枚举从某个节点出发不同的两条路径相加的最大值求出。因此，在 DP 求解的过程中，我们只需要在更新 dp[u] 之前，计算 d = max(d, dp[u] + dp[v] + w(u, v)) 即可算出直径 d$
 ```C++
-// 我们定义 dp[u]：以 u 为根的子树中，从 u 出发的最长路径。那么容易得出转移方程：dp[u] = max(dp[u], dp[v] + w(u, v))，其中的 v 为 u 的子节点，w(u, v) 表示所经过边的权重。
-// 树形 DP 可以在存在负权边的情况下求解出树的直径。
-// 对于树的直径，实际上是可以通过枚举从某个节点出发不同的两条路径相加的最大值求出。因此，在 DP 求解的过程中，我们只需要在更新 dp[u] 之前，计算 d = max(d, dp[u] + dp[v] + w(u, v)) 即可算出直径 d。
+
 
 const int N = 1e6 + 10;
 vector<int> e[N];
@@ -2689,19 +2757,18 @@ void solve() {
 
 ### 理论
 
-对于节点u来说
-1、先遍历u的轻儿子(非重儿子），先计算轻儿子答案，然后再清除其对cnt数组的贡献。
-2、遍历重儿子，计算答案，不必消除其对cnt数组的贡献(可以用一个变量标记其是否为重儿子）。
-3、再次遍历 u的轻儿子的子树结点，将这些结点的贡献与重儿子的贡献合并，以得到 u的答案
+对于节点$u$来说
+1、先遍历$u$的轻儿子(非重儿子)，先计算轻儿子答案，然后再清除其对$cnt$数组的贡献。
+2、遍历重儿子，计算答案，不必消除其对$cnt$数组的贡献(可以用一个变量标记其是否为重儿子）。
+3、再次遍历$u$的轻儿子的子树结点，将这些结点的贡献与重儿子的贡献合并，以得到$u$的答案
 
 最后，树上启发式合并有两种：
-1、树链剖分。对原树进行重链剖分，直觉上，每次保留重子节点的信息，重新计算其他轻节点的信息可以优化时间复杂度；事实上，由重链剖分的结论可知，任意节点走到根节点最多经过 O(logn) 条轻边。所以总的时间复杂度为 O(nlogn)。 
-2、按秩合并。对于每个节点，用一个 map 存储其子树内信息。通过深度优先搜索合并集合（深度大的子树计算完后信息就无用了，若集合大可以 swap 到父节点）。每次合并集合大小会翻倍，所以合并插入的次数是  O(nlogn)，总的时间复杂度是O(nlog^2)。
+1、树链剖分。对原树进行重链剖分，直觉上，每次保留重子节点的信息，重新计算其他轻节点的信息可以优化时间复杂度；事实上，由重链剖分的结论可知，任意节点走到根节点最多经过 O($logn$) 条轻边。所以总的时间复杂度为 O($nlogn$)。 
+2、按秩合并。对于每个节点，用一个$ map $存储其子树内信息。通过深度优先搜索合并集合（深度大的子树计算完后信息就无用了，若集合大可以 $swap$到父节点）。每次合并集合大小会翻倍，所以合并插入的次数是  O($nlogn$)，总的时间复杂度是O($n * (logn)^2$)。
 
 ### 树链剖分
-
+例题： https://www.lanqiao.cn/problems/5892/learning/
 ```C++
-//例题： https://www.lanqiao.cn/problems/5892/learning/
 #include<bits/stdc++.h>
 using namespace std;
 #define int long long
@@ -2799,8 +2866,8 @@ signed main() {
 ```
 
 ### 按秩合并
+例题：https://atcoder.jp/contests/abc359/tasks/abc359_g
 ```c++
-//例题：https://atcoder.jp/contests/abc359/tasks/abc359_g
 #include <bits/stdc++.h>
 using namespace std;
 #define int long long
@@ -2866,9 +2933,8 @@ signed main() {
 ```
 
 ## 虚树
-
+题目链接：https://atcoder.jp/contests/abc359/tasks/abc359_g
 ```c++
-//题号：https://atcoder.jp/contests/abc359/tasks/abc359_g
 #include <bits/stdc++.h>
 using namespace std;
 #define int long long
@@ -3030,9 +3096,8 @@ signed main() {
 # 数据结构
 
 ## 栈
-
+最长括号匹配:https://www.luogu.com.cn/problem/P1944
 ```c++
-//最长括号匹配:https://www.luogu.com.cn/problem/P1944
 #include <bits/stdc++.h>
 using namespace std;
 #define int long long
@@ -3158,9 +3223,8 @@ void merge(int x, int y) {
 ```
 
 ## 字典树（前缀树）
-
+例题：https://atcoder.jp/contests/abc353/tasks/abc353_e
 ```C++
-//例题：https://atcoder.jp/contests/abc353/tasks/abc353_e
 #include <bits/stdc++.h>
 using namespace std;
 #define int long long
@@ -3234,14 +3298,13 @@ int query(int l, int r) {
 ```
 
 ## 分块
+暴力加暴力
 
+$len：每一个块的大小  tot：块的个数 l[i]：第i个块的的左端点  r[i]:第i个块的的右端点  belong[i]:每一个点属于的块$
+
+$sum[i]:每一个块块内的前缀和  b[i]：第i个块的前缀和  add[i]:第i个块每个数增加的个数$
 ```C++
-//暴力加暴力
-
 using ll = long long;
-
-//len：每一个块的大小  tot：块的个数 l[i]：第i个块的的左端点  r[i]:第i个块的的右端点  belong[i]:每一个点属于的块
-//sum[i]:每一个块块内的前缀和  b[i]：第i个块的前缀和  add[i]:第i个块每个数增加的个数
 const int N = 5e5 + 10;
 int n, m;
 ll a[N];
@@ -3299,9 +3362,8 @@ ll query(int L, int R) {//区间查询
 ```
 
 ## 对顶堆（动态求第k大）
-
+例题：https://codeforces.com/contest/1945/problem/F
 ```C++
-//例题：https://codeforces.com/contest/1945/problem/F
 #include <bits/stdc++.h>
 using namespace std;
 #define IOS ios::sync_with_stdio(false),cin.tie(nullptr),cout.tie(nullptr);
@@ -3364,9 +3426,8 @@ signed main() {
 
 
 ## 树状数组
-
+$ 以下为权值树状数组-求第k小数 $
 ```C++
-//权值树状数组-求第k小数
 #include<bits/stdc++.h>
 using namespace std;
 #define int long long 
@@ -4412,8 +4473,8 @@ int C(int n, int r) {
 ```
 
 #### Lucas定理
+模板题：https://www.luogu.com.cn/problem/P3807
 ```C++
-//模板题：https://www.luogu.com.cn/problem/P3807
 #include <bits/stdc++.h>
 using namespace std;
 #define IOS ios::sync_with_stdio(false),cin.tie(nullptr)
@@ -4476,6 +4537,7 @@ signed main() {
     return 0;
 } 
 ```
+
 #### 十二重计数法
 ```C++
 #include <bits/stdc++.h>
@@ -4622,9 +4684,8 @@ int qmi(int a, int b, int p){
 ```
 
 ## 矩阵快速幂加速递推
-
+例题： https://codeforces.com/group/mey3UXMrvB/contest/515223/problem/B
 ```C++
-//https://codeforces.com/group/mey3UXMrvB/contest/515223/problem/B
 struct mat {
     int row, col;
     int a[4][4];
@@ -4679,9 +4740,8 @@ int gcd(int a, int b) {
 ```
 
 ### 扩展欧几里德算法
-
+$ a * x + b * y = gcd(a, b)的一组整数解 O(logn) $
 ```c++
-//求 a * x + b * y = gcd(a, b)的一组整数解 O(logn)
 int x, y;
 int exgcd(int a, int b, int &x, int &y) {//返回gcd(a,b) 并求出解(引用带回)
     if (b == 0) {
@@ -4706,9 +4766,9 @@ else {
 ```
 
 ## 数论分块（整除分块）
-
+$ ∑f[i] * (k / i) $
 ```c++
-//形如f[i] * (k / i)的前n项和
+
 int res = n * k;
 
 for (int l = 1, r; l <= n; l = r + 1) {
@@ -4937,9 +4997,8 @@ void solve() {
 # 多项式与生成函数
 
 ## 快速傅里叶变换
-
+luogu P1919 【模板】A*B Problem 升级版（FFT 快速傅里叶变换）
 ```c++
-//luogu P1919 【模板】A*B Problem 升级版（FFT 快速傅里叶变换）
 const double PI = acos(-1.0);
 struct Complex{
     double x, y;
@@ -5011,9 +5070,8 @@ void solve() {
 ```
 
 ## 快速数论变换
-
+luohu P3803 【模板】多项式乘法（FFT）
 ```c++
-//luohu P3803 【模板】多项式乘法（FFT）
 const int N = 1e7 + 10;
 int A[N], B[N];
 const int p = 998244353;
@@ -5083,7 +5141,7 @@ void solve() {
 ## bitset
 
 ### bitset异或
-
+bitset计算一次的复杂度 O($ n / 32 $)
 ```C++
 #include <bits/stdc++.h>
 using namespace std;
@@ -5509,9 +5567,8 @@ signed main() {
 ```
 
 ### 树上莫队
-
+时间复杂度 O($n^(5/3)$)
 ```C++
-// 树上莫队 O(n^(5/3))
 #include <iostream>
 #include <cstring>
 #include <algorithm>
