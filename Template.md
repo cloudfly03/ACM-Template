@@ -3908,7 +3908,7 @@ signed main() {
 
 ### 主席树
 
-## 求区间第k大
+#### 求区间第k大
 ```C++
 #include <bits/stdc++.h>
 using namespace std;
@@ -3997,7 +3997,7 @@ signed main() {
 }
 ```
 
-## 主席树二分
+#### 主席树二分
 题目链接: https://codeforces.com/contest/1997/problem/E
 ```c++
 #include <bits/stdc++.h>
