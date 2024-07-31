@@ -2090,8 +2090,7 @@ int main() {
 
 
 ## 树上点前缀和
-$ dist(x, y) $ = 
-$s[x] + s[y] - s[lca] - s[fa[lca]] $
+$dist(x, y) = s[x] + s[y] - s[lca] - s[fa[lca]] $
 
 luogu P4427 [BJOI2018] 求和
 ```c++
