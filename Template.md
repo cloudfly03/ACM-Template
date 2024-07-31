@@ -520,7 +520,6 @@ void solve() {
 ## 基本线性dp
 
 ### 最长上升子序列I  O（$n ^ 2$）
-
 ```c++
 int f[N];
 int a[N];
