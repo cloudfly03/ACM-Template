@@ -4966,7 +4966,7 @@ int inv(int x) {
 
 
 ## 线性同余方程
- a * x ≡ b (mod \ m) <=> a * x \ mod \ m ≡  b
+ a * x ≡ b (mod m) <=> a * x (mod m) m ≡ b
 
 当b = 1时，x 为 a 的乘法逆元
 
