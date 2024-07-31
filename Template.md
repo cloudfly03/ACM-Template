@@ -441,7 +441,7 @@ int main()
 }
 ```
 
-## 高精度乘高精度$O(nlogn)$
+## 高精度乘高精度O(nlogn)
 luogu P1919 【模板】A*B Problem 升级版（FFT 快速傅里叶变换）
 ```C++
 
@@ -4966,8 +4966,9 @@ int inv(int x) {
 
 
 ## 线性同余方程
-$ a * x ≡ b (mod \ m) <=> a * x \ mod \ m ≡  b$
-当$b = 1$时，$x$ 为 $a$ 的乘法逆元
+ a * x ≡ b (mod \ m) <=> a * x \ mod \ m ≡  b
+
+当b = 1时，x 为 a 的乘法逆元
 
 ```c++
 void solve() {
@@ -5130,7 +5131,7 @@ void solve() {
 ## bitset
 
 ### bitset异或
-bitset计算一次的复杂度 O($ n / 32 $)
+bitset计算一次的复杂度 O( n / 32 )
 ```C++
 #include <bits/stdc++.h>
 using namespace std;
@@ -5556,7 +5557,7 @@ signed main() {
 ```
 
 ### 树上莫队
-时间复杂度 O($n^(5/3)$)
+时间复杂度 O(n^(5/3))
 ```C++
 #include <iostream>
 #include <cstring>
