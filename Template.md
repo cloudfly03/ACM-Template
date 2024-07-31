@@ -2178,7 +2178,7 @@ signed main() {
 ```
 
 ## 树上边前缀和
-$ dist(x, y)$ $=$ $s[x] + s[y] - 2 * s[lca] $
+$ dist(x, y) $ $=$ $s[x] + s[y] - 2 * s[lca] $
 
 ```c++
 int s[N];
