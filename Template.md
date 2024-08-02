@@ -4826,13 +4826,13 @@ signed main() {
 ```c++
 int qmi(int a, int b, int p){
     a %= p;
-    int res = 1;
+    int ans = 1;
     while (b) {     
-        if(b & 1) res = res * a % p;
+        if(b & 1) ans = ans * a % p;
         b >>= 1;
         a = a * a % p;
     }
-    return res;
+    return ans;
 }
 ```
 
