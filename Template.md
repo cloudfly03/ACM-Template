@@ -3082,6 +3082,175 @@ signed main() {
 }
 ```
 
+## 树上倍增
+2024河北省赛H题：https://codeforces.com/group/mey3UXMrvB/contest/540698/attachments
+```C++
+#include <bits/stdc++.h>
+using namespace std;
+#define int long long
+#define ll long long
+#define ull unsigned long long
+#define all(x) x.begin(), x.end()
+#define pb push_back
+#define PII pair<int, int>
+#define x first
+#define y second
+#define endl '\n'
+
+inline int read() {int c; cin >> c; return c;}
+inline void readn(int a[], int n) {
+    for_each(a + 1, a + n + 1, [](int &x) {cin >> x;});
+}
+inline void writen(int a[], int n) {
+    for_each(a + 1, a + n + 1, [](int &x) { cout << x << ' '; });
+    cout << endl;
+}
+template<typename T, typename... Args>
+void write(const T &first, const Args &...args) {
+    cout << first;
+    ((cout << ' ' << args), ...);
+    cout << endl;
+}
+template<typename T, typename... Args>
+void ewrite(const T& first, const Args&... args) {
+    cerr << '*';
+    cerr << first;
+    ((cerr << ' ' << args), ...);
+    cerr << endl;
+}
+char out[2][10] = {"No", "Yes"};
+const double eps = 1e-6;
+const int N = 1e6 + 10;
+const int M = N << 1;
+const int mod = 1e9 + 7;
+
+/* next is main_solve */
+
+vector<int> e[N];
+int dp[N];
+int vis[N];
+
+const int lgmx = 20;
+int dep[N], fa[N][21];
+int mi1[N][21];
+int mi2[N][21];
+void dfs(int u, int father) {
+    dep[u] = dep[father] + 1;
+
+    fa[u][0] = father;
+    mi1[u][0] = 3 * dp[u] - dep[u];
+    mi2[u][0] = 3 * dp[u] + dep[u];
+
+    for (int i = 1; i <= lgmx; i++) {
+        int v = fa[u][i - 1];
+        fa[u][i] = fa[v][i - 1];
+        mi1[u][i] = min(mi1[u][i - 1], mi1[v][i - 1]);
+        mi2[u][i] = min(mi2[u][i - 1], mi2[v][i - 1]);
+    }
+
+    for (auto v: e[u]) {
+        if (v == father) continue;
+        dfs(v, u);
+    }
+}
+
+int lca(int u, int v){
+    if (dep[u] < dep[v])
+        swap(u, v);
+    for (int k = dep[u] - dep[v], lg; k; k -= 1 << lg) {
+        lg = __lg(k);
+        u = fa[u][lg];
+    }
+    if(u == v)
+        return u;
+
+    for(int k = __lg(dep[u]); k >= 0; k--) {
+        if (fa[u][k] != fa[v][k])
+            u = fa[u][k], v = fa[v][k];
+    }
+    return fa[u][0];
+}
+
+int ask1(int u, int v) {
+    int ans = 1e18;
+    for (int k = dep[u] - dep[v] + 1, lg; k; k -= 1 << lg) {
+        lg = __lg(k);
+        ans = min(ans, mi1[u][lg]);
+        u = fa[u][lg];
+    }
+    return ans;
+}
+
+int ask2(int u, int v) {
+    int ans = 1e18;
+    for (int k = dep[u] - dep[v] + 1, lg; k; k -= 1 << lg) {
+        lg = __lg(k);
+        ans = min(ans, mi2[u][lg]);
+        u = fa[u][lg];
+    }
+    return ans;
+}
+
+void solve() {
+    int n, k;
+    n = read(), k = read();
+    for (int i = 1; i < n; i++) {
+        int u, v;
+        u = read(), v = read();
+        e[u].push_back(v);
+        e[v].push_back(u);
+    }
+
+    queue<int> q;
+    for (int i = 1; i <= k; i++) {
+        int v; 
+        v = read();
+        q.push(v);
+        vis[v] = 1;
+    }
+
+    while (q.size()) {
+        auto u = q.front();
+        q.pop();
+        for (auto v: e[u]) {
+            if (vis[v]) continue;
+            dp[v] = dp[u] + 1;
+            vis[v] = 1;
+            q.push(v);
+        }
+    }
+
+    dfs(1, 0);
+    int Q;
+    Q = read();
+    while (Q--) {
+        int x, y;
+        x = read(), y = read();
+        int lc = lca(x, y);
+
+        int ans = 2 * (dep[x] + dep[y] - 2 * dep[lc]);
+        //ewrite(ans);
+        ans = min(ans, ask1(x, lc) + 2 * dep[x] + dep[y] - 2 * dep[lc]);
+        //ewrite(ans);
+        ans = min(ans, ask2(y, lc) + 2 * dep[x] + dep[y] - 4 * dep[lc]);
+        //ewrite(ans);
+        write(ans);
+    }
+}
+void cloud_fly() {
+    // int t;
+    // cin >> t;
+    // while (t--)
+        solve();
+}
+
+signed main() {
+    ios::sync_with_stdio(false), cin.tie(nullptr);
+    cloud_fly();
+    return 0;
+}
+```
+
 # 数据结构
 
 ## 栈
