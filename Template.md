@@ -3270,19 +3270,95 @@ signed main() {
 ## ST表（静态RMQ问题）
 
 ```C++
-void init() {
-    for(int i = 1; i <= n; i++) {
-        f[i][0] = a[i];
+#include <bits/stdc++.h>
+using namespace std;
+#define int long long
+#define ll long long
+#define ull unsigned long long
+#define all(x) x.begin(), x.end()
+#define pb push_back
+#define PII pair<int, int>
+#define x first
+#define y second
+#define endl '\n'
+
+inline int read() {int c; cin >> c; return c;}
+inline void readn(int a[], int n) {
+    for_each(a + 1, a + n + 1, [](int &x) {cin >> x;});
+}
+inline void writen(int a[], int n) {
+    for_each(a + 1, a + n + 1, [](int &x) { cout << x << ' '; });
+    cout << endl;
+}
+template<typename T, typename... Args>
+void write(const T &first, const Args &...args) {
+    cout << first;
+    ((cout << ' ' << args), ...);
+    cout << endl;
+}
+template<typename T, typename... Args>
+void ewrite(const T& first, const Args&... args) {
+    cerr << '*';
+    cerr << first;
+    ((cerr << ' ' << args), ...);
+    cerr << endl;
+}
+char out[2][10] = {"No", "Yes"};
+const double eps = 1e-6;
+const int N = 1e6 + 10;
+const int M = N << 1;
+const int mod = 1e9 + 7;
+
+/* next is main_solve */
+int n, m;
+int a[N];
+const int lgmx = 20;
+int mx[N][21];
+void st() {
+    for (int i = 1; i <= n; i++) {
+        mx[i][0] = a[i];
     }
-    for (int j = 1; j <= 21; j++) {
-        for (int i = 1; i + (1 << j) - 1 <= n; i++) {
-            f[i][j] = min(f[i][j - 1], f[i + (1 << (j - 1))][j - 1]);
+
+    for (int i = 1; i <= lgmx; i++) {
+        for (int j = 1; j <= n; j++) {
+            mx[j][i] = max(mx[j][i - 1], mx[j + (1 << (i - 1))][i - 1]);
         }
     }
 }
-int query(int l, int r) {
-    int k=log2(r-l+1); 
-    return min(f[l][k],f[r-(1<<k)+1][k]);
+
+int ask(int l, int r) {
+    int ans = -1e18;
+    for (int k = r - l + 1, lg; k; k -= 1 << lg) {
+        lg = __lg(k);
+        ans = max(ans, mx[l][lg]);
+        l += 1 << lg;
+    }
+    return ans;
+}
+
+void solve() {
+    n = read(), m = read();
+    readn(a, n);
+
+    st();
+
+    while (m--) {
+        int l, r;
+        l = read(), r = read();
+        cout << ask(l, r) << '\n';
+    }
+}
+void cloud_fly() {
+    // int t;
+    // cin >> t;
+    // while (t--)
+        solve();
+}
+
+signed main() {
+    ios::sync_with_stdio(false), cin.tie(nullptr);
+    cloud_fly();
+    return 0;
 }
 ```
 
