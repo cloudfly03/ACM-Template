@@ -3660,59 +3660,109 @@ signed main() {
 
 
 ## 树状数组
-以下为权值树状数组-求第k小数 
+约瑟夫问题：树状数组解决
+bit[i] 这个位置辖域是 [i - lowbit(i) + 1, i]
+ans += 1ll<<i后，在树状数组上tr[ans]存储的是 ans-(1ll<<i)+1 到 ans 这长度为 (1ll<<i) 位置上的和
 ```C++
-#include<bits/stdc++.h>
+#include <bits/stdc++.h>
 using namespace std;
-#define int long long 
+#define int long long
+#define ull unsigned long long
+#define all(x) x.begin(), x.end()
+#define pb push_back
+#define PII pair<int, int>
+#define x first
+#define y second
+#define endl '\n'
 
-int n, q;
-const int N = 1e6 + 10;
-int tr[N];
-int lowbit(int x) {
-    return x & -x;
+inline int read() {
+    int c;
+    cin >> c;
+    return c;
 }
-void add(int i, int k) {
-    for ( ; i < N; i += lowbit(i)) {
+inline void readn(int a[], int n) {
+    for_each(a + 1, a + n + 1, [](int &x) { cin >> x; });
+}
+inline void writen(int a[], int n) {
+    for_each(a + 1, a + n + 1, [](int &x) { cout << x << ' '; });
+    cout << endl;
+}
+template <typename T, typename... Args>
+void write(const T &first, const Args &...args) {
+    cout << first;
+    ((cout << ' ' << args), ...);
+    cout << endl;
+}
+template <typename T, typename... Args>
+void ewrite(const T &first, const Args &...args) {
+    cerr << '*';
+    cerr << first;
+    ((cerr << ' ' << args), ...);
+    cerr << endl;
+}
+char out[2][10] = {"NO", "YES"};
+const double eps = 1e-6;
+const int N = 2e6 + 10;
+const int M = N << 1;
+const int mod = 1e9 + 7;
+
+int a[N];
+int tr[N];
+int maxn;
+int lowbit(int x) { return x & -x; }
+
+void add(int x, int k) {
+    for (int i = x; i < N; i += lowbit(i)) {
         tr[i] += k;
     }
 }
-int sum(int i) {
-    int s = 0;
-    for ( ; i; i -= lowbit(i)) {
-        s += tr[i];
+
+int sum(int x) {
+    int ans = 0;
+    for (int i = x; i; i -= lowbit(i)) {
+        ans += tr[i];
     }
-    return s;
+    return ans;
 }
-int query(int k) {
-    int l = 1, r = N - 1;
-    while (l < r) {
-        int mid = l + r >> 1;
-        if (sum(mid) >= k) r = mid;
-        else l = mid + 1;    
+
+int kth(int k) {
+    int ans = 0, now = 0;
+    for (int i = 20; i >= 0; i--) {
+        ans += 1ll << i;
+        if (ans > maxn || tr[ans] + now >= k)
+            ans -= 1ll << i;
+        else
+            now += tr[ans];
     }
-    return l;
+    return ans + 1;
 }
+
 void solve() {
-    cin >> n >> q;
+    int n, k;
+    n = read(), k = read();
+    maxn = n;
     for (int i = 1; i <= n; i++) {
-        int x; cin >> x;
-        add(x, 1);
+        add(i, 1);
     }
-    while (q--) {
-        int k; cin >> k;
-        if (k > 0) {
-            add(k, 1);
-        }
-        else {
-            k *= -1;
-            int x = query(k);
-            add(x, -1);
-        }
+
+    int now = 1;
+    while (n > 1) {
+        now = (now + k - 2) % n + 1;
+        int ans = kth(now);
+        add(ans, -1);
+        cout << ans << ' ';
+        n--;
     }
-    int ans = query(1);
-    if (ans == N - 1) cout << 0 << endl;
-    else cout << ans << endl;
+}
+
+signed main() {
+    ios::sync_with_stdio(false), cin.tie(nullptr);
+    // int T;
+    // T = read();
+    // while (T--)
+    solve();
+
+    return 0;
 }
 ```
 
