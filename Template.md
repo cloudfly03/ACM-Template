@@ -3661,6 +3661,7 @@ signed main() {
 
 ## 树状数组
 约瑟夫问题：树状数组解决
+
 bit[i] 这个位置辖域是 [i - lowbit(i) + 1, i]
 
 ans += 1ll<<i后，在树状数组上tr[ans]存储的是 ans-(1ll<<i)+1 到 ans 这长度为 (1ll<<i) 位置上的和
