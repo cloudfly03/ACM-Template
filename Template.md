@@ -5443,6 +5443,130 @@ void solve() {
 }
 ```
 
+## 异或线性基
+
+高斯消元法求解异或线性基
+```C++
+#include <bits/stdc++.h>
+using namespace std;
+#define int long long
+#define ull unsigned long long
+#define all(x) x.begin(), x.end()
+#define pb push_back
+#define PII pair<int, int>
+#define x first
+#define y second
+#define endl '\n'
+
+inline int read() {
+    int c;
+    cin >> c;
+    return c;
+}
+inline void readn(int a[], int n) {
+    for_each(a + 1, a + n + 1, [](int &x) { cin >> x; });
+}
+inline void writen(int a[], int n) {
+    for_each(a + 1, a + n + 1, [](int &x) { cout << x << ' '; });
+    cout << endl;
+}
+template <typename T, typename... Args>
+void write(const T &first, const Args &...args) {
+    cout << first;
+    ((cout << ' ' << args), ...);
+    cout << endl;
+}
+template <typename T, typename... Args>
+void ewrite(const T &first, const Args &...args) {
+    cerr << '*';
+    cerr << first;
+    ((cerr << ' ' << args), ...);
+    cerr << endl;
+}
+char out[2][10] = {"NO", "YES"};
+const double eps = 1e-6;
+const int N = 1e6 + 10;
+const int M = N << 1;
+const int mod = 1e9 + 7;
+
+int a[N];
+int b[N];
+int p[N];
+int d[N];
+int tot = 0;
+
+int lgmx = 30;
+void insert(int x) {
+    for (int i = lgmx; i >= 0; i--) {
+        if ((x >> i) & 1) {
+            if (!p[i]) {
+                p[i] = x;
+                break;
+            }
+            x ^= p[i];
+        }
+    }
+}
+
+void rebuild() {
+    for (int i = 0; i <= lgmx; i++) {
+        for (int j = i - 1; j >= 0; j--) {
+            if ((p[i] >> j) & 1) {
+                p[i] ^= p[j];
+            }
+        }
+    }
+    for (int i = 0; i <= lgmx; i++) {
+        if (p[i]) d[tot++] = p[i];
+    }
+}
+void solve() {
+    int n;
+    n = read();
+
+    int xa = 0, xb = 0;
+    for (int i = 1; i <= n; i++) {
+        a[i] = read();
+        xa ^= a[i];
+    }
+    for (int i = 1; i <= n; i++) {
+        b[i] = read();
+        xb ^= b[i];
+    }
+
+    tot = 0;
+    for (int i = 0; i <= lgmx; i++) {
+        p[i] = d[i] = 0;
+    }
+
+    for (int i = 1; i <= n; i++) {
+        insert(a[i] ^ b[i]);
+    }
+    rebuild();
+
+    int ans = max(xa, xb);
+    for (int i = tot - 1; i >= 0; i--) {
+        int mx = max(xa ^ d[i], xb ^ d[i]);
+        if (mx < ans) {
+            xa ^= d[i];
+            xb ^= d[i];
+            ans = mx;
+        }
+    }
+    write(ans);
+}
+
+signed main() {
+    ios::sync_with_stdio(false), cin.tie(nullptr);
+    int T;
+    T = read();
+    while (T--)
+        solve();
+
+    return 0;
+}
+```
+
 
 
 # 多项式与生成函数
