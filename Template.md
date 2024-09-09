@@ -5446,6 +5446,8 @@ void solve() {
 ## 异或线性基
 
 高斯消元法求解异或线性基
+
+2024CCPC网络赛J题
 ```C++
 #include <bits/stdc++.h>
 using namespace std;
