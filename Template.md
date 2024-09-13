@@ -2474,8 +2474,12 @@ int main() {
 ## Tarjan
 
 ### 强连通分量
+强连通的定义是：有向图 G 强连通是指，G 中任意两个结点连通。
 
+强连通分量（Strongly Connected Components，SCC）的定义是：极大的强连通子图。
 ```C++
+#include<bits/stdc++.h>
+using namespace std;
 const int N = 1e6 + 10;
 vector<int> e[N];
 int dfn[N], low[N], tot;
@@ -2522,6 +2526,8 @@ void tarjan(int x) {
 ### 割点
 
 ```C++
+#include<bits/stdc++.h>
+using namespace std;
 const int N = 1e6 + 10;
 vector<int> e[N];
 int dfn[N], low[N]; 
@@ -2551,6 +2557,8 @@ void tarjan(int x) {
 ### 割边
 
 ```C++
+#include<bits/stdc++.h>
+using namespace std;
 const int N = 1e6 + 10;
 const int M = N << 1;
 struct edge{
@@ -2589,6 +2597,8 @@ void tarjan(int x, int in_edg) {
 ### eDCC缩点
 
 ```C++
+#include<bits/stdc++.h>
+using namespace std;
 const int N = 1e6 + 10;
 const int M = N << 1;
 struct edge{
@@ -2641,6 +2651,8 @@ void solve() {
 ### vDCC缩点
 
 ```C++
+#include<bits/stdc++.h>
+using namespace std;
 const int N = 1e6 + 10;
 const int M = N << 1;
 vector<int> e[N], ne[N];
