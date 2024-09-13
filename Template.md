@@ -2517,7 +2517,7 @@ void solve() {
     for (int i = 1; i <= n; i++) {
         if (!dfn[i]) tarjan(i);
     }
-    
+
     for (int x = 1; x <= n; x++) {
         for (auto y: e[x]) {
             if (scc[x] != scc[y]) {
@@ -2526,8 +2526,6 @@ void solve() {
         }
     }
 }
-
-
 ``
 
 ### 割点和桥
