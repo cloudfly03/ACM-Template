@@ -2559,8 +2559,7 @@ void tarjan(int x) {
 }
 ```
 
-### 割边
-和割点差不多，叫做桥。
+### 割边(桥)
 ```C++
 #include<bits/stdc++.h>
 using namespace std;
