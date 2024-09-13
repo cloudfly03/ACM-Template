@@ -1370,7 +1370,8 @@ for (int i = h[u]; i; i = ne[i]) {
 }
 ```
 
-## dijkstra最短路
+## 最短路算法
+### dijkstra最短路
 单源、正权边的最短路问题
 ```c++
 int h[N], e[M], ne[M], tot, w[N];
@@ -1408,7 +1409,7 @@ int dijkstra(int s){
 }
 ```
 
-## bellmanford
+### bellmanford
 单源，且可含负权边的最短路问题，可以判断负环
 
 时间复杂度为 O(n * m)。
@@ -1459,9 +1460,7 @@ bool bellmanford(int n, int s) {
 }
 ```
 
-## spfa
-优化的bellmanford
-
+### spfa（优化的bellmanford）
 可以处理负权值，但是不能处理负环。可以判断是否有环以及负环
 
 SPFA算法的时间复杂度取决于边的数量和图的结构。在一般情况下，SPFA算法的时间复杂度为O(kE)，其中k是一个常数（一般在2到3之间），E是边的数量。然而，在最坏情况下，SPFA算法的时间复杂度可以达到O(VE)，其中V是点的数量，E是边的数量。
@@ -1506,7 +1505,7 @@ bool spfa(int n, int s) {
 }
 ```
 
-## floyd
+### floyd
 全源最短路，插点法
 
 时间复杂度O(n^3)
@@ -1522,7 +1521,7 @@ void floyd() {
 }
 ```
 
-## Johnson
+### Johnson
 全源最短路径算法
 
 时间复杂度 O(n * m * logm + n * m)
