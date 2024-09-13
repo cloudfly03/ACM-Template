@@ -1527,6 +1527,8 @@ void floyd() {
 全源最短路径算法
 
 时间复杂度 O(n * m * logm + n * m)
+
+知乎链接：https://zhuanlan.zhihu.com/p/99802850
 ```C++
 #include <bits/stdc++.h>
 using namespace std;
