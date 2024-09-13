@@ -2408,18 +2408,66 @@ signed main() {
 
 ```
 
-## 欧拉路径
+## 欧拉路径（Hierholzer算法）
+如何判断一个图是否有欧拉路径呢？显然，与一笔画问题相同，一个图有欧拉路径需要以下几个条件：
 
+首先，这是一个连通图
+
+若是无向图，则这个图的度数为奇数的点的个数必须是0或2；若是有向图，则要么所有点的入度和出度相等，
+要么有且只有两个点的入度分别比出度大1和少1
+
+上面这两个条件很好证明。查找欧拉路径前，必须先保证该图满足以上两个条件，否则直接判误即可。
+
+查找欧拉路径的算法有Fluery算法和Hierholzer算法。下面介绍一下Hierholzer算法。
+
+从起点开始，每一次执行递归函数，相当于模拟一笔画的过程。递归的边界显然就是路径的终点，对于一个有欧拉路径的图，此时图上的所有边都已被删除，自然就不能继续递归。由于存储答案是在遍历以后进行的，答案存储也就是倒序的，因此要倒序输出答案。
+
+在下面的代码中，找出的是起点字典序最小的欧拉路径，具体情况应视题意而定。
 ```C++
-const int N = 1e3 + 10;
-vector g(N, vector<int>(N, 1));
-void dfs(int u) {
-    for (int i = 0; i < g[u].size(); i++) {
-        if (g[u][i]) {
-            g[u][i] = g[i][u] = 0;
+#include <iostream>
+#include <stack>
+using namespace std;
+const int N = 500;
+int n, tot, c = N, jp[N], cnt[N], edge[N][N];
+char a, b;
+stack<int> q;
+void dfs(int now) {
+    for (int i = 1; i <= N; i++)
+        if (edge[now][i] == 1) {
+            edge[now][i]--, edge[i][now]--;
             dfs(i);
         }
+    q.push(now); // 加入答案队列
+} // 算法过程
+int main() {
+    cin >> n;
+    for (int i = 1; i <= n; i++) {
+        cin >> a >> b;
+        c = min(c, a);
+        c = min(c, b);
+        edge[a][b]++，edge[b][a]++;
+        cnt[a]++;
+        cnt[b]++; // 统计每个节点的度数
     }
+    for (int i = 1; i <= N; i++)
+        if (cnt[i] % 2 == 1)
+            jp[tot++] = i; // 找出度数为奇数的节点
+    if (tot != 2 && tot) {
+        cout << "No Solution";
+        return 0;
+    } // 若该图没有欧拉路径则判误
+    int stat;
+    if (tot)
+        stat = min(jp[0], jp[1]);
+    else
+        stat = c; // 找出起点
+    dfs(stat);
+    while (!q.empty()) {
+        char ct = q.top();
+        cout << ct;
+        q.pop();
+    } // 倒序输出
+    return 0;
 }
 ```
 
