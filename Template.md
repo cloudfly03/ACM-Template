@@ -1371,7 +1371,7 @@ for (int i = h[u]; i; i = ne[i]) {
 ```
 
 ## dijkstra最短路
-
+单源、正权边的最短路问题
 ```c++
 int h[N], e[M], ne[M], tot, w[N];
 void add(int a, int b, int c) {
@@ -1409,7 +1409,9 @@ int dijkstra(int s){
 ```
 
 ## bellmanford
-时间复杂度为 O( n * m)。
+单源，且可含负权边的最短路问题，可以判断负环
+
+时间复杂度为 O(n * m)。
 
 先介绍 Bellman–Ford 算法要用到的松弛操作（Dijkstra 算法也会用到松弛操作）。
 
@@ -1458,7 +1460,11 @@ bool bellmanford(int n, int s) {
 ```
 
 ## spfa
-即 Shortest Path Faster Algorithm。
+优化的bellmanford
+
+可以处理负权值，但是不能处理负环。可以判断是否有环以及负环
+
+SPFA算法的时间复杂度取决于边的数量和图的结构。在一般情况下，SPFA算法的时间复杂度为O(kE)，其中k是一个常数（一般在2到3之间），E是边的数量。然而，在最坏情况下，SPFA算法的时间复杂度可以达到O(VE)，其中V是点的数量，E是边的数量。
 
 很多时候我们并不需要那么多无用的松弛操作。
 
@@ -1501,9 +1507,10 @@ bool spfa(int n, int s) {
 ```
 
 ## floyd
+全源最短路，插点法
 
+时间复杂度O(n^3)
 ```c++
-//全源最短路，插点法
 void floyd() {
     for (int k = 1; k <= n; k++) {
         for (int i = 1; i <= n; i++) {
