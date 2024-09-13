@@ -2511,19 +2511,26 @@ void tarjan(int x) {
 ```
 
 ### SCC缩点
-
+缩点：把一个强连通分量缩成一个点
 ```C++
+void solve() {
+    for (int i = 1; i <= n; i++) {
+        if (!dfn[i]) tarjan(i);
+    }
+    
     for (int x = 1; x <= n; x++) {
         for (auto y: e[x]) {
             if (scc[x] != scc[y]) {
-                din[scc[y]]++;
-                dout[scc[x]]++;
+                E[x].push_back(y); //x -> y
             }
         }
     }
-```
+}
 
-### 割点
+
+``
+
+### 割点和桥
 
 ```C++
 #include<bits/stdc++.h>
