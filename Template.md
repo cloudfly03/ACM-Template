@@ -1696,14 +1696,16 @@ const int N = 1e6 + 10;
 int a[N];
 vector<int> e[N];
 int color[N];
-int dfs(int x,int col,int fa){
-    color[x]=col;
-    for(auto y:e[x]){
-        if(y==fa)continue;
-        if(!color[y]){
-            if(dfs(y,3-col,x)) return 1;
-        }else{
-            if(color[y]==col){
+int dfs(int x, int col, int fa) {
+    color[x] = col;
+    for (auto y : e[x]) {
+        if (y == fa)
+            continue;
+        if (!color[y]) {
+            if (dfs(y, 3 - col, x))
+                return 1;
+        } else {
+            if (color[y] == col) {
                 return 1;
             }
         }
