@@ -1373,6 +1373,8 @@ for (int i = h[u]; i; i = ne[i]) {
 ## 最短路算法
 ### dijkstra
 单源、正权边的最短路问题
+
+时间复杂度：优先队列，O(mlogm)
 ```c++
 int h[N], e[M], ne[M], tot, w[N];
 void add(int a, int b, int c) {
