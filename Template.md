@@ -2477,6 +2477,8 @@ int main() {
 强连通的定义是：有向图 G 强连通是指，G 中任意两个结点连通。
 
 强连通分量（Strongly Connected Components，SCC）的定义是：极大的强连通子图。(极大不是最大)
+
+low: 能够回溯到的最早的已经在栈中的结点
 ```C++
 #include<bits/stdc++.h>
 using namespace std;
@@ -2530,6 +2532,8 @@ void solve() {
 
 ### 割点
 对于一个无向图，如果把一个点删除后这个图的极大连通分量数增加了，那么这个点就是这个图的割点（又称割顶）。
+
+low: 不经过其父亲能到达的最小的时间戳
 ```C++
 #include<bits/stdc++.h>
 using namespace std;
@@ -2560,6 +2564,7 @@ void tarjan(int x) {
 ```
 
 ### 割边(桥)
+和割点差不多，只要改一处: low[v] > dfn[u]即可，而且不需要考虑根节点的问题
 ```C++
 #include<bits/stdc++.h>
 using namespace std;
