@@ -1371,7 +1371,7 @@ for (int i = h[u]; i; i = ne[i]) {
 ```
 
 ## 最短路算法
-### dijkstra最短路
+### dijkstra
 单源、正权边的最短路问题
 ```c++
 int h[N], e[M], ne[M], tot, w[N];
