@@ -2535,69 +2535,88 @@ void solve() {
 
 low: 不经过其父亲能到达的最小的时间戳
 ```C++
-#include<bits/stdc++.h>
+#include <bits/stdc++.h>
 using namespace std;
-const int N = 1e6 + 10;
-vector<int> e[N];
-int dfn[N], low[N]; 
-int tot;
-int cut[N], root;
-void tarjan(int x) {
-    dfn[x] = low[x] = ++tot;
-    int child = 0;
-    for (auto y: e[x]) {
-        if (!dfn[y]) {
-            tarjan(y);
-            low[x] = min(low[x], low[y]);
-            if (low[y] >= dfn[x]) {
-                child++;
-                if (x != root || child > 1) {
-                    cut[x] = 1;
-                }
+int n, m; // n：点数 m：边数
+int dfn[100001], low[100001], inde, res;
+// dfn：记录每个点的时间戳
+// low：能不经过父亲到达最小的编号，inde：时间戳，res：答案数量
+bool vis[100001], flag[100001]; // flag: 答案 vis：标记是否重复
+vector<int> edge[100001];       // 存图用的
+
+void Tarjan(int u, int father) { // u 当前点的编号，father 自己爸爸的编号
+    vis[u] = true;               // 标记
+    low[u] = dfn[u] = ++inde; // 打上时间戳
+    int child = 0;            // 每一个点儿子数量
+    for (auto v : edge[u]) {  // 访问这个点的所有邻居 （C++11）
+        if (!vis[v]) {
+            child++;                      // 多了一个儿子
+            Tarjan(v, u);                 // 继续
+            low[u] = min(low[u], low[v]); // 更新能到的最小节点编号
+            if (father != u && low[v] >= dfn[u] && !flag[u]) { // 主要代码
+                // 如果不是自己，且不通过父亲返回的最小点符合割点的要求，并且没有被标记过
+                // 要求即为：删了父亲连不上去了，即为最多连到父亲
+                flag[u] = true;
+                res++; // 记录答案
             }
-        }
-        else {
-            low[x] = min(low[x], dfn[y]);
+        } else if (v != father) {
+            // 如果这个点不是自己的父亲，更新能到的最小节点编号
+            low[u] = min(low[u], dfn[v]);
         }
     }
+    // 主要代码，自己的话需要 2 个儿子才可以
+    if (father == u && child >= 2 && !flag[u]) {
+        flag[u] = true;
+        res++; // 记录答案
+    }
+}
+
+int main() {
+    cin >> n >> m;                 // 读入数据
+    for (int i = 1; i <= m; i++) { // 注意点是从 1 开始的
+        int x, y;
+        cin >> x >> y;
+        edge[x].push_back(y);
+        edge[y].push_back(x);
+    } // 使用 vector 存图
+    for (int i = 1; i <= n; i++) // 因为 Tarjan 图不一定连通
+        if (!vis[i]) {
+            inde = 0;     // 时间戳初始为 0
+            Tarjan(i, i); // 从第 i 个点开始，父亲为自己
+        }
+    cout << res << endl;
+    for (int i = 1; i <= n; i++)
+        if (flag[i])
+            cout << i << " "; // 输出结果
+    return 0;
 }
 ```
 
 ### 割边(桥)
 和割点差不多，只要改一处: low[v] > dfn[u]即可，而且不需要考虑根节点的问题
-```C++
-#include<bits/stdc++.h>
-using namespace std;
-const int N = 1e6 + 10;
-const int M = N << 1;
-struct edge{
-    int u, v;
-};
-vector<edge> e;
-vector<int> h[N];
-int dfn[N], low[N], tot, cnt;
-struct bridge{
-    int x, y;
-}bri[M];
-void add(int a, int b) {
-    e.push_back({a, b});
-    h[a].push_back(e.size() - 1);
-}
 
-void tarjan(int x, int in_edg) {
-    dfn[x] = low[x] = ++tot;
-    for (int i = 0; i < h[x].size(); i++) {
-        int j = h[x][i];
-        int y = e[j].v;
-        if (!dfn[y]) {
-            tarjan(y, j);
-            low[x] = min(low[x], low[y]);
-            if (low[y] > dfn[x]) {
-                bri[++cnt] = {x, y};
+low: 不经过其父亲能到达的最小的时间戳
+```C++
+int low[MAXN], dfn[MAXN], dfs_clock;
+bool isbridge[MAXN];
+vector<int> G[MAXN];
+int cnt_bridge;
+int father[MAXN];
+
+void tarjan(int u, int fa) {
+    father[u] = fa;
+    low[u] = dfn[u] = ++dfs_clock;
+    for (int i = 0; i < G[u].size(); i++) {
+        int v = G[u][i];
+        if (!dfn[v]) {
+            tarjan(v, u);
+            low[u] = min(low[u], low[v]);
+            if (low[v] > dfn[u]) {
+                isbridge[v] = true;
+                ++cnt_bridge;
             }
-        }
-        else if (j != (in_edg ^ 1)) {
-            low[x] = min(low[x], dfn[y]);
+        } else if (dfn[v] < dfn[u] && v != fa) {
+            low[u] = min(low[u], dfn[v]);
         }
     }
 }
