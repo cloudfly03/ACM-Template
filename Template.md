@@ -2529,7 +2529,7 @@ void solve() {
 ```
 
 ### 割点和桥
-
+对于一个无向图，如果把一个点删除后这个图的极大连通分量数增加了，那么这个点就是这个图的割点（又称割顶）。
 ```C++
 #include<bits/stdc++.h>
 using namespace std;
