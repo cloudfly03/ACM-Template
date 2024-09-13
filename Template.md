@@ -1710,7 +1710,7 @@ int dfs(int x, int col, int fa) {
             }
         }
     }
-    return 0;
+    return 0;//不是二分图，即存在奇数环
 }
 
 vector<int> sb[3];
