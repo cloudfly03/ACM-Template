@@ -1607,10 +1607,10 @@ void solve() {
         int ans = 0;
         for (int j = 1; j <= n; j++) {
             if (dist[j] == 1e9) {
-                ans += j * (1e9);
+                ans += j * (1e9);//题目特定要求
             }
             else {
-                ans += j * (dist[j] + h[j] - h[i]);
+                ans += j * (dist[j] + h[j] - h[i]);//存在最短路
             }
         }
         cout << ans << '\n';
