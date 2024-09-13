@@ -2473,7 +2473,7 @@ int main() {
 
 ## Tarjan
 
-### 强连通分量
+### 强连通分量(SCC)
 强连通的定义是：有向图 G 强连通是指，G 中任意两个结点连通。
 
 强连通分量（Strongly Connected Components，SCC）的定义是：极大的强连通子图。(极大不是最大)
