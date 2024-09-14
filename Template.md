@@ -3617,6 +3617,159 @@ signed main() {
 }
 ```
 
+### 最小割
+最大流 = 最小割
+
+求最小割的最小边数：
+第一遍dinic后，重建边时应当把第一遍dinic中剩余容量为0的正向边的边权设为1，其他正向边设为无穷大，反向边都设为零，因为只有流满的边才是最小割中的边。
+```c++
+#include <bits/stdc++.h>
+using namespace std;
+#define int long long
+#define ull unsigned long long
+#define all(x) x.begin(), x.end()
+#define pb push_back
+#define PII pair<int, int>
+#define x first
+#define y second
+#define endl '\n'
+
+inline int read() {
+    int c;
+    cin >> c;
+    return c;
+}
+inline void readn(int a[], int n) {
+    for_each(a + 1, a + n + 1, [](int &x) { cin >> x; });
+}
+inline void writen(int a[], int n) {
+    for_each(a + 1, a + n + 1, [](int &x) { cout << x << ' '; });
+    cout << endl;
+}
+template <typename T, typename... Args>
+void write(const T &first, const Args &...args) {
+    cout << first;
+    ((cout << ' ' << args), ...);
+    cout << endl;
+}
+template <typename T, typename... Args>
+void ewrite(const T &first, const Args &...args) {
+    cerr << '*';
+    cerr << first;
+    ((cerr << ' ' << args), ...);
+    cerr << endl;
+}
+char out[2][10] = {"NO", "YES"};
+const double eps = 1e-6;
+const int N = 1e6 + 10;
+const int M = N << 1;
+const int mod = 998244353;
+
+struct edge{
+    int v, w, ne;
+}e[M];
+int h[N];
+int tot = 1;
+int dep[N], cur[N];
+int n, m, s, t;
+void add(int u, int v, int w) {
+    e[++tot] = {v, w, h[u]};
+    h[u] = tot;
+}
+
+bool bfs() {
+    for (int i = 1; i <= n; i++) dep[i] = 0;
+    queue<int> q;
+    q.push(s);
+    dep[s] = 1;
+    while (q.size()) {
+        auto u = q.front();
+        q.pop();
+        for (int i = h[u]; i; i = e[i].ne) {
+            int v = e[i].v;
+            if (!dep[v] && e[i].w) {
+                dep[v] = dep[u] + 1;
+                q.push(v);
+                if (v == t) return true;
+            }
+        }
+    }
+    return false;
+}
+
+int dfs(int u, int mf) {
+    if (u == t) return mf;
+    int sum = 0;
+    for (int i = cur[u]; i; i = e[i].ne) {
+        cur[u] = i;
+        int v = e[i].v;
+        if (dep[v] == dep[u] + 1 && e[i].w) {
+            int f = dfs(v, min(mf, e[i].w));
+            e[i].w -= f;
+            e[i ^ 1].w += f;
+            sum += f;
+            mf -= f;
+            if (!mf) break;
+        }
+    }
+    if (!sum) dep[u] = 0;
+    return sum;
+}
+
+int dinic() {
+    int flow = 0;
+    while (bfs()) {
+        for (int i = 1; i <= tot; i++) cur[i] = h[i];
+        flow += dfs(s, 1e18); 
+    }
+    return flow;
+}
+
+int vis[N];
+
+//求最小割划分
+void micut(int u) {
+    vis[u] = 1;
+    for (int i = h[u]; i; i = e[i].ne) {
+        int v = e[i].v;
+        if (!vis[v] && e[i].w) micut(v);
+    }
+}
+
+void solve() {
+    n = read(), m = read(), s = 1, t = n;
+    for (int i = 1; i <= m; i++) {
+        int u, v, w;
+        u = read(), v = read(), w = read();
+        add(u, v, w);
+        add(v, u, 0);
+    }
+    int ans1 = 0, ans2 = 0;
+    ans1 = dinic();
+
+    for (int i = 1; i <= tot; i++) {
+        if (i % 2 == 0) {
+            e[i].w = e[i].w > 0 ? 1e18 : 1;
+        }
+        else {
+            e[i].w = 0;
+        }
+    }
+    ans2 = dinic();
+    write(ans1, ans2);
+}
+
+signed main() {
+    ios::sync_with_stdio(false), cin.tie(nullptr);
+    // int T;
+    // T = read();
+    // while (T--)
+    solve();
+
+    return 0;
+}
+```
+
 # 数据结构
 
 ## 栈
