@@ -3373,7 +3373,7 @@ signed main() {
 
 最大流问题： 求满足流量小于等于容量的, 从源点流向汇点的最大流量
 
-时间复杂度 $ O(n * m ^ 2) $
+时间复杂度 O($ n * m ^ 2$ ) 
 ```C++
 #include <bits/stdc++.h>
 using namespace std;
