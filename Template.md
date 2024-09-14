@@ -3489,7 +3489,7 @@ signed main() {
 }
 ```
 
-## 最大流(Dinic算法)
+### 最大流(Dinic算法)
 时间复杂度O($n^2 \cdot m$)
 ```C++
 #include <bits/stdc++.h>
