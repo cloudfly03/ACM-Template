@@ -3362,6 +3362,132 @@ signed main() {
 }
 ```
 
+## 网络流
+
+### 最大流
+在一个有向图G=(V,E)中：
+
+有一个唯一的源点S， 有一个唯一的汇点T
+
+图中的每一条边都一个非负的权值，这个权值叫做容量c(u,v)， 用f(u, v)表示u->v的流量。
+
+最大流问题： 求满足流量小于等于容量的, 从源点流向汇点的最大流量
+
+```C++
+#include <bits/stdc++.h>
+using namespace std;
+#define int long long
+#define ull unsigned long long
+#define all(x) x.begin(), x.end()
+#define pb push_back
+#define PII pair<int, int>
+#define x first
+#define y second
+#define endl '\n'
+
+inline int read() {
+    int c;
+    cin >> c;
+    return c;
+}
+inline void readn(int a[], int n) {
+    for_each(a + 1, a + n + 1, [](int &x) { cin >> x; });
+}
+inline void writen(int a[], int n) {
+    for_each(a + 1, a + n + 1, [](int &x) { cout << x << ' '; });
+    cout << endl;
+}
+template <typename T, typename... Args>
+void write(const T &first, const Args &...args) {
+    cout << first;
+    ((cout << ' ' << args), ...);
+    cout << endl;
+}
+template <typename T, typename... Args>
+void ewrite(const T &first, const Args &...args) {
+    cerr << '*';
+    cerr << first;
+    ((cerr << ' ' << args), ...);
+    cerr << endl;
+}
+char out[2][10] = {"NO", "YES"};
+const double eps = 1e-6;
+const int N = 1e6 + 10;
+const int M = N << 1;
+const int mod = 998244353;
+
+struct edge {
+    int v, w, ne;
+}e[M];
+int h[N], tot = 1;
+int mf[N], pre[N];
+int n, m, s, t;
+void add(int u, int v, int w) {
+    e[++tot] = {v, w, h[u]};
+    h[u] = tot;
+}
+
+bool bfs() {
+    for (int i = 1; i <= n; i++) {
+        mf[i] = 0;
+    }
+    queue<int> q;
+    q.push(s);
+    mf[s] = 1e18;
+    while (q.size()) {
+        auto u = q.front();
+        q.pop();
+        for (int i = h[u]; i; i = e[i].ne) {
+            int v = e[i].v;
+            if (!mf[v] && e[i].w) {
+                mf[v] = min(mf[u], e[i].w);
+                pre[v] = i;
+                q.push(v);
+                if (v == t) return true;
+            }
+        }
+    }
+    return false;
+}
+
+int EK() {
+    int flow = 0;
+    while (bfs()) {
+        int v = t;
+        while (v != s) {
+            int i = pre[v];
+            e[i].w -= mf[t];
+            e[i ^ 1].w += mf[t];
+            v = e[i ^ 1].v;
+        }
+        flow += mf[t];
+    }
+    return flow;
+}
+
+void solve() {
+    n = read(), m = read(), s = read(), t = read();
+    for (int i = 1; i <= m; i++) {
+        int u, v, w;
+        u = read(), v = read(), w = read();
+        add(u, v, w);
+        add(v, u, 0);
+    }
+    int ans = EK();
+    write(ans);
+}
+
+signed main() {
+    ios::sync_with_stdio(false), cin.tie(nullptr);
+    // int T;
+    // T = read();
+    // while (T--)
+    solve();
+
+    return 0;
+}
+```
+
 # 数据结构
 
 ## 栈
