@@ -3029,6 +3029,10 @@ signed main() {
 ```
 
 ## 虚树
+虚树的主要思想是：对于一棵树，仅仅保留有用的点，重新构建一棵树
+
+这里有用的点指的是询问点和它们的lca
+
 题目链接：https://atcoder.jp/contests/abc359/tasks/abc359_g
 ```c++
 #include <bits/stdc++.h>
