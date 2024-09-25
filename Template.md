@@ -2904,6 +2904,112 @@ void solve() {
 }
 ```
 
+### 树的直径性质
+树上的一点到任意一点的最远距离是直径的两个端点之一
+题目链接：https://ac.nowcoder.com/acm/contest/91279/H
+```C++
+#include <bits/stdc++.h>
+using namespace std;
+#define int long long
+#define ull unsigned long long
+#define all(x) x.begin(), x.end()
+#define pb push_back
+#define PII pair<int, int>
+#define x first
+#define y second
+#define endl '\n'
+
+inline int read() {
+    int c;
+    cin >> c;
+    return c;
+}
+inline void readn(int a[], int n) {
+    for_each(a + 1, a + n + 1, [](int &x) { cin >> x; });
+}
+inline void writen(int a[], int n) {
+    for_each(a + 1, a + n + 1, [](int &x) { cout << x << ' '; });
+    cout << endl;
+}
+template <typename T, typename... Args>
+void write(const T &first, const Args &...args) {
+    cout << first;
+    ((cout << ' ' << args), ...);
+    cout << endl;
+}
+template <typename T, typename... Args>
+void ewrite(const T &first, const Args &...args) {
+    cerr << '*';
+    cerr << first;
+    ((cerr << ' ' << args), ...);
+    cerr << endl;
+}
+char out[2][10] = {"NO", "YES"};
+const double eps = 1e-6;
+const int N = 1e6 + 10;
+const int M = N << 1;
+const int mod = 998244353;
+struct edge {
+    int v, w;
+};
+vector<edge> e[M];
+
+void dfs(int u, int fa, int dist[]) {
+    for (auto [v, w]: e[u]) {
+        if (v == fa) continue;
+        dist[v] = dist[u] + w;
+        dfs(v, u, dist);
+    }
+}
+
+int dist[N];
+int distl[N];
+int distr[N];
+
+void solve() {
+    int n = read();
+    for (int i = 1; i < n; i++) {
+        int u, v, c;
+        u = read(), v = read(), c = read();
+        e[u].push_back({v, c});
+        e[v].push_back({u, c});
+    }
+    for (int i = 1; i <= n; i++) {
+        int d = read();
+        e[i].push_back({i + n, d});
+        e[i + n].push_back({i, d});
+    }
+
+    dfs(1, 0, dist);
+    int l = max_element(dist + 1, dist + 1 + 2 * n) - dist;
+    dfs(l, 0, distl);
+    int r = max_element(distl + 1, distl + 1 + 2 * n) - distl;
+    dfs(r, 0, distr);
+
+    for (int i = 1; i <= n; i++) {
+        if (i + n == l) {
+            write(distr[i]);
+        }
+        else if (i + n == r) {
+            write(distl[i]);
+        }
+        else {
+            write(max(distl[i], distr[i]));
+        }
+    }
+}
+
+signed main() {
+    ios::sync_with_stdio(false), cin.tie(nullptr);
+    // int T = 1;
+    // T = read();
+    // while (T--)
+    solve();
+
+    return 0;
+}
+```
+
 
 
 ## 树上启发式合并
