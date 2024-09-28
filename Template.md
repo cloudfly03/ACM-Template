@@ -1713,131 +1713,6 @@ bool kruskal() {
 }
 ```
 
-## 二分图染色法
-时间复杂度 O($n$)
-
-该算法可以用来判断一个图是不是二分图以及是否含有奇环
-
-题目链接: https://codeforces.com/contest/1991/problem/E
-```C++
-
-#include <bits/stdc++.h>
-using namespace std;
-#define int long long
-#define ll long long
-#define ull unsigned long long
-#define all(x) x.begin(),x.end()
-#define PII pair<int, int>
-#define x first
-#define y second
-// #define endl '\n'
-inline int read() {int c;cin>>c;return c;}
-inline void readn(int a[], int n){
-    for_each(a + 1, a + n + 1, [](int &x){cin>>x;});
-}
-inline void printn(int a[], int n){
-    for_each(a + 1, a + n + 1, [](int &x){
-        cout<<x<<' ';
-    });
-    cout<<endl;
-}
-template<typename T, typename... Args>
-void write(const T& first, const Args&... args) {
-    cout << first;
-    ((cout << ' ' << args), ...);
-    cout << endl;
-}
-char out[2][10] = {"No", "Yes"};
-const int N = 1e6 + 10;
-/* next is main_solve */
-int a[N];
-vector<int> e[N];
-int color[N];
-int dfs(int x, int col, int fa) {
-    color[x] = col;
-    for (auto y : e[x]) {
-        if (y == fa)
-            continue;
-        if (!color[y]) {
-            if (dfs(y, 3 - col, x))
-                return 1;
-        } else {
-            if (color[y] == col) {
-                return 1;
-            }
-        }
-    }
-    return 0;//是二分图，即不存在奇数环
-}
-
-vector<int> sb[3];
-
-void solve() {
-    int n, m; cin >> n >> m;
-    for (int i = 1; i <= n; i++) {
-        e[i].clear();
-        color[i] = 0;
-    }
-    for (int i = 1; i <= m; i++) {
-        int u, v; cin >> u >> v;
-        e[u].push_back(v);
-        e[v].push_back(u);
-    }
-
-    for (int i = 1; i <= 2; i++) sb[i].clear();
-
-    if (dfs(1, 1, 0)) {
-        cout << "Alice" << endl;
-        for (int i = 1; i <= n; i++) {
-            cout << 1 << ' ' << 2 << endl;
-            read(), read();
-        }
-    }
-    else {
-        for (int i = 1; i <= n; i++) sb[color[i]].push_back(i);
-        cout << "Bob" << endl;
-        for (int i = 1; i <= n; i++) {
-            int x = read(), y = read();
-            if (x > y) swap(x, y);
-            if (sb[1].size() && sb[2].size()) {
-                if (x == 1) {
-                    int v = sb[1].back();
-                    sb[1].pop_back();
-                    cout << v << ' ' << 1 << endl;
-                }
-                else {
-                    int v = sb[2].back();
-                    sb[2].pop_back();
-                    cout << v << ' ' << 2 << endl;
-                }
-            }
-            else {
-                if (sb[1].size()) {
-                    int v = sb[1].back();
-                    sb[1].pop_back();
-                    if (x == 2) cout << v << ' ' << y << endl;
-                    else cout << v << ' ' << x << endl;
-                }
-                else {
-                    int v = sb[2].back();
-                    sb[2].pop_back();
-                    if (x == 1) cout << v << ' ' << y << endl;
-                    else cout << v << ' ' << x << endl;
-                }
-            }
-        }
-    }
-}
-
-signed main() {
-    ios::sync_with_stdio(false),cin.tie(nullptr);
-    int t; cin >> t;
-    while (t--)
-        solve();
-    return 0;
-}
-```
-
 ## 换根dp
 也叫二次扫描法。先处理以每个节点为根节点的f。显然， 最终要求的并不是只包括子节点，还包括父节点。但是在第一次dfs中我们可以知道  ans[1] = f[1] 
 我们可以再次dfs2， 从u节点的答案转换到v节点
@@ -3937,6 +3812,131 @@ signed main() {
 即最小费用最大流
 ```
 
+```
+
+### 二分图判定（染色法）
+时间复杂度 O($n$)
+
+该算法可以用来判断一个图是不是二分图以及是否含有奇环
+
+题目链接: https://codeforces.com/contest/1991/problem/E
+```C++
+
+#include <bits/stdc++.h>
+using namespace std;
+#define int long long
+#define ll long long
+#define ull unsigned long long
+#define all(x) x.begin(),x.end()
+#define PII pair<int, int>
+#define x first
+#define y second
+// #define endl '\n'
+inline int read() {int c;cin>>c;return c;}
+inline void readn(int a[], int n){
+    for_each(a + 1, a + n + 1, [](int &x){cin>>x;});
+}
+inline void printn(int a[], int n){
+    for_each(a + 1, a + n + 1, [](int &x){
+        cout<<x<<' ';
+    });
+    cout<<endl;
+}
+template<typename T, typename... Args>
+void write(const T& first, const Args&... args) {
+    cout << first;
+    ((cout << ' ' << args), ...);
+    cout << endl;
+}
+char out[2][10] = {"No", "Yes"};
+const int N = 1e6 + 10;
+/* next is main_solve */
+int a[N];
+vector<int> e[N];
+int color[N];
+int dfs(int x, int col, int fa) {
+    color[x] = col;
+    for (auto y : e[x]) {
+        if (y == fa)
+            continue;
+        if (!color[y]) {
+            if (dfs(y, 3 - col, x))
+                return 1;
+        } else {
+            if (color[y] == col) {
+                return 1;
+            }
+        }
+    }
+    return 0;//是二分图，即不存在奇数环
+}
+
+vector<int> sb[3];
+
+void solve() {
+    int n, m; cin >> n >> m;
+    for (int i = 1; i <= n; i++) {
+        e[i].clear();
+        color[i] = 0;
+    }
+    for (int i = 1; i <= m; i++) {
+        int u, v; cin >> u >> v;
+        e[u].push_back(v);
+        e[v].push_back(u);
+    }
+
+    for (int i = 1; i <= 2; i++) sb[i].clear();
+
+    if (dfs(1, 1, 0)) {
+        cout << "Alice" << endl;
+        for (int i = 1; i <= n; i++) {
+            cout << 1 << ' ' << 2 << endl;
+            read(), read();
+        }
+    }
+    else {
+        for (int i = 1; i <= n; i++) sb[color[i]].push_back(i);
+        cout << "Bob" << endl;
+        for (int i = 1; i <= n; i++) {
+            int x = read(), y = read();
+            if (x > y) swap(x, y);
+            if (sb[1].size() && sb[2].size()) {
+                if (x == 1) {
+                    int v = sb[1].back();
+                    sb[1].pop_back();
+                    cout << v << ' ' << 1 << endl;
+                }
+                else {
+                    int v = sb[2].back();
+                    sb[2].pop_back();
+                    cout << v << ' ' << 2 << endl;
+                }
+            }
+            else {
+                if (sb[1].size()) {
+                    int v = sb[1].back();
+                    sb[1].pop_back();
+                    if (x == 2) cout << v << ' ' << y << endl;
+                    else cout << v << ' ' << x << endl;
+                }
+                else {
+                    int v = sb[2].back();
+                    sb[2].pop_back();
+                    if (x == 1) cout << v << ' ' << y << endl;
+                    else cout << v << ' ' << x << endl;
+                }
+            }
+        }
+    }
+}
+
+signed main() {
+    ios::sync_with_stdio(false),cin.tie(nullptr);
+    int t; cin >> t;
+    while (t--)
+        solve();
+    return 0;
+}
 ```
 
 # 数据结构
