@@ -19,18 +19,18 @@ inline int read() {
 inline void readn(int a[], int n) {
     for_each(a + 1, a + n + 1, [](int &x) { cin >> x; });
 }
-inline void writen(int a[], int n) {
+inline void printn(int a[], int n) {
     for_each(a + 1, a + n + 1, [](int &x) { cout << x << ' '; });
     cout << endl;
 }
 template <typename T, typename... Args>
-void write(const T &first, const Args &...args) {
+void print(const T &first, const Args &...args) {
     cout << first;
     ((cout << ' ' << args), ...);
     cout << endl;
 }
 template <typename T, typename... Args>
-void ewrite(const T &first, const Args &...args) {
+void eprint(const T &first, const Args &...args) {
     cerr << '*';
     cerr << first;
     ((cerr << ' ' << args), ...);
@@ -46,9 +46,9 @@ void solve() {}
 
 signed main() {
     ios::sync_with_stdio(false), cin.tie(nullptr);
-    // int T = 1;
-    // T = read();
-    // while (T--)
+    int T = 1;
+    T = read();
+    while (T--)
     solve();
 
     return 0;
