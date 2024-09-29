@@ -1,0 +1,1 @@
+{"name":"Local: test","url":"d:\\Aster\\Documents\\VS Code\\C++\\test.cpp","tests":[{"id":1716211971942,"input":"1 4\naaaaaaaaaaaaaaaaaaaa\n1\naaaa","output":""}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"d:\\Aster\\Documents\\VS Code\\C++\\test.cpp","group":"local","local":true}
