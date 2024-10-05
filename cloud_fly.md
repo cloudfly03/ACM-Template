@@ -1,4 +1,4 @@
-# 写题模板
+# 起手式
 ```C++
 #include <bits/stdc++.h>
 using namespace std;
@@ -41,6 +41,20 @@ const double eps = 1e-6;
 const int N = 1e6 + 10;
 const int M = N << 1;
 const int mod = 998244353;
+
+void print128(__int128 x){
+    if (x < 0) putchar('-'),x = -x;
+    if (x > 9) print128(x / 10);
+    putchar(x % 10 + '0');
+}
+
+int Sqrt(int x) {
+    assert(x >= 0);
+    int t = sqrt(x);
+    while ((t + 1) * (t + 1) <= x) t++;
+    while (t * t > x) t--;
+    return t;
+}
 
 void solve() {}
 
