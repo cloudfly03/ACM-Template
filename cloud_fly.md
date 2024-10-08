@@ -1,4 +1,5 @@
 # 起手式
+```C++
 #include <bits/stdc++.h>
 using namespace std;
 #define int long long
@@ -69,76 +70,7 @@ int Sqrt(int x) {
     return t;
 }
 
-void solve() {
-    int n, m, p;
-    cin >> n >> m >> p;
-    vector need(n + 1, 0ll);
-
-    for (int i = 0; i < p; i++) {
-        int x;
-        cin >> x;
-        need[x] = 1;
-    }
-
-    vector<array<int, 3>> e(m);
-    for (int i = 0; i < m; i++) {
-        int u, v, w;
-        cin >> u >> v >> w;
-        e.push_back({w, u, v});
-    }
-
-    sort(e.begin(), e.end());
-
-    vector fa(n + 1, 0ll);
-    vector sz(n + 1, 0ll);
-    for (int i = 1; i <= n; i++) {
-        fa[i] = i;
-        sz[i] = need[i];
-    }
-
-    vector dp(n + 1, vector(n + 1, inf));
-    for (int i = 1; i <= n; i++) {
-        dp[i][sz[i]] = 0;
-    }
-
-    auto find = [&](int x) -> int {
-        while (x != fa[x])
-            x = fa[x] = fa[fa[x]];
-        return x;
-    };
-
-    auto merge = [&](int u, int v, int w) -> bool {
-        u = find(u), v = find(v);
-        if (u == v)
-            return false;
-        int su = sz[u], sv = sz[v];
-        vector f(n + 1, inf);
-        for (int i = 1; i <= su; i++) {
-            f[i] = min(f[i], dp[u][i] + w * sv);
-        }
-        for (int i = 1; i <= sv; i++) {
-            f[i] = min(f[i], dp[v][i] + w * su);
-        }
-
-        for (int i = 0; i <= su; i++) {
-            for (int j = 0; j <= sv; j++) {
-                f[i + j] = min(f[i + j], dp[u][i] + dp[v][j]);
-            }
-        }
-        swap(dp[u], f);
-
-        sz[u] += sz[v];
-        fa[v] = u;
-        return true;
-    };
-
-    for (auto [w, u, v] : e) {
-        merge(u, v, w);
-    }
-    int x = find(1);
-    for (int i = 1; i <= n; i++)
-        cout << (dp[x][i] == inf ? 0 : dp[x][i]) << " \n"[i == n];
-}
+void solve() {}
 
 signed main() {
     ios::sync_with_stdio(false), cin.tie(nullptr);
