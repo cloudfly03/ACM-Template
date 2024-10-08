@@ -1,12 +1,12 @@
 # 起手式
-```C++
 #include <bits/stdc++.h>
 using namespace std;
 #define int long long
 #define ull unsigned long long
 #define all(x) x.begin(), x.end()
+#define vi vector
 #define pb push_back
-#define PII pair<int, int>
+#define pii pair<int, int>
 #define x first
 #define y second
 #define endl '\n'
@@ -36,34 +36,116 @@ void eprint(const T &first, const Args &...args) {
     ((cerr << ' ' << args), ...);
     cerr << endl;
 }
+#define eprintn(a, n)                                                          \
+    {                                                                          \
+        cerr << #a << ' ';                                                     \
+        for (int i = 1; i <= n; i++)                                           \
+            cerr << (a)[i] << ' ';                                             \
+        cerr << endl;                                                          \
+    }
+
 char out[2][10] = {"NO", "YES"};
 const double eps = 1e-6;
+const int inf = 1e18;
 const int N = 1e6 + 10;
 const int M = N << 1;
 const int mod = 998244353;
 
-void print128(__int128 x){
-    if (x < 0) putchar('-'),x = -x;
-    if (x > 9) print128(x / 10);
+void print128(__int128 x) {
+    if (x < 0)
+        putchar('-'), x = -x;
+    if (x > 9)
+        print128(x / 10);
     putchar(x % 10 + '0');
 }
 
 int Sqrt(int x) {
     assert(x >= 0);
     int t = sqrt(x);
-    while ((t + 1) * (t + 1) <= x) t++;
-    while (t * t > x) t--;
+    while ((t + 1) * (t + 1) <= x)
+        t++;
+    while (t * t > x)
+        t--;
     return t;
 }
 
-void solve() {}
+void solve() {
+    int n, m, p;
+    cin >> n >> m >> p;
+    vector need(n + 1, 0ll);
+
+    for (int i = 0; i < p; i++) {
+        int x;
+        cin >> x;
+        need[x] = 1;
+    }
+
+    vector<array<int, 3>> e(m);
+    for (int i = 0; i < m; i++) {
+        int u, v, w;
+        cin >> u >> v >> w;
+        e.push_back({w, u, v});
+    }
+
+    sort(e.begin(), e.end());
+
+    vector fa(n + 1, 0ll);
+    vector sz(n + 1, 0ll);
+    for (int i = 1; i <= n; i++) {
+        fa[i] = i;
+        sz[i] = need[i];
+    }
+
+    vector dp(n + 1, vector(n + 1, inf));
+    for (int i = 1; i <= n; i++) {
+        dp[i][sz[i]] = 0;
+    }
+
+    auto find = [&](int x) -> int {
+        while (x != fa[x])
+            x = fa[x] = fa[fa[x]];
+        return x;
+    };
+
+    auto merge = [&](int u, int v, int w) -> bool {
+        u = find(u), v = find(v);
+        if (u == v)
+            return false;
+        int su = sz[u], sv = sz[v];
+        vector f(n + 1, inf);
+        for (int i = 1; i <= su; i++) {
+            f[i] = min(f[i], dp[u][i] + w * sv);
+        }
+        for (int i = 1; i <= sv; i++) {
+            f[i] = min(f[i], dp[v][i] + w * su);
+        }
+
+        for (int i = 0; i <= su; i++) {
+            for (int j = 0; j <= sv; j++) {
+                f[i + j] = min(f[i + j], dp[u][i] + dp[v][j]);
+            }
+        }
+        swap(dp[u], f);
+
+        sz[u] += sz[v];
+        fa[v] = u;
+        return true;
+    };
+
+    for (auto [w, u, v] : e) {
+        merge(u, v, w);
+    }
+    int x = find(1);
+    for (int i = 1; i <= n; i++)
+        cout << (dp[x][i] == inf ? 0 : dp[x][i]) << " \n"[i == n];
+}
 
 signed main() {
     ios::sync_with_stdio(false), cin.tie(nullptr);
     int T = 1;
     T = read();
     while (T--)
-    solve();
+        solve();
 
     return 0;
 }
