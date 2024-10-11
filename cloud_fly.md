@@ -976,6 +976,275 @@ signed main() {
 }
 ```
 
+## dp的优化
+### 单调队列优化
+题目链接：https://codeforces.com/contest/372/problem/C
+```C++
+#include <bits/stdc++.h>
+using namespace std;
+#define int long long
+#define ull unsigned long long
+#define all(x) x.begin(), x.end()
+#define vi vector
+#define pb push_back
+#define pii pair<int, int>
+#define x first
+#define y second
+#define endl '\n'
+
+inline int read() {
+    int c;
+    cin >> c;
+    return c;
+}
+inline void readn(int a[], int n) {
+    for_each(a + 1, a + n + 1, [](int &x) { cin >> x; });
+}
+inline void printn(int a[], int n) {
+    for_each(a + 1, a + n + 1, [](int &x) { cout << x << ' '; });
+    cout << endl;
+}
+template <typename T, typename... Args>
+void print(const T &first, const Args &...args) {
+    cout << first;
+    ((cout << ' ' << args), ...);
+    cout << endl;
+}
+template <typename T, typename... Args>
+void eprint(const T &first, const Args &...args) {
+    cerr << '*';
+    cerr << first;
+    ((cerr << ' ' << args), ...);
+    cerr << endl;
+}
+#define eprintn(a, n)                                                          \
+    {                                                                          \
+        cerr << #a << ' ';                                                     \
+        for (int i = 1; i <= n; i++)                                           \
+            cerr << (a)[i] << ' ';                                             \
+        cerr << endl;                                                          \
+    }
+
+char out[2][10] = {"NO", "YES"};
+const double eps = 1e-6;
+const int inf = 1e18;
+const int N = 1e6 + 10;
+const int M = N << 1;
+const int mod = 998244353;
+
+void print128(__int128 x) {
+    if (x < 0)
+        putchar('-'), x = -x;
+    if (x > 9)
+        print128(x / 10);
+    putchar(x % 10 + '0');
+}
+
+int Sqrt(int x) {
+    assert(x >= 0);
+    int t = sqrt(x);
+    while ((t + 1) * (t + 1) <= x)
+        t++;
+    while (t * t > x)
+        t--;
+    return t;
+}
+
+int g[N];
+int f[N];
+struct node {
+    int a, b, t;
+}arr[N];
+
+void solve() {
+    int n = read(), m = read(), d = read();
+    int sum = 0;
+    for (int i = 1; i <= m; i++) {
+        int a = read(), b = read(), t = read();
+        arr[i] = {a, b, t};
+        sum += b;
+    }
+
+    for (int j = 1; j <= n; j++) f[j] = abs(arr[1].a - j);
+    // eprintn(f, n);
+
+    for (int i = 2; i <= m; i++) {
+        auto [a, b, _] = arr[i];
+        int t = arr[i].t - arr[i - 1].t;
+        for (int j = 1; j <= n; j++) {
+            g[j] = f[j];
+            f[j] = inf;
+        }
+        deque<int> q1, q2;
+        for (int j = 1; j <= n; j++) {
+            while (q1.size() && j - q1.front() - 1 >= t * d) q1.pop_front();
+            while (q1.size() && g[j] <= g[q1.back()]) q1.pop_back();
+            q1.push_back(j);
+            f[j] = min(f[j], g[q1.front()] + abs(a - j));
+        }
+        for (int j = n; j >= 1; j--) {
+            while (q2.size() && q2.front() - j - 1 >= t * d) q2.pop_front();
+            while (q2.size() && g[j] <= g[q2.back()]) q2.pop_back();
+            q2.push_back(j);
+            f[j] = min(f[j], g[q2.front()] + abs(a - j));
+        } 
+        // eprintn(f, n);
+    }
+    int ans = inf;
+
+    for (int i = 1; i <= n; i++) ans = min(ans, f[i]);
+    print(sum - ans);
+}
+
+signed main() {
+    ios::sync_with_stdio(false), cin.tie(nullptr);
+    // int T = 1;
+    // T = read();
+    // while (T--)
+        solve();
+
+    return 0;
+}
+```
+
+### 斜率优化
+题目链接：https://www.luogu.com.cn/problem/P3195
+```C++
+#include <bits/stdc++.h>
+using namespace std;
+#define int long long
+#define ull unsigned long long
+#define all(x) x.begin(), x.end()
+#define vi vector
+#define pb push_back
+#define pii pair<int, int>
+#define x first
+#define y second
+#define endl '\n'
+#define ld long double
+
+inline int read() {
+    int c;
+    cin >> c;
+    return c;
+}
+inline void readn(int a[], int n) {
+    for_each(a + 1, a + n + 1, [](int &x) { cin >> x; });
+}
+inline void printn(int a[], int n) {
+    for_each(a + 1, a + n + 1, [](int &x) { cout << x << ' '; });
+    cout << endl;
+}
+template <typename T, typename... Args>
+void print(const T &first, const Args &...args) {
+    cout << first;
+    ((cout << ' ' << args), ...);
+    cout << endl;
+}
+template <typename T, typename... Args>
+void eprint(const T &first, const Args &...args) {
+    cerr << '*';
+    cerr << first;
+    ((cerr << ' ' << args), ...);
+    cerr << endl;
+}
+#define eprintn(a, n)                                                          \
+    {                                                                          \
+        cerr << #a << ' ';                                                     \
+        for (int i = 1; i <= n; i++)                                           \
+            cerr << (a)[i] << ' ';                                             \
+        cerr << endl;                                                          \
+    }
+
+char out[2][10] = {"NO", "YES"};
+const double eps = 1e-6;
+const int inf = 1e18;
+const int N = 1e6 + 10;
+const int M = N << 1;
+const int mod = 998244353;
+
+void print128(__int128 x) {
+    if (x < 0)
+        putchar('-'), x = -x;
+    if (x > 9)
+        print128(x / 10);
+    putchar(x % 10 + '0');
+}
+
+int Sqrt(int x) {
+    assert(x >= 0);
+    int t = sqrt(x);
+    while ((t + 1) * (t + 1) <= x)
+        t++;
+    while (t * t > x)
+        t--;
+    return t;
+}
+
+int c[N];
+int dp[N];
+int s[N];
+int q[N];
+
+int n, l;
+int Y(int j) {
+    return dp[j] + s[j] * s[j];
+}
+int X(int j) {
+    return s[j];
+}
+
+ld slope(int i, int j) {
+    return (ld)(Y(i) - Y(j)) / (X(i) - X(j));
+}
+
+int second(deque<int> &q) {
+    if (q.size() < 2) return -1;
+    int x = q.front();
+    q.pop_front();
+    int y = q.front();
+    q.push_front(x);
+    return y;
+}
+
+int LastSecond(deque<int> &q) {
+    if (q.size() < 2) return -1;
+    int x = q.back();
+    q.pop_back();
+    int y = q.back();
+    q.push_back(x);
+    return y;
+}
+
+void solve() {
+    n = read(), l = read();
+    l++;
+    readn(c, n);
+    for (int i = 1; i <= n; i++) s[i] = s[i - 1] + c[i] + 1;
+
+    deque<int> q;
+    q.push_back(0);
+    for (int i = 1, j; i <= n; i++) {
+        while (q.size() > 1 && slope(q.front(), second(q)) <= 2 * (s[i] - l)) q.pop_front();
+        dp[i] = dp[j = q.front()] + (s[i] - s[j] - l) * (s[i] - s[j] - l);
+        while (q.size() > 1 && slope(q.back(), LastSecond(q)) >= slope(LastSecond(q), i)) q.pop_back();
+        q.push_back(i);
+    }
+    print(dp[n]);
+}
+
+
+signed main() {
+    ios::sync_with_stdio(false), cin.tie(nullptr);
+    // int T = 1;
+    // T = read();
+    // while (T--)
+        solve();
+
+    return 0;
+}
+```
+
 # 字符串
 
 ## 序列自动机
