@@ -1359,7 +1359,7 @@ signed main() {
 
     return 0;
 }
-```c++
+```
 
 # 字符串
 
