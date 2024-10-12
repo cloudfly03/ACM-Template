@@ -1,0 +1,99 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+#define ld long double
+#define pii pair<int,int>
+#define complex complex<ld>
+#define all(x) x.begin(),x.end()
+#define lowbit(x) (x&-x)
+#define endl '\n'
+#define PI (ld)(3.141592653589793)
+#define INF (int)(1e14)
+#define MOD (int)(1e9+9)
+#define eps (ld)(1e-12)
+#define P (int)(998244353)
+#define G (int)(3)
+// #define lc p<<1
+// #define rc p<<1|1
+#define lc(x) tr[x].lc
+#define rc(x) tr[x].rc
+// #define lc(name,x) name[x].lc
+// #define rc(name,x) name[x].rc
+
+const int N = 3e5 + 1;
+
+int n, m;
+int trie[N * 50][2], sz[N * 50], cnt;
+int root[N << 1], idx;
+
+void update(int a) {
+    root[++idx] = ++cnt;
+    int x = root[idx - 1];
+    int y = root[idx];
+    for (int i = 23;i >= 0;--i) {
+        int j = a >> i & 1;
+        trie[y][!j] = trie[x][!j];
+        trie[y][j] = ++cnt;
+        x = trie[x][j], y = trie[y][j];
+        sz[y] = sz[x] + 1;
+    }
+}
+
+int query(int l, int r, int a) {
+    int ans = 0;
+    int x = root[l];
+    int y = root[r];
+    for (int i = 23;i >= 0;--i) {
+        int j = a >> i & 1;
+        if (sz[trie[y][!j]] > sz[trie[x][!j]]) {
+            x = trie[x][!j];
+            y = trie[y][!j];
+            ans += 1 << i;
+        }
+        else {
+            x = trie[x][j];
+            y = trie[y][j];
+        }
+    }
+    return ans;
+}
+
+void solve() {
+    cin >> n >> m;
+    update(0);
+    int s = 0;
+    for (int i = 1;i <= n;++i) {
+        int t;cin >> t;
+        s ^= t;
+        update(s);
+    }
+
+    for (int i = 1;i <= m;++i) {
+        char op;cin >> op;
+        if (op == 'A') {
+            int x;cin >> x;
+            s ^= x;
+            update(s);
+        }
+        else {
+            int l, r, z;
+            cin >> l >> r >> z;
+            cout << query(l - 1, r, z ^ s) << endl;
+        }
+    }
+}
+
+signed main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    cout.tie(nullptr);
+
+    // freopen("test.in", "r", stdin);
+    // freopen("test.out", "w", stdout);
+
+    int t = 1;
+    //cin >> t;
+    while (t--) solve();
+
+    return 0;
+}

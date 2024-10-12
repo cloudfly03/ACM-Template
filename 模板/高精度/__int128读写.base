@@ -1,0 +1,18 @@
+ostream& operator<<(ostream& cout, __int128 val) {
+    char stk[129], top = 0;
+    while (val) {
+        stk[++top] = val % 10 + '0';
+        val /= 10;
+    }
+    while (top) cout << stk[top--];
+    return cout;
+}
+
+istream& operator>>(istream& cin, __int128& val) {
+    string s;cin >> s;
+    for (auto ch : s) {
+        val *= 10;
+        val += ch - '0';
+    }
+    return cin;
+}
