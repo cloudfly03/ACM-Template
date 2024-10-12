@@ -1245,6 +1245,122 @@ signed main() {
 }
 ```
 
+### 四边形不等式优化
+```c++
+#include <bits/stdc++.h>
+using namespace std;
+#define int long long
+#define ull unsigned long long
+#define all(x) x.begin(), x.end()
+#define vi vector
+#define pb push_back
+#define pii pair<int, int>
+#define x first
+#define y second
+#define endl '\n'
+
+inline int read() {
+    int c;
+    cin >> c;
+    return c;
+}
+inline void readn(int a[], int n) {
+    for_each(a + 1, a + n + 1, [](int &x) { cin >> x; });
+}
+inline void printn(int a[], int n) {
+    for_each(a + 1, a + n + 1, [](int &x) { cout << x << ' '; });
+    cout << endl;
+}
+template <typename T, typename... Args>
+void print(const T &first, const Args &...args) {
+    cout << first;
+    ((cout << ' ' << args), ...);
+    cout << endl;
+}
+template <typename T, typename... Args>
+void eprint(const T &first, const Args &...args) {
+    cerr << '*';
+    cerr << first;
+    ((cerr << ' ' << args), ...);
+    cerr << endl;
+}
+#define eprintn(a, n)                                                          \
+    {                                                                          \
+        cerr << #a << ' ';                                                     \
+        for (int i = 1; i <= n; i++)                                           \
+            cerr << (a)[i] << ' ';                                             \
+        cerr << endl;                                                          \
+    }
+
+char out[2][10] = {"NO", "YES"};
+const double eps = 1e-6;
+const int inf = 1e18;
+const int N = 3e3 + 10;
+const int M = N << 1;
+const int mod = 998244353;
+
+void print128(__int128 x) {
+    if (x < 0)
+        putchar('-'), x = -x;
+    if (x > 9)
+        print128(x / 10);
+    putchar(x % 10 + '0');
+}
+
+int Sqrt(int x) {
+    assert(x >= 0);
+    int t = sqrt(x);
+    while ((t + 1) * (t + 1) <= x)
+        t++;
+    while (t * t > x)
+        t--;
+    return t;
+}
+
+int a[N];
+int w[3100][3100];
+int dp[3100][400];
+int p[3100][400];
+void solve() {
+    int n = read(), m = read();
+    readn(a, n);
+    for (int i = 1; i <= n; i++) {
+        for (int j = i + 1; j <= n; j++) {
+            w[i][j] = w[i][j - 1] + a[j] - a[(i + j) / 2];
+        }
+    }
+    for (int i = 0; i <= n; i++) {
+        for (int j = 0; j <= m; j++) {
+            dp[i][j] = inf;
+        }
+    }
+
+    dp[0][0] = 0;
+    for (int i = 1; i <= m; i++) p[n + 1][i] = n;
+    for (int j = 1; j <= m; j++) {
+        for (int i = n; i >= j; i--) {
+            for (int k = p[i][j - 1]; k <= p[i + 1][j]; k++) {
+                if (dp[i][j] > dp[k][j - 1] + w[k + 1][i]) {
+                    dp[i][j] = dp[k][j - 1] + w[k + 1][i];
+                    p[i][j] = k;
+                }
+            }
+        }
+    }
+    print128(dp[n][m]);
+}
+
+signed main() {
+    ios::sync_with_stdio(false), cin.tie(nullptr);
+    // int T = 1;
+    // T = read();
+    // while (T--)
+        solve();
+
+    return 0;
+}
+```c++
+
 # 字符串
 
 ## 序列自动机
