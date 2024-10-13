@@ -630,30 +630,28 @@ void solve() {
 ```C++
 int a[N];
 int f[N];//长度为i的上升子序列末位的最小值，随着i的增加而增加
-void solve() {
-	int n = read();
-	for (int i = 1; i <= n; i++) a[i] = read();
-	
-	int len = 0;
-	f[0] = -INF;
-	for (int i = 1; i <= n; i++) {
-		if (a[i] > f[len]) f[++len] = a[i];
-		else {
-			int l = 1, r = len;
-			while (l < r) {
-				int mid = l + r >> 1;
-				if (f[mid] > a[i]) r = mid;
-				else l = mid + 1;
-			}
-			f[l] = a[i];
-		}
-	}
-	cout << len << endl;
+int n;
+int LIS() {
+    int len = 0;
+    f[0] = -inf;
+    for (int i = 1; i <= n; i++) {
+        if (a[i] > f[len]) f[++len] = a[i];
+        else {
+            int l = 1, r = len;
+            while (l < r) {
+                int mid = l + r >> 1;
+                if (f[mid] > a[i]) r = mid;
+                else l = mid + 1;
+            }
+            f[l] = a[i];
+        }
+    }
+    return len;
 }
 ```
 
 ### 最长公共子序列
-时间复杂度 O(n^2)
+朴素，n <= 1e3, m <= 1e3 时间复杂度 O(n * m)
 ```c++
 int f[N][N];//f[i][j]：a中前i个字符， b中前j个字符的最长公共子序列的最大长度
 char a[N], b[N];
@@ -670,6 +668,127 @@ void solve() {
 		}
 	}
 	cout << f[n][m] << endl;
+}
+```
+题面链接：https://www.luogu.com.cn/problem/P1439
+给出1,2,…,n 的两个排列P1和Pn
+其中 n <= 1e5，求它们的最长公共子序列
+时间复杂度O(n * logn)
+```C++
+#include <bits/stdc++.h>
+using namespace std;
+#define int long long
+#define ull unsigned long long
+#define all(x) x.begin(), x.end()
+#define vi vector
+#define pb push_back
+#define pii pair<int, int>
+#define x first
+#define y second
+#define endl '\n'
+
+inline int read() {
+    int c;
+    cin >> c;
+    return c;
+}
+inline void readn(int a[], int n) {
+    for_each(a + 1, a + n + 1, [](int &x) { cin >> x; });
+}
+inline void printn(int a[], int n) {
+    for_each(a + 1, a + n + 1, [](int &x) { cout << x << ' '; });
+    cout << endl;
+}
+template <typename T, typename... Args>
+void print(const T &first, const Args &...args) {
+    cout << first;
+    ((cout << ' ' << args), ...);
+    cout << endl;
+}
+template <typename T, typename... Args>
+void eprint(const T &first, const Args &...args) {
+    cerr << '*';
+    cerr << first;
+    ((cerr << ' ' << args), ...);
+    cerr << endl;
+}
+#define eprintn(a, n)                                                          \
+    {                                                                          \
+        cerr << #a << ' ';                                                     \
+        for (int i = 1; i <= n; i++)                                           \
+            cerr << (a)[i] << ' ';                                             \
+        cerr << endl;                                                          \
+    }
+
+char out[2][10] = {"NO", "YES"};
+const double eps = 1e-6;
+const int inf = 1e18;
+const int N = 1e6 + 10;
+const int M = N << 1;
+const int mod = 998244353;
+
+void print128(__int128 x) {
+    if (x < 0)
+        putchar('-'), x = -x;
+    if (x > 9)
+        print128(x / 10);
+    putchar(x % 10 + '0');
+}
+
+int Sqrt(int x) {
+    assert(x >= 0);
+    int t = sqrt(x);
+    while ((t + 1) * (t + 1) <= x)
+        t++;
+    while (t * t > x)
+        t--;
+    return t;
+}
+
+int n;
+int a[N];
+int f[N];
+int LIS() {
+    int len = 0;
+    f[0] = -inf;
+    for (int i = 1; i <= n; i++) {
+        if (a[i] > f[len]) f[++len] = a[i];
+        else {
+            int l = 1, r = len;
+            while (l < r) {
+                int mid = l + r >> 1;
+                if (f[mid] > a[i]) r = mid;
+                else l = mid + 1;
+            }
+            f[l] = a[i];
+        }
+    }
+    return len;
+}
+
+void solve() {
+    n = read();
+    map<int, int> mp;
+    for (int i = 1; i <= n; i++) {
+        int x = read();
+        mp[x] = i;
+    }
+    for (int i = 1; i <= n; i++) {
+        a[i] = mp[read()];
+    }
+
+    int ans = LIS();
+    print(ans);
+}
+
+signed main() {
+    ios::sync_with_stdio(false), cin.tie(nullptr);
+    // int T = 1;
+    // T = read();
+    // while (T--)
+        solve();
+
+    return 0;
 }
 ```
 
