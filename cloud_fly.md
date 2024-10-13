@@ -329,277 +329,6 @@ int parity(const vector<int> &a) {
 }
 ```
 
-
-# 高精度算法
-
-## 高精度加法
-
-```c++
-int A[N], B[N], C[N];
-int la, lb, lc;
-void add(int A[], int B[], int C[]) {
-    for (int i = 0; i < lc; i++) {
-        C[i] += A[i] + B[i];//累加
-        C[i + 1] += C[i] / 10;//进位
-        C[i] %= 10;//存余
-    }
-    if (C[lc]) lc++;//处理高位
-}
-void solve() {
-    string a, b; cin >> a >> b;
-    la = a.size(), lb = b.size(), lc = max(la, lb);
-    //反转
-    for (int i = la - 1; ~i; i--) A[la - 1 - i] = a[i] - '0';
-    for (int i = lb - 1; ~i; i--) B[lb - 1 - i] = b[i] - '0';
-    add(A, B, C);
-    for (int i = lc - 1; ~i; i--) printf("%d", C[i]);
-}
-```
-
-## N进制加法
-
-```c++
-//luogu 1601
-int A[N], B[N], C[N];
-int la, lb, lc;
-int n;
-bool check(int C[]) {
-	int i = 0, j = lc - 1;
-	while (i < j) {
-		if (C[i] != C[j]) return false;
-		i++, j--;
-	}
-	return true;
-}
-void add(int A[], int B[], int C[]) {
-	for (int i = 0; i < lc; i++) {
-		C[i] += A[i] + B[i];
-		C[i + 1] += C[i] / n;
-		C[i] %= n;
-	}
-	if (C[lc]) lc++;
-}
-void solve() {
-	n = read();
-	string m; cin >> m;
-	lc = m.size();
-	if (n == 16) {//16进制特判
-		for (int i = lc - 1; ~i; i--) {
-			if (m[i] >= 'A' && m[i] <= 'Z') C[lc - 1 - i] = m[i] - 'A' + 10;
-			else C[lc - 1 - i] = m[i] - '0';
-		}
-	}
-	else {
-		for (int i = lc - 1; ~i; i--) 
-			C[lc - 1 - i] = m[i] - '0';
-	}
-	 
-	if (check(C)) {
-		printf("STEP=%d\n", 0);
-		return ;
-	}
-	for (int i = 1; i <= 30; i++) {
-		la = lc;
-		lb = lc;
-		for (int i = lc - 1; i >= 0; i--) {
-			A[lc - 1 - i] = C[i];
-			B[i] = C[i];
-		}
-		memset(C, 0, sizeof C);
-		add(A, B, C);
-		if (check(C)) {
-			printf("STEP=%d\n", i);
-			return ;
-		}
-	}
-	cout << "Impossible!" << endl;
-}
-```
-
-## 八进制小数转十进制小数
-
-```C++
-#include<bits/stdc++.h>
-using namespace std;
-int ten[15051]; // 用于存储结果的十进制数
-
-int main(){
-	string eight; // 用于存储输入的八进制数
-	cin >> eight;
-	int index = 0;
-	
-    // 从八进制数的最低位开始处理
-    for (int i = eight.size() - 1; i >= 0; i--){//i是外层已经枚举到的小数位数
-        int num = eight[i] - '0'; // 当前处理的八进制位的数字
-        int j = 0; //j是每一位计算时已到达的小数位数
-        // 对当前位进行处理，计算其在十进制中的值，并累加到结果中
-        while(j < index || num ){
-            int d = num * 10 + (j < index ? ten[j] :0 ); // 将当前位转换为十进制，并加上之前的结果
-            ten[j++] = d / 8;    // 计算当前位的十进制值，并存储到结果数组中
-            num = d % 8;      // 计算余数，用于下一轮处理
-        }
-        index = j; // 更新当前处理的位置
-    }
-    
-    int len = 10000;
-    while (!ten[len]) len--;
-    for (int i = 0; i <= len; i++) cout << ten[i];
-
-	return 0;
-}
-```
-
-## 高精度乘低精度
-
-```C++
-#include<bits/stdc++.h>
-using namespace std;
-//C = A * b;A是大数，b使用int类型存储 
-vector<int> mul(vector<int> &A,int b)
-{
-	vector<int> C;//声明一个动态数组，用于储存结果 
-	int t=0;//进位的值，初始值是0，即最开始的进位是0 
-	for(int i = 0;i < A.size() || t;i++) 
-	//在这里循环进行下去的条件是，i还没有循环结束或者进位值t不等于0 
-	{
-		if(i<A.size()) t += A[i]*b; //计算出，A的其中1位和b的乘积 
-		C.push_back(t%10);//余数就是其中一位的值 
-		t /= 10; //这个就是需要进到下一位的值 
-	}
-	while(C.size()>1&&C.back()==0) C.pop_back();//去除前导0 
-	return C;
-}
-
-int main()
-{
-	string a;
-	int b;
-	cin>>a>>b;
-	vector<int> A;
-	for(int i=a.size()-1;i>=0;i--) A.push_back(a[i]-'0');
-	//将a存储在int类型的动态数组中，并且翻转，方便后续计算。 
-	vector<int> C = mul(A,b);
-	for(int i=C.size()-1;i>=0;i--) printf("%d",C[i]);
-	return 0;
-}
-```
-
-## 高精度乘高精度（O（n^2））
-
-```C++
-#include<bits/stdc++.h>
-using namespace std;
-
-vector<int> mul(vector<int> &A,vector<int> &B)
-{
-	vector<int> C(A.size() + B.size());
-	for(int i=0;i<A.size();i++)
-	{
-		for(int j=0;j<B.size();j++)
-		{
-			C[i + j] += A[i] * B[j];
-		}
-	}
-	int t=0;
-	for(int i=0;i<C.size();i++)
-	{
-		t+=C[i];
-		C[i]=t%10;
-		t/=10;
-	}
-	while(C.size()>1&&C.back()==0) C.pop_back();
-	
-	return C;
-} 
-
-int main()
-{
-    string a,b;
-    cin>>a>>b;
-    vector<int> A,B;
-    for (int i = a.size() - 1;i >= 0;i--) A.push_back(a[i]-'0');
-    for (int i = b.size() - 1;i >= 0;i--) B.push_back(b[i]-'0');
-    vector<int> C = mul(A,B);
-    for (int i = C.size() - 1;i >= 0;i--) cout<<C[i];
-    
-    return 0;
-}
-```
-
-## 高精度乘高精度O(nlogn)
-luogu P1919 【模板】A*B Problem 升级版（FFT 快速傅里叶变换）
-```C++
-
-const double PI = acos(-1.0);
-struct Complex{
-    double x, y;
-    Complex(double _x = 0.0, double _y = 0.0) {
-        x = _x, y = _y;
-    }
-    Complex operator +(const Complex &b) const{
-        return Complex(x + b.x, y + b.y);
-    }
-    Complex operator -(const Complex &b) const{
-        return Complex(x - b.x, y - b.y);
-    }
-    Complex operator *(const Complex &b) const{
-        return Complex(x * b.x - y * b.y, x * b.y + y * b.x);
-    }   
-};
-Complex A[N], B[N];
-void change(Complex A[], int n) {
-    int k;
-    //0 和 最后一个不用反转
-    for (int i = 1, j = n / 2; i < n - 1; i++) {
-        if (i < j) swap(A[i], A[j]);// i < j 保证只交换一次
-
-        // i 做正常的加1， j 做左反转类型的加1， 始终保持i和j是反转的
-        k = n / 2;
-        while (j >= k) {
-            j -= k;
-            k >>= 1;
-        }
-        if (j < k) j += k;
-    }
-}
-void fft(Complex A[], int n, int op) {
-    change(A, n);//位逆序变换（蝴蝶变换）
-    for (int m = 2; m <= n; m <<= 1) {//枚举块宽
-        Complex w1({cos(2 * PI / m), sin(2 * PI / m) * op});
-        for (int i = 0; i < n; i += m) {//枚举块数
-            Complex wk({1, 0});
-            for (int j = 0; j < m / 2; j++) {//枚举半块
-                Complex x = A[i + j], y = A[i + j + m / 2] * wk;
-                A[i + j] = x + y;
-                A[i + j + m / 2] = x - y;
-                wk = wk * w1;
-            }
-        }
-    }
-}
-char a[N], b[N];
-int ans[N];
-void solve() {
-    scanf("%s%s", a, b);
-    int n = strlen(a) - 1, m = strlen(b) - 1;
-    for (int i = 0; i <= n; i++) A[i].x = a[n - i] - '0';
-    for (int i = 0; i <= m; i++) B[i].x = b[m - i] - '0';
-    for (m = n + m, n = 1; n <= m; n <<= 1) ;
-    fft(A, n, 1), fft(B, n, 1);
-    for (int i = 0; i < n; i++) A[i] = A[i] * B[i];
-    fft(A, n, -1);
-    int k = 0;
-    for (int i = 0, t = 0; i < n || t; i++) {
-        t += A[i].x / n + 0.5;
-        ans[k++] = t % 10;
-        t /= 10;
-    }
-    while (k > 1 && !ans[k - 1]) k--;
-    for (int i = k - 1; i >= 0; i--)
-	    printf("%d", ans[i]);
-}
-```
-
 # 动态规划
 
 ## 基本线性dp
@@ -6228,11 +5957,568 @@ constexpr int P = 1000000007;
 using Z = MInt<P>;
 ```
 
-# 组合数学
 
-## 排列组合
-### 组合数
-#### dp
+# 数学
+
+## 快速幂
+```c++
+int qmi(int a, int b, int p){
+    a %= p;
+    int ans = 1;
+    while (b) {     
+        if(b & 1) ans = ans * a % p;
+        b >>= 1;
+        a = a * a % p;
+    }
+    return ans;
+}
+```
+
+## 高精度
+
+### 高精度加法
+
+```c++
+int A[N], B[N], C[N];
+int la, lb, lc;
+void add(int A[], int B[], int C[]) {
+    for (int i = 0; i < lc; i++) {
+        C[i] += A[i] + B[i];//累加
+        C[i + 1] += C[i] / 10;//进位
+        C[i] %= 10;//存余
+    }
+    if (C[lc]) lc++;//处理高位
+}
+void solve() {
+    string a, b; cin >> a >> b;
+    la = a.size(), lb = b.size(), lc = max(la, lb);
+    //反转
+    for (int i = la - 1; ~i; i--) A[la - 1 - i] = a[i] - '0';
+    for (int i = lb - 1; ~i; i--) B[lb - 1 - i] = b[i] - '0';
+    add(A, B, C);
+    for (int i = lc - 1; ~i; i--) printf("%d", C[i]);
+}
+```
+
+### N进制加法
+
+```c++
+//luogu 1601
+int A[N], B[N], C[N];
+int la, lb, lc;
+int n;
+bool check(int C[]) {
+	int i = 0, j = lc - 1;
+	while (i < j) {
+		if (C[i] != C[j]) return false;
+		i++, j--;
+	}
+	return true;
+}
+void add(int A[], int B[], int C[]) {
+	for (int i = 0; i < lc; i++) {
+		C[i] += A[i] + B[i];
+		C[i + 1] += C[i] / n;
+		C[i] %= n;
+	}
+	if (C[lc]) lc++;
+}
+void solve() {
+	n = read();
+	string m; cin >> m;
+	lc = m.size();
+	if (n == 16) {//16进制特判
+		for (int i = lc - 1; ~i; i--) {
+			if (m[i] >= 'A' && m[i] <= 'Z') C[lc - 1 - i] = m[i] - 'A' + 10;
+			else C[lc - 1 - i] = m[i] - '0';
+		}
+	}
+	else {
+		for (int i = lc - 1; ~i; i--) 
+			C[lc - 1 - i] = m[i] - '0';
+	}
+	 
+	if (check(C)) {
+		printf("STEP=%d\n", 0);
+		return ;
+	}
+	for (int i = 1; i <= 30; i++) {
+		la = lc;
+		lb = lc;
+		for (int i = lc - 1; i >= 0; i--) {
+			A[lc - 1 - i] = C[i];
+			B[i] = C[i];
+		}
+		memset(C, 0, sizeof C);
+		add(A, B, C);
+		if (check(C)) {
+			printf("STEP=%d\n", i);
+			return ;
+		}
+	}
+	cout << "Impossible!" << endl;
+}
+```
+
+### 八进制小数转十进制小数
+
+```C++
+#include<bits/stdc++.h>
+using namespace std;
+int ten[15051]; // 用于存储结果的十进制数
+
+int main(){
+	string eight; // 用于存储输入的八进制数
+	cin >> eight;
+	int index = 0;
+	
+    // 从八进制数的最低位开始处理
+    for (int i = eight.size() - 1; i >= 0; i--){//i是外层已经枚举到的小数位数
+        int num = eight[i] - '0'; // 当前处理的八进制位的数字
+        int j = 0; //j是每一位计算时已到达的小数位数
+        // 对当前位进行处理，计算其在十进制中的值，并累加到结果中
+        while(j < index || num ){
+            int d = num * 10 + (j < index ? ten[j] :0 ); // 将当前位转换为十进制，并加上之前的结果
+            ten[j++] = d / 8;    // 计算当前位的十进制值，并存储到结果数组中
+            num = d % 8;      // 计算余数，用于下一轮处理
+        }
+        index = j; // 更新当前处理的位置
+    }
+    
+    int len = 10000;
+    while (!ten[len]) len--;
+    for (int i = 0; i <= len; i++) cout << ten[i];
+
+	return 0;
+}
+```
+
+### 高精度乘低精度
+
+```C++
+#include<bits/stdc++.h>
+using namespace std;
+//C = A * b;A是大数，b使用int类型存储 
+vector<int> mul(vector<int> &A,int b)
+{
+	vector<int> C;//声明一个动态数组，用于储存结果 
+	int t=0;//进位的值，初始值是0，即最开始的进位是0 
+	for(int i = 0;i < A.size() || t;i++) 
+	//在这里循环进行下去的条件是，i还没有循环结束或者进位值t不等于0 
+	{
+		if(i<A.size()) t += A[i]*b; //计算出，A的其中1位和b的乘积 
+		C.push_back(t%10);//余数就是其中一位的值 
+		t /= 10; //这个就是需要进到下一位的值 
+	}
+	while(C.size()>1&&C.back()==0) C.pop_back();//去除前导0 
+	return C;
+}
+
+int main()
+{
+	string a;
+	int b;
+	cin>>a>>b;
+	vector<int> A;
+	for(int i=a.size()-1;i>=0;i--) A.push_back(a[i]-'0');
+	//将a存储在int类型的动态数组中，并且翻转，方便后续计算。 
+	vector<int> C = mul(A,b);
+	for(int i=C.size()-1;i>=0;i--) printf("%d",C[i]);
+	return 0;
+}
+```
+
+### 高精度乘高精度（O（n^2））
+
+```C++
+#include<bits/stdc++.h>
+using namespace std;
+
+vector<int> mul(vector<int> &A,vector<int> &B)
+{
+	vector<int> C(A.size() + B.size());
+	for(int i=0;i<A.size();i++)
+	{
+		for(int j=0;j<B.size();j++)
+		{
+			C[i + j] += A[i] * B[j];
+		}
+	}
+	int t=0;
+	for(int i=0;i<C.size();i++)
+	{
+		t+=C[i];
+		C[i]=t%10;
+		t/=10;
+	}
+	while(C.size()>1&&C.back()==0) C.pop_back();
+	
+	return C;
+} 
+
+int main()
+{
+    string a,b;
+    cin>>a>>b;
+    vector<int> A,B;
+    for (int i = a.size() - 1;i >= 0;i--) A.push_back(a[i]-'0');
+    for (int i = b.size() - 1;i >= 0;i--) B.push_back(b[i]-'0');
+    vector<int> C = mul(A,B);
+    for (int i = C.size() - 1;i >= 0;i--) cout<<C[i];
+    
+    return 0;
+}
+```
+
+### 高精度乘高精度O(nlogn)
+luogu P1919 【模板】A*B Problem 升级版（FFT 快速傅里叶变换）
+```C++
+const int N = 1e7 + 10;
+int A[N], B[N];
+const int p = 998244353;
+const int g = 3, gi = 332748118;
+int qmi(int a, int b){
+	a %= p;
+	int res=1;
+	while(b){
+		if(b & 1) res = res * a % p;
+		b >>= 1;
+		a = a * a % p;
+	}
+	return res;
+}
+void change(int A[], int n) {
+    int k;
+    //0 和 最后一个不用反转
+    for (int i = 1, j = n / 2; i < n - 1; i++) {
+        if (i < j) swap(A[i], A[j]);// i < j 保证只交换一次
+
+        // i 做正常的加1， j 做左反转类型的加1， 始终保持i和j是反转的
+        k = n / 2;
+        while (j >= k) {
+            j -= k;
+            k >>= 1;
+        }
+        if (j < k) j += k;
+    }
+}
+void ntt(int A[], int n, int op) {
+    change(A, n);//位逆序变换（蝴蝶变换）
+    for (int m = 2; m <= n; m <<= 1) {//枚举块宽
+        int g1 = qmi(op == 1? g : gi, (p - 1) / m);
+        for (int i = 0; i < n; i += m) {//枚举块数
+            int gk = 1;
+            for (int j = 0; j < m / 2; j++) {//枚举半块
+                int x = A[i + j] % p, y = gk * A[i + j + m / 2]  % p;
+                A[i + j] = (x + y) % p;
+                A[i + j + m / 2] = (x - y + 2 * p) % p;
+                gk = gk * g1 % p;
+            }
+        }
+    }
+}
+void solve() {
+    int n, m;
+    cin >> n >> m;
+    for (int i = 0; i <= n; i++) cin >> A[i];
+    for (int i = 0; i <= m; i++) cin >> B[i];
+
+    int sum = n + m;
+    for (m = n + m + 1, n = 1; n <= m; n <<= 1) ;
+
+    ntt(A, n, 1), ntt(B, n, 1);
+    for (int i = 0; i < n; i++) A[i] = A[i] * B[i] % p;
+    ntt(A, n, -1);
+
+    int inv = qmi(n, p - 2);
+    for (int i = 0; i <= sum; i++) {
+        cout << (A[i] * inv) % p << " " ;
+    }
+}
+```
+
+## 数论
+### 试除法判定质数
+
+```c++
+bool is_prime(int x) {
+    if(x < 2) return false;
+    for(int i = 2; i <= x / i; i++) {
+        if (x % i == 0) return false;
+    }
+    return true;
+}
+```
+
+### 最大公约数
+
+#### 欧几里德算法
+
+```c++
+int gcd(int a, int b) {
+    return b? gcd(b, a % b) : a;
+}
+```
+
+#### 扩展欧几里德算法
+$ a * x + b * y = gcd(a, b)的一组整数解 O(logn) $
+```c++
+int x, y;
+int exgcd(int a, int b, int &x, int &y) {//返回gcd(a,b) 并求出解(引用带回)
+    if (b == 0) {
+        x = 1, y = 0;
+        return a;
+    }
+    int x1, y1, d;
+    d = exgcd(b, a % b, x1, y1);
+    x = y1, y = x1 - a / b * y1;
+    return d;
+}
+
+//如果求不定方程：a * x + b * y = c的一组整数解
+int d = exgcd(a, b, x, y);
+if (c % d == 0) {
+    x = c / d * x;
+    y = c / d * y;
+}
+else {
+    puts("无解");
+}
+```
+
+### 数论分块（整除分块）
+$ ∑f[i] * (k / i) $
+```c++
+
+int res = n * k;
+
+for (int l = 1, r; l <= n; l = r + 1) {
+
+  if (k / l == 0) break;
+
+  r = min(k / (k / l), n);
+
+  res -= (k / l) * (r - l + 1) * (l + r) / 2; 
+
+}
+```
+
+### 欧拉函数
+
+```c++
+int phi(int x) {
+    int res = x;
+    for (int i = 2; i <= x / i; i++) {
+        if (x % i == 0) {
+            while (x % i == 0) x /= i;
+            res = res / i * (i - 1);
+        }
+    }
+    if (x > 1) res = res / x * (x - 1);
+    return res;
+}
+```
+
+### 筛法
+
+#### 埃式筛
+
+```c++
+const int N = 1e7 + 10;
+int pr[N];
+void sieve(int n) {
+    for (int i = 2; i <= n; i++) {
+        for (int j = i; j <= n; j += i) {
+            if (!pr[j]) pr[j] = i;
+        }
+    }
+}
+```
+
+#### 线性筛求质数
+
+```c++
+vector<int> minp, primes;
+void sieve(int n) {
+    minp.assign(n + 1, 0);
+    primes.clear();
+    for (int i = 2; i <= n; i++) {
+        if (minp[i] == 0) {
+            minp[i] = i;
+            primes.push_back(i);
+        }
+        for (auto p: primes) {
+            if (i * p > n) break;
+            minp[i * p] = p;
+            if (p == minp[i]) break;
+        }
+    }
+}
+```
+
+#### 线性筛求欧拉函数
+
+```c++
+int primes[N], cnt;
+int phi[N];
+bool st[N];
+void sieve(int n) {
+    st[1] = true;
+    phi[1] = 1;
+
+    for (int i = 2; i <= n; i++) {
+        if (!st[i]) {
+            primes[cnt++] = i;
+            phi[i] = i - 1;
+        }
+        for (int j = 0; primes[j] <= n / i; j++) {
+            st[i * primes[j]] = true;
+            if (i % primes[j] == 0) {
+                phi[i * primes[j]] = phi[i] * primes[j];
+                break;
+            }
+            phi[i * primes[j]] = phi[i] * (primes[j] - 1);
+        }
+    }
+}
+```
+
+### 分解质因数
+
+```c++
+vector<int> breakdown(int n) {
+    vector<int> result;
+    for (int i = 2; i * i <= n; i++) {
+      if (n % i == 0) { 
+        while (n % i == 0) n /= i;
+        result.push_back(i);
+      }
+    }
+    if (n != 1) {  
+      result.push_back(n);
+    }
+    return result;
+}
+```
+
+### 约数
+
+```c++
+void get_divisors(int n)
+{
+    vector<int> res;
+    for (int i = 1; i <= n / i; i++) {
+        if (n % i == 0) {
+            res.push_back(i);
+
+            if (i != n / i) {  
+                res.push_back(n / i);
+            }
+        }
+    }
+    sort(res.begin(), res.end());
+    for (auto item : res) {
+        cout << item << " ";
+    }
+    puts("");
+}
+```
+
+### 裴蜀定理
+
+
+特别地，一定存在整数 $x$ 和 $y$ 的解，使得 $ax+by=gcd(a,b)$ 成立。
+它的一个重要推论为：a,b互质的充分必要条件是存在整数 $x$ , $y$ 使 $ax+by=1$ ; 
+或者说对于方程 $ax+by=1$ 只有整数 $a$ 和 $b$ 互质时，方程才有整数解 $x,y$ 
+
+
+### 欧拉定理&费马小定理
+
+
+定义：对任意两个正整数 $a$ , $n$ ,如果两者互质，那么 $a^{φ(n)} ≡ 1(mod \ n)$
+
+若存在整数 $a$ , $p$
+
+$p$ 为质数, 那么 $a^{p-1}≡ 1(mod \ p)$
+
+费马小定理是欧拉定理的一种特殊情况(当 $n$ 为质数时 $φ(n)$ 为 $n-1$ )
+
+
+### 乘法逆元
+
+欧拉定理 $a^{p-1} ≡ 1(mod \ p)$
+对于任意互质的 $a$ , $p$ 恒成立。
+欧拉定理用来求逆元用的是欧拉定理的一个推论：
+$a * a ^ {φ(p) - 1} ≡ 1(mod \ p)$
+由于 $a * a^{-1} ≡ 1(mod \ p)$ 
+在这里的 $a^{-1}$ 不就是上面的 $a ^ {φ(p) -1}$ 吗？，所以求出 $a ^ {φ(p) - 1}$ 就好了。
+
+补充：其实如果$p$是质数的话，可以用费马小定理，与欧拉定理是完全一样的，费马小定理在p不是质数时，则只能用欧拉定理。
+怎么弄呢？费马小定理 $a ^ {p - 1} ≡ 1(mod \ p)$ $p$ 是质数，且 $a$, $p$ 互质，
+然后将上面的式子变一下, $a * a ^ {p - 2} ≡ 1(mod \ p)$ 
+再变一下
+$a ^ {p - 2} ≡ a ^ {-1} (mod \ p)$ 
+然后求出 $a ^ {p - 2}$ 就可以了。
+然后再看一下欧拉定理，
+如果p是质数
+$φ(p) = p - 1$
+那么我们求 $a ^ {φ(p) - 1}$ 
+也就是求 $a ^ {p - 2}$ 
+和费马小定理是一样的。
+因此, 分数取余如下：
+一般 $p$ 为质数, 则直接乘 $qmi(b, p - 2, p)$
+欧拉广义降幂：求 $a ^ {b} \ mod \ p$
+
+1. $gcd(a, p) = 1$, $a ^ {b} \ mod \ p =  a ^ {b \ mod \ φ(p)} \ mod \ p$
+2. $gcd(a, p) != 1$ ,
+
+    若 $b < φ(p)$ , $a ^ {b} \ mod \ p = a ^ {b} \ mod \ p$ ;
+
+    若 $b >= φ(p)$ , $a ^ {b} \ mod \ p = a ^ {b \ mod \ φ(p) + φ(p)} \ mod \ p$
+
+### 除法取模
+
+```C++
+int qmi(int a, int b, int p){
+    a %= p;
+    int res=1;
+    while (b) {     
+        if(b & 1) res = res * a % p;
+        b >>= 1;
+        a = a * a % p;
+    }
+    return res;
+}
+
+int inv(int x) {
+	return qmi(x, mod - 2, mod);
+}
+```
+
+
+
+### 线性同余方程
+ a * x ≡ b (mod m) <=> a * x (mod m) m ≡ b
+
+当b = 1时，x 为 a 的乘法逆元
+
+```c++
+void solve() {
+    int d = exgcd(a, m, x, y);
+    if (b % d == 0) {
+        res = 1ll * x * b / d % m;
+    }
+    else {
+        puts("无解");
+    }
+}
+```
+
+## 组合数学
+
+### 排列组合
+#### 组合数
+##### dp
 ```C++
 const int N = 1e3 + 10;
 const int mod = 998244353;
@@ -6247,7 +6533,7 @@ void init() {
 }
 ```
 
-#### 预处理法
+##### 预处理法
 ```C++
 const int N = 1e6 + 10;
 const int mod = 998244353;
@@ -6278,7 +6564,7 @@ int C(int n, int r) {
 }
 ```
 
-#### Lucas定理
+##### Lucas定理
 模板题：https://www.luogu.com.cn/problem/P3807
 ```C++
 #include <bits/stdc++.h>
@@ -6344,7 +6630,7 @@ signed main() {
 } 
 ```
 
-#### 十二重计数法
+##### 十二重计数法
 ```C++
 #include <bits/stdc++.h>
 using namespace std;
@@ -6469,27 +6755,11 @@ signed main() {
 } 
 ```
 
-## 容斥原理与鸽巢原理
+### 容斥原理与鸽巢原理
 
+## 线性代数
 
-# 数论
-
-## 快速幂
-
-```c++
-int qmi(int a, int b, int p){
-    a %= p;
-    int ans = 1;
-    while (b) {     
-        if(b & 1) ans = ans * a % p;
-        b >>= 1;
-        a = a * a % p;
-    }
-    return ans;
-}
-```
-
-## 矩阵快速幂加速递推
+### 矩阵快速幂加速递推
 例题： https://codeforces.com/group/mey3UXMrvB/contest/515223/problem/B
 ```C++
 struct mat {
@@ -6523,283 +6793,9 @@ mat pow(mat p, int m) {
 }
 ```
 
-## 试除法判定质数
-
-```c++
-bool is_prime(int x) {
-    if(x < 2) return false;
-    for(int i = 2; i <= x / i; i++) {
-        if (x % i == 0) return false;
-    }
-    return true;
-}
-```
-
-## 最大公约数
-
-### 欧几里德算法
-
-```c++
-int gcd(int a, int b) {
-    return b? gcd(b, a % b) : a;
-}
-```
-
-### 扩展欧几里德算法
-$ a * x + b * y = gcd(a, b)的一组整数解 O(logn) $
-```c++
-int x, y;
-int exgcd(int a, int b, int &x, int &y) {//返回gcd(a,b) 并求出解(引用带回)
-    if (b == 0) {
-        x = 1, y = 0;
-        return a;
-    }
-    int x1, y1, d;
-    d = exgcd(b, a % b, x1, y1);
-    x = y1, y = x1 - a / b * y1;
-    return d;
-}
-
-//如果求不定方程：a * x + b * y = c的一组整数解
-int d = exgcd(a, b, x, y);
-if (c % d == 0) {
-    x = c / d * x;
-    y = c / d * y;
-}
-else {
-    puts("无解");
-}
-```
-
-## 数论分块（整除分块）
-$ ∑f[i] * (k / i) $
-```c++
-
-int res = n * k;
-
-for (int l = 1, r; l <= n; l = r + 1) {
-
-  if (k / l == 0) break;
-
-  r = min(k / (k / l), n);
-
-  res -= (k / l) * (r - l + 1) * (l + r) / 2; 
-
-}
-```
-
-## 欧拉函数
-
-```c++
-int phi(int x) {
-    int res = x;
-    for (int i = 2; i <= x / i; i++) {
-        if (x % i == 0) {
-            while (x % i == 0) x /= i;
-            res = res / i * (i - 1);
-        }
-    }
-    if (x > 1) res = res / x * (x - 1);
-    return res;
-}
-```
-
-## 筛法
-
-### 埃式筛
-
-```c++
-const int N = 1e7 + 10;
-int pr[N];
-void sieve(int n) {
-    for (int i = 2; i <= n; i++) {
-        for (int j = i; j <= n; j += i) {
-            if (!pr[j]) pr[j] = i;
-        }
-    }
-}
-```
-
-### 线性筛求质数
-
-```c++
-vector<int> minp, primes;
-void sieve(int n) {
-    minp.assign(n + 1, 0);
-    primes.clear();
-    for (int i = 2; i <= n; i++) {
-        if (minp[i] == 0) {
-            minp[i] = i;
-            primes.push_back(i);
-        }
-        for (auto p: primes) {
-            if (i * p > n) break;
-            minp[i * p] = p;
-            if (p == minp[i]) break;
-        }
-    }
-}
-```
-
-### 线性筛求欧拉函数
-
-```c++
-int primes[N], cnt;
-int phi[N];
-bool st[N];
-void sieve(int n) {
-    st[1] = true;
-    phi[1] = 1;
-
-    for (int i = 2; i <= n; i++) {
-        if (!st[i]) {
-            primes[cnt++] = i;
-            phi[i] = i - 1;
-        }
-        for (int j = 0; primes[j] <= n / i; j++) {
-            st[i * primes[j]] = true;
-            if (i % primes[j] == 0) {
-                phi[i * primes[j]] = phi[i] * primes[j];
-                break;
-            }
-            phi[i * primes[j]] = phi[i] * (primes[j] - 1);
-        }
-    }
-}
-```
-
-## 分解质因数
-
-```c++
-vector<int> breakdown(int n) {
-    vector<int> result;
-    for (int i = 2; i * i <= n; i++) {
-      if (n % i == 0) { 
-        while (n % i == 0) n /= i;
-        result.push_back(i);
-      }
-    }
-    if (n != 1) {  
-      result.push_back(n);
-    }
-    return result;
-}
-```
-
-## 约数
-
-```c++
-void get_divisors(int n)
-{
-    vector<int> res;
-    for (int i = 1; i <= n / i; i++) {
-        if (n % i == 0) {
-            res.push_back(i);
-
-            if (i != n / i) {  
-                res.push_back(n / i);
-            }
-        }
-    }
-    sort(res.begin(), res.end());
-    for (auto item : res) {
-        cout << item << " ";
-    }
-    puts("");
-}
-```
-
-## 裴蜀定理
 
 
-特别地，一定存在整数 $x$ 和 $y$ 的解，使得 $ax+by=gcd(a,b)$ 成立。
-它的一个重要推论为：a,b互质的充分必要条件是存在整数 $x$ , $y$ 使 $ax+by=1$ ; 
-或者说对于方程 $ax+by=1$ 只有整数 $a$ 和 $b$ 互质时，方程才有整数解 $x,y$ 
-
-
-## 欧拉定理&费马小定理
-
-
-定义：对任意两个正整数 $a$ , $n$ ,如果两者互质，那么 $a^{φ(n)} ≡ 1(mod \ n)$
-
-若存在整数 $a$ , $p$
-
-$p$ 为质数, 那么 $a^{p-1}≡ 1(mod \ p)$
-
-费马小定理是欧拉定理的一种特殊情况(当 $n$ 为质数时 $φ(n)$ 为 $n-1$ )
-
-
-## 乘法逆元
-
-欧拉定理 $a^{p-1} ≡ 1(mod \ p)$
-对于任意互质的 $a$ , $p$ 恒成立。
-欧拉定理用来求逆元用的是欧拉定理的一个推论：
-$a * a ^ {φ(p) - 1} ≡ 1(mod \ p)$
-由于 $a * a^{-1} ≡ 1(mod \ p)$ 
-在这里的 $a^{-1}$ 不就是上面的 $a ^ {φ(p) -1}$ 吗？，所以求出 $a ^ {φ(p) - 1}$ 就好了。
-
-补充：其实如果$p$是质数的话，可以用费马小定理，与欧拉定理是完全一样的，费马小定理在p不是质数时，则只能用欧拉定理。
-怎么弄呢？费马小定理 $a ^ {p - 1} ≡ 1(mod \ p)$ $p$ 是质数，且 $a$, $p$ 互质，
-然后将上面的式子变一下, $a * a ^ {p - 2} ≡ 1(mod \ p)$ 
-再变一下
-$a ^ {p - 2} ≡ a ^ {-1} (mod \ p)$ 
-然后求出 $a ^ {p - 2}$ 就可以了。
-然后再看一下欧拉定理，
-如果p是质数
-$φ(p) = p - 1$
-那么我们求 $a ^ {φ(p) - 1}$ 
-也就是求 $a ^ {p - 2}$ 
-和费马小定理是一样的。
-因此, 分数取余如下：
-一般 $p$ 为质数, 则直接乘 $qmi(b, p - 2, p)$
-欧拉广义降幂：求 $a ^ {b} \ mod \ p$
-
-1. $gcd(a, p) = 1$, $a ^ {b} \ mod \ p =  a ^ {b \ mod \ φ(p)} \ mod \ p$
-2. $gcd(a, p) != 1$ ,
-
-    若 $b < φ(p)$ , $a ^ {b} \ mod \ p = a ^ {b} \ mod \ p$ ;
-
-    若 $b >= φ(p)$ , $a ^ {b} \ mod \ p = a ^ {b \ mod \ φ(p) + φ(p)} \ mod \ p$
-
-## 除法取模
-
-```C++
-int qmi(int a, int b, int p){
-    a %= p;
-    int res=1;
-    while (b) {     
-        if(b & 1) res = res * a % p;
-        b >>= 1;
-        a = a * a % p;
-    }
-    return res;
-}
-
-int inv(int x) {
-	return qmi(x, mod - 2, mod);
-}
-```
-
-
-
-## 线性同余方程
- a * x ≡ b (mod m) <=> a * x (mod m) m ≡ b
-
-当b = 1时，x 为 a 的乘法逆元
-
-```c++
-void solve() {
-    int d = exgcd(a, m, x, y);
-    if (b % d == 0) {
-        res = 1ll * x * b / d % m;
-    }
-    else {
-        puts("无解");
-    }
-}
-```
-
-## 异或线性基
+### 异或线性基
 
 高斯消元法求解异或线性基
 
@@ -6927,9 +6923,9 @@ signed main() {
 
 
 
-# 多项式与生成函数
+## 多项式与生成函数
 
-## 快速傅里叶变换
+### 快速傅里叶变换
 luogu P1919 【模板】A*B Problem 升级版（FFT 快速傅里叶变换）
 ```c++
 const double PI = acos(-1.0);
@@ -7002,7 +6998,7 @@ void solve() {
 }
 ```
 
-## 快速数论变换
+### 快速数论变换
 luohu P3803 【模板】多项式乘法（FFT）
 ```c++
 const int N = 1e7 + 10;
