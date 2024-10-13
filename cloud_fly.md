@@ -833,9 +833,9 @@ public:
 };
 ```
 
-### 超大背包问题
+### 超大背包问题（折半搜索）
 折半搜索
-```C++
+```C++bay
 
 #include <bits/stdc++.h>
 using namespace std;
