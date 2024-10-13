@@ -1480,6 +1480,142 @@ signed main() {
 }
 ```
 
+### 状态设计优化
+题目链接：https://codeforces.com/gym/104857/problem/G
+
+给定一个长为n的01序列，最多把m个0变成1.对于修改后所有极长的1连续段，最大化其中第k长的长度
+其中，n <= 2e5, m <= n. k <= 5
+```C++
+#include <bits/stdc++.h>
+using namespace std;
+#define int long long
+#define ull unsigned long long
+#define all(x) x.begin(), x.end()
+#define vi vector
+#define pb push_back
+#define pii pair<int, int>
+#define x first
+#define y second
+#define endl '\n'
+
+inline int read() {
+    int c;
+    cin >> c;
+    return c;
+}
+inline void readn(int a[], int n) {
+    for_each(a + 1, a + n + 1, [](int &x) { cin >> x; });
+}
+inline void printn(int a[], int n) {
+    for_each(a + 1, a + n + 1, [](int &x) { cout << x << ' '; });
+    cout << endl;
+}
+template <typename T, typename... Args>
+void print(const T &first, const Args &...args) {
+    cout << first;
+    ((cout << ' ' << args), ...);
+    cout << endl;
+}
+template <typename T, typename... Args>
+void eprint(const T &first, const Args &...args) {
+    cerr << '*';
+    cerr << first;
+    ((cerr << ' ' << args), ...);
+    cerr << endl;
+}
+#define eprintn(a, n)                                                          \
+    {                                                                          \
+        cerr << #a << ' ';                                                     \
+        for (int i = 1; i <= n; i++)                                           \
+            cerr << (a)[i] << ' ';                                             \
+        cerr << endl;                                                          \
+    }
+
+char out[2][10] = {"NO", "YES"};
+const double eps = 1e-6;
+const int inf = 1e18;
+const int N = 2e5 + 10;
+const int M = N << 1;
+const int mod = 998244353;
+
+void print128(__int128 x) {
+    if (x < 0)
+        putchar('-'), x = -x;
+    if (x > 9)
+        print128(x / 10);
+    putchar(x % 10 + '0');
+}
+
+int Sqrt(int x) {
+    assert(x >= 0);
+    int t = sqrt(x);
+    while ((t + 1) * (t + 1) <= x)
+        t++;
+    while (t * t > x)
+        t--;
+    return t;
+}
+
+int n, m, k;
+int pre[N];
+int last[N];
+int f[N][6];
+int g[N][6];
+bool check(int x) {
+    for (int i = 1; i <= k; i++) f[0][i] = g[0][i] = inf;
+    for (int i = 1; i <= n; i++) {
+        f[i][0] = 0;
+        for (int j = 1; j <= k; j++) {
+            if (i >= x) {
+                int t = last[i - x];
+                f[i][j] = g[t][j - 1] + i - t - (pre[i] - pre[t]); 
+            }
+            else {
+                f[i][j] = inf;
+            }
+            g[i][j] = min(g[i - 1][j], f[i - 1][j]);
+        }
+    }
+    int ans = inf;
+    for (int i = 1; i <= n; i++) ans = min(ans, f[i][k]);
+    return ans <= m;
+}
+
+void solve() {
+    n = read(), m = read(), k = read();
+    string s; cin >> s;
+    s = ' ' + s;
+    for (int i = 1; i <= n; i++) {
+        pre[i] += pre[i - 1];
+        if (s[i] == '1') pre[i]++;
+    }
+    for (int i = 1; i <= n; i++) {
+        if (s[i] == '1') last[i] = last[i - 1];
+        else last[i] = i;
+    }
+
+    int l = 1, r = n;
+    while (l < r) {
+        int mid = l + r + 1 >> 1;
+        if (check(mid)) l = mid;
+        else r = mid - 1;
+    }
+    int ans = -1;
+    if (check(l)) ans = l;
+    print(ans);
+}
+
+signed main() {
+    ios::sync_with_stdio(false), cin.tie(nullptr);
+    // int T = 1;
+    // T = read();
+    // while (T--)
+        solve();
+
+    return 0;
+}
+```
+
 # 字符串
 
 ## 序列自动机
