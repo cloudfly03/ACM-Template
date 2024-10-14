@@ -380,6 +380,7 @@ int LIS() {
 ```
 
 ### 最长公共子序列
+1.
 朴素，n <= 1e3, m <= 1e3 时间复杂度 O(n * m)
 ```c++
 int f[N][N];//f[i][j]：a中前i个字符， b中前j个字符的最长公共子序列的最大长度
@@ -399,6 +400,8 @@ void solve() {
 	cout << f[n][m] << endl;
 }
 ```
+
+2.
 题面链接：https://www.luogu.com.cn/problem/P1439
 给出1,2,…,n 的两个排列P1和Pn
 其中 n <= 1e5，求它们的最长公共子序列
@@ -7064,9 +7067,6 @@ void solve() {
     }
 }
 ```
-
-# 黑科技
-
 ## bitset
 
 ### bitset异或
@@ -7160,62 +7160,9 @@ signed main() {
  
     return 0;
 }
- 
 ```
 
-## 分块
-
-```C++
-#include <bits/stdc++.h>
-using namespace std;
-#define IOS ios::sync_with_stdio(false),cin.tie(nullptr),cout.tie(nullptr);
-#define all(x) x.begin(),x.end()
-#define PII pair<int, int>
-#define x first
-#define y second
-#define ll long long
-#define int long long
-#define endl '\n'
-using i64 = long long;
-
-const int N = 5e5 + 10;
-int a[N];
-int s[5010][5010];
-void solve() {
-    int q; cin >> q;
-    int n = (ll)5e5, B = sqrt(500000);
-    while (q--) {
-        int op; cin >> op;
-        if (op == 1) {
-            int x, y; cin >> x >> y;
-            a[x] += y;
-            for (int i = 1; i < B; i++) {
-                s[i][x % i] += y;
-            }
-        }
-        else {
-            int x, y; cin >> x >> y;
-            if (x < B) {
-                cout << s[x][y] << '\n';
-            } else {
-                int ans = 0;
-                for (int i = y; i <= n; i += x) ans += a[i];
-                cout << ans << '\n';
-            }
-        }
-    }
-}
-
-signed main() {
-    IOS;
-    // int T; cin >> T;
-    // while (T--)
-    solve();
-
-    return 0;
-}
-```
-
+# 离线算法
 ## 莫队
 
 ### 基础莫队
