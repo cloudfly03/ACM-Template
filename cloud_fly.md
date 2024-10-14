@@ -1936,7 +1936,7 @@ bool spfa() {
         q.pop();
         vis[u] = 0;
         for (auto [v, w]: e[u]) {
-            if (dist[v] < dist[u] + w) continue;//最短路
+            if (dist[v] <= dist[u] + w) continue;//最短路
             dist[v] = dist[u] + w;
             if (!vis[v]) {
                 tot[v]++;
