@@ -12,7 +12,6 @@ using namespace std;
 #define y second
 #define endl '\n'
 
-// 快读
 // inline int read() {
 //     register int x = 0, t = 1;
 //     register char ch = getchar(); 
@@ -28,11 +27,20 @@ using namespace std;
 //     return x * t;
 // }
 
+// void print128(__int128 x) {
+//     if (x < 0)
+//         putchar('-'), x = -x;
+//     if (x > 9)
+//         print128(x / 10);
+//     putchar(x % 10 + '0');
+// }
+
 inline int read() {
     int c;
     cin >> c;
     return c;
 }
+
 inline void readn(int a[], int n) {
     for_each(a + 1, a + n + 1, [](int &x) { cin >> x; });
 }
@@ -61,13 +69,6 @@ void eprint(const T &first, const Args &...args) {
         cerr << endl;                                                          \
     }
 
-void print128(__int128 x) {
-    if (x < 0)
-        putchar('-'), x = -x;
-    if (x > 9)
-        print128(x / 10);
-    putchar(x % 10 + '0');
-}
 
 int Sqrt(int x) {
     assert(x >= 0);
@@ -4443,8 +4444,165 @@ signed main() {
 
 ### 费用流(EK算法)
 即最小费用最大流
-```
+```c++
+#include <bits/stdc++.h>
+using namespace std;
+#define int long long
+#define ull unsigned long long
+#define all(x) x.begin(), x.end()
+#define vi vector
+#define pb push_back
+#define pii pair<int, int>
+#define x first
+#define y second
+#define endl '\n'
 
+// inline int read() {
+//     register int x = 0, t = 1;
+//     register char ch = getchar();
+//     while (ch < '0'|| ch > '9'){
+//         if (ch == '-')
+//             t = -1;
+//         ch = getchar();
+//     }
+//     while (ch >= '0' && ch <= '9'){
+//         x = (x << 1) + (x << 3) + (ch ^ 48);
+//         ch = getchar();
+//     }
+//     return x * t;
+// }
+
+// void print128(__int128 x) {
+//     if (x < 0)
+//         putchar('-'), x = -x;
+//     if (x > 9)
+//         print128(x / 10);
+//     putchar(x % 10 + '0');
+// }
+
+inline int read() {
+    int c;
+    cin >> c;
+    return c;
+}
+inline void readn(int a[], int n) {
+    for_each(a + 1, a + n + 1, [](int &x) { cin >> x; });
+}
+inline void printn(int a[], int n) {
+    for_each(a + 1, a + n + 1, [](int &x) { cout << x << ' '; });
+    cout << endl;
+}
+template <typename T, typename... Args>
+void print(const T &first, const Args &...args) {
+    cout << first;
+    ((cout << ' ' << args), ...);
+    cout << endl;
+}
+template <typename T, typename... Args>
+void eprint(const T &first, const Args &...args) {
+    cerr << '*';
+    cerr << first;
+    ((cerr << ' ' << args), ...);
+    cerr << endl;
+}
+#define eprintn(a, n)                                                          \
+    {                                                                          \
+        cerr << #a << ' ';                                                     \
+        for (int i = 1; i <= n; i++)                                           \
+            cerr << (a)[i] << ' ';                                             \
+        cerr << endl;                                                          \
+    }
+
+int Sqrt(int x) {
+    assert(x >= 0);
+    int t = sqrt(x);
+    while ((t + 1) * (t + 1) <= x)
+        t++;
+    while (t * t > x)
+        t--;
+    return t;
+}
+
+char out[2][10] = {"NO", "YES"};
+const double eps = 1e-6;
+const int inf = 1e18;
+
+const int N = 5010, M = 100010;
+
+int n, m, S, T;
+
+struct edge {
+    int v, c, w, ne;
+} e[M];
+
+int h[N], idx = 1; // 从2,3开始配对
+int d[N], mf[N], pre[N], vis[N];
+int flow, cost;
+
+void add(int a, int b, int c, int d) {
+    e[++idx] = {b, c, d, h[a]};
+    h[a] = idx;
+}
+
+bool spfa() {
+    for (int i = 1; i <= n; i++) {
+      d[i] = inf;
+      mf[i] = 0;
+    }
+    queue<int> q;
+    q.push(S);
+    d[S] = 0, mf[S] = inf, vis[S] = 1;
+    while (q.size()) {
+        int u = q.front();
+        q.pop();
+        vis[u] = 0;
+        for (int i = h[u]; i; i = e[i].ne) {
+            int v = e[i].v, c = e[i].c, w = e[i].w;
+            if (d[v] > d[u] + w && c) {
+                d[v] = d[u] + w; // 最短路
+                pre[v] = i;
+                mf[v] = min(mf[u], c);
+                if (!vis[v]) {
+                    q.push(v);
+                    vis[v] = 1;
+                }
+            }
+        }
+    }
+    return mf[T] > 0;
+}
+void EK() {
+    while (spfa()) {
+        for (int v = T; v != S;) {
+            int i = pre[v];
+            e[i].c -= mf[T];
+            e[i ^ 1].c += mf[T];
+            v = e[i ^ 1].v;
+        }
+        flow += mf[T];        // 累加可行流
+        cost += mf[T] * d[T]; // 累加费用
+    }
+}
+void solve() {
+    n = read(), m = read(), S = read(), T = read();
+    while (m--) {
+        int a = read(), b = read(), c = read(), d = read();
+        add(a, b, c, d);
+        add(b, a, 0, -d);
+    }
+    EK();
+    print(flow, cost);
+}
+
+signed main() {
+    ios::sync_with_stdio(false), cin.tie(nullptr);
+    // int T = 1;
+    // T = read();
+    // while (T--)
+    solve();
+
+    return 0;
+}
 ```
 
 ### 二分图判定（染色法）
