@@ -1942,6 +1942,7 @@ bool spfa() {
                 tot[v]++;
                 if (tot[v] == n + 1) return false; // 注意添加了一个超级源点
                 q.push(v);
+                vis[v] = 1;
             }
         }
     }
