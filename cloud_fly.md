@@ -233,32 +233,26 @@ void solve() {
 ## 分治法：归并排序
 
 ```C++
+int a[N];
 int tmp[N];
-void merge_sort(int a[], int l, int r) {
-    if (l == r)
-        return;
-
+int ans = 0;//逆序对数量
+void merge(int l, int r) {
+    if (l == r) return ;
     int mid = l + r >> 1;
-    merge_sort(a, l, mid);
-    merge_sort(a, mid + 1, r);
+    merge(l, mid);
+    merge(mid + 1, r);
 
-    int k = 0, i = l, j = mid + 1;
-
+    int i = l, j = mid + 1, k = l;
     while (i <= mid && j <= r) {
-        if (a[i] <= a[j])
-            tmp[k++] = a[i++];
-        else
+        if (a[i] <= a[j]) tmp[k++] = a[i++];
+        else {
             tmp[k++] = a[j++];
+            ans += mid - i + 1;
+        }
     }
-
-    while (i <= mid)
-        tmp[k++] = a[i++];
-    while (j <= r)
-        tmp[k++] = a[j++];
-
-    for (k = 0, i = l; i <= r; k++, i++) {
-        a[i] = tmp[k];
-    }
+    while (i <= mid) tmp[k++] = a[i++];
+    while (j <= r) tmp[k++] = a[j++];
+    for (i = l; i <= r; i++) a[i] = tmp[i];
 }
 ```
 
@@ -7329,7 +7323,8 @@ signed main() {
     return 0;
 }
 ```
-### 线性判定排列逆序数的奇偶性
+### 逆序对
+#### 线性判定排列逆序数的奇偶性
 ```c++
 int parity(const vector<int> &a) {
     const int n = a.size();
@@ -7343,6 +7338,194 @@ int parity(const vector<int> &a) {
         p ^= 1;
     }
     return p;
+}
+```
+
+#### 求解逆序对个数
+##### 树状数组
+```c++
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+#define endl '\n'
+const int N = 5e5 + 10;
+int tr[N];
+
+int n;
+
+int lowbit(int x) {
+    return x & -x;
+}
+
+void add(int i, int k) {
+    for ( ; i < N; i += lowbit(i)) {
+        tr[i] += k;
+    }
+}
+
+int sum(int i) {
+    int s = 0;
+    for ( ; i; i -= lowbit(i)) {
+        s += tr[i];
+    }
+    return s;
+}
+
+vector<int> vec;
+int ans;
+int a[N];
+signed main() {
+    cin >> n;
+
+    for (int i = 0; i < n; i++) {
+        int x; cin >> x;
+        vec.push_back(x);
+        a[i] = x;
+    }
+
+    sort(vec.begin(), vec.end());
+    vec.erase(unique(vec.begin(), vec.end()), vec.end());
+
+    for (int i = 0; i < n; i++) {
+        int x = lower_bound(vec.begin(), vec.end(), a[i]) - vec.begin() + 1;
+        ans += sum(N - 1) - sum(x);
+        add(x, 1);
+    }
+
+    cout << ans << endl;
+
+    return 0;
+}
+```
+
+##### 归并排序
+```c++
+#include <bits/stdc++.h>
+using namespace std;
+#define int long long
+#define ull unsigned long long
+#define all(x) x.begin(), x.end()
+#define vi vector
+#define pb push_back
+#define pii pair<int, int>
+#define x first
+#define y second
+#define endl '\n'
+
+// inline int read() {
+//     register int x = 0, t = 1;
+//     register char ch = getchar(); 
+//     while (ch < '0'|| ch > '9'){
+//         if (ch == '-')
+//             t = -1;
+//         ch = getchar();
+//     }
+//     while (ch >= '0' && ch <= '9'){
+//         x = (x << 1) + (x << 3) + (ch ^ 48);  
+//         ch = getchar();
+//     }
+//     return x * t;
+// }
+
+// void print128(__int128 x) {
+//     if (x < 0)
+//         putchar('-'), x = -x;
+//     if (x > 9)
+//         print128(x / 10);
+//     putchar(x % 10 + '0');
+// }
+
+inline int read() {
+    int c;
+    cin >> c;
+    return c;
+}
+
+inline void readn(int a[], int n) {
+    for_each(a + 1, a + n + 1, [](int &x) { cin >> x; });
+}
+inline void printn(int a[], int n) {
+    for_each(a + 1, a + n + 1, [](int &x) { cout << x << ' '; });
+    cout << endl;
+}
+template <typename T, typename... Args>
+void print(const T &first, const Args &...args) {
+    cout << first;
+    ((cout << ' ' << args), ...);
+    cout << endl;
+}
+template <typename T, typename... Args>
+void eprint(const T &first, const Args &...args) {
+    cerr << '*';
+    cerr << first;
+    ((cerr << ' ' << args), ...);
+    cerr << endl;
+}
+#define eprintn(a, n)                                                          \
+    {                                                                          \
+        cerr << #a << ' ';                                                     \
+        for (int i = 1; i <= n; i++)                                           \
+            cerr << (a)[i] << ' ';                                             \
+        cerr << endl;                                                          \
+    }
+
+
+int Sqrt(int x) {
+    assert(x >= 0);
+    int t = sqrt(x);
+    while ((t + 1) * (t + 1) <= x)
+        t++;
+    while (t * t > x)
+        t--;
+    return t;
+}
+
+char out[2][10] = {"NO", "YES"};
+const double eps = 1e-6;
+const int inf = 1e18;
+const int N = 1e6 + 10;
+const int M = N << 1;
+const int mod = 998244353;
+
+int a[N];
+int tmp[N];
+int ans = 0;
+void merge(int l, int r) {
+    if (l == r) return ;
+    int mid = l + r >> 1;
+    merge(l, mid);
+    merge(mid + 1, r);
+
+    int i = l, j = mid + 1, k = l;
+    while (i <= mid && j <= r) {
+        if (a[i] <= a[j]) tmp[k++] = a[i++];
+        else {
+            tmp[k++] = a[j++];
+            ans += mid - i + 1;
+        }
+    }
+    while (i <= mid) tmp[k++] = a[i++];
+    while (j <= r) tmp[k++] = a[j++];
+    for (i = l; i <= r; i++) a[i] = tmp[i];
+}
+
+void solve() {
+    int n = read();
+    readn(a, n);
+    merge(1, n);
+    print(ans);
+}
+
+
+signed main() {
+    ios::sync_with_stdio(false), cin.tie(nullptr);
+    // int T = 1;
+    // T = read();
+    // while (T--)
+        solve();
+
+    return 0;
 }
 ```
 
