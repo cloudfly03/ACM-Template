@@ -1832,6 +1832,7 @@ SPFA 也可以用于判断 s 点是否能抵达一个负环，只需记录最短
 核心：dist_v >= dist_v + w or dist_v <= dist_u + w
 
 1.spfa
+模板题；https://www.luogu.com.cn/problem/P5960
 ```c++
 #include <bits/stdc++.h>
 using namespace std;
@@ -1983,6 +1984,7 @@ signed main() {
 ```
 
 2.tarjan + 拓扑 dag
+题目链接：https://www.luogu.com.cn/problem/P3275
 ```c++
 #include <bits/stdc++.h>
 using namespace std;
