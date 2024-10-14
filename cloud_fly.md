@@ -12,6 +12,22 @@ using namespace std;
 #define y second
 #define endl '\n'
 
+// 快读
+// inline int read() {
+//     register int x = 0, t = 1;
+//     register char ch = getchar(); 
+//     while (ch < '0'|| ch > '9'){
+//         if (ch == '-')
+//             t = -1;
+//         ch = getchar();
+//     }
+//     while (ch >= '0' && ch <= '9'){
+//         x = (x << 1) + (x << 3) + (ch ^ 48);  
+//         ch = getchar();
+//     }
+//     return x * t;
+// }
+
 inline int read() {
     int c;
     cin >> c;
@@ -85,35 +101,66 @@ signed main() {
 
 # 基础算法
 
-## 快读
-
-```c++
-inline int read() {
-    register int x = 0, t = 1;
-    register char ch = getchar(); 
-    while (ch < '0'|| ch > '9'){
-        if (ch == '-')
-            t = -1;
-        ch = getchar();
-    }
-    while (ch >= '0' && ch <= '9'){
-        x = (x << 1) + (x << 3) + (ch ^ 48);  
-        ch = getchar();
-    }
-    return x * t;
-}
-```
-
-## 差分
-
+## 前缀和与差分
+一维差分：
 ```c++
 diff[i] = a[i] - a[i - 1];
-
 a[i] = a[i - 1] + diff[i];
-
 diff[l] += c;
-
 diff[r + 1] -= c;
+```
+
+二维前缀和：
+```c++
+b[i][j] = b[i - 1][j] + b[i][j - 1] - b[i-1][ j-1] + a[i][j]
+Sum(子矩阵和) = b[x2][y2] - b[x2][y1- 1] - b[x1 - 1][y2] + b[x1 - 1][y1 - 1]
+```
+
+二维差分：
+假设我们已经构建好了二维数组b[][] 的二维差分数组 a[][] ，现在要处理的是如何在a[][] 上加c,使其二维前缀和数组b[][]在指定的子矩阵内的所有元素都加上一个c 。
+```c++
+#include <iostream>
+using namespace std;
+const int N = 1e3 + 10;
+int b[N][N], a[N][N];
+void insert(int x1, int y1, int x2, int y2, int c)
+{
+    a[x1][y1] += c;
+    a[x2 + 1][y1] -= c;
+    a[x1][y2 + 1] -= c;
+    a[x2 + 1][y2 + 1] += c;
+}
+int main()
+{
+    int n, m, q;
+    cin >> n >> m >> q;
+    for (int i = 1; i <= n; i++)
+        for (int j = 1; j <= m; j++)
+            cin >> b[i][j],
+            a[i][j] = b[i][j] - b[i][j-1] - b[i-1][j] + b[i-1][j-1];//构建二维差分数组
+    while (q--)
+    {
+        int x1, y1, x2, y2, c;
+        cin >> x1 >> y1 >> x2 >> y2 >> c;
+        insert(x1, y1, x2, y2, c); //这一步是精髓
+    }
+    for (int i = 1; i <= n; i++)
+    {
+        for (int j = 1; j <= m; j++)
+        {
+            b[i][j] = b[i - 1][j] + b[i][j - 1] - b[i - 1][j - 1] + a[i][j];  //二维前缀和
+        }
+    }
+    for (int i = 1; i <= n; i++)
+    {
+        for (int j = 1; j <= m; j++)
+        {
+            printf("%d ", b[i][j]);//输出操作完所有步骤后的b[][]
+        }
+        printf("\n");
+    }
+    return 0;
+}
 ```
 
 ## 二分查找
@@ -182,25 +229,6 @@ void solve() {
 ```
 
 
-
-## 离散化
-
-```c++
-set<int> s;
-map<int, int> mp;
-void solve() {
-    int n; cin >> n;
-    for (int i = 1; i <= n; i++) {
-        int x; cin >> x;
-        s.insert(x);
-    }
-    int idx = 0;
-    for (auto x: s) {
-        mp[x] = ++idx;
-    }
-}
-```
-
 ## 分治法：归并排序
 
 ```C++
@@ -228,106 +256,6 @@ void merge_sort(int a[],int l,int r){
 }
 ```
 
-## 单调队列
-如果一个选手比你小还比你强，你就可以退役了。”——单调队列
-
-单调队列：擅长维护区间最大/最小值，最小值对应着递增队列，最大值对应着递减队列
-
-例题：https://www.luogu.com.cn/problem/P1714
-```C++
-
-#include <bits/stdc++.h>
-using namespace std;
-#define int long long
-#define PII pair<int, int>
-#define all x.begin(), x.end()
-const int N = 1e6 + 10;
-int a[N];
-int s[N];
-void solve() {
-    int n, m; cin >> n >> m;
-    for (int i = 1; i <= n; i++) {
-        int x; cin >> x;
-        s[i] = s[i - 1] + x;
-    }
-
-    int ans = -1e18;
-    deque<int> dq;
-    dq.push_back(0);
-    for (int i = 1; i <= n; i++) {
-        while (dq.size() && i - dq.front() > m) dq.pop_front();
-        ans = max(ans, s[i] - s[dq.front()]);
-        while (dq.size() && s[i] <= s[dq.back()]) dq.pop_back();
-        dq.push_back(i);
-    }
-    cout << ans << '\n';
-}
-
-signed main() {
-    ios::sync_with_stdio(false), cin.tie(0);
-    // int t; cin >> t;
-    // while (t--) 
-        solve();
-
-    return 0;
-}
-```
-
-## 单调栈
-栈是单调的
-
-单调栈：：擅长维护最近大于/小于关系，从左侧先入栈就是维护左侧最近关系，从右侧先入栈就是维护右侧最近关系
-```C++
-
-#include <bits/stdc++.h>
-using namespace std;
-#define int long long
-#define PII pair<int, int>
-#define all x.begin(), x.end()
-const int N = 1e6 + 10;
-int dp[N];
-int h[N];
-void solve() {
-    int n; cin >> n;
-    for (int i = 1; i <= n; i++) cin >> h[i];
-    h[0] = 1e9;
-    vector<int> arr;
-    arr.push_back(0);
-    for (int i = 1; i <= n; i++) {
-        while (arr.size() && h[i] > h[arr.back()]) arr.pop_back();
-        dp[i] = dp[arr.back()] + (i - arr.back()) * h[i];
-        arr.push_back(i);
-    }
-
-    for (int i = 1; i <= n; i++) cout << dp[i] + 1 << ' ';
-}
-
-signed main() {
-    ios::sync_with_stdio(false), cin.tie(0);
-    // int t; cin >> t;
-    // while (t--) 
-        solve();
-
-    return 0;
-}
-```
-
-## 线性判定排列逆序数的奇偶性
-```c++
-int parity(const vector<int> &a) {
-    const int n = a.size();
-    vector<int> vis(n);
-    int p = n % 2;
-    for (int i = 0; i < n; i++) {
-        if (vis[i]) continue;
-        for (int j = i; !vis[j]; j = a[j]) {
-            vis[j] = 1;
-        }
-        p ^= 1;
-    }
-    return p;
-}
-```
 
 # 动态规划
 
@@ -4341,72 +4269,82 @@ signed main() {
 
 # 数据结构
 
-## 栈
-最长括号匹配:https://www.luogu.com.cn/problem/P1944
-```c++
+## 单调队列
+如果一个选手比你小还比你强，你就可以退役了。”——单调队列
+
+单调队列：擅长维护定长区间最大/最小值，最小值对应着递增队列，最大值对应着递减队列
+
+例题：https://www.luogu.com.cn/problem/P1714
+```C++
+
 #include <bits/stdc++.h>
 using namespace std;
 #define int long long
 #define PII pair<int, int>
-
+#define all x.begin(), x.end()
 const int N = 1e6 + 10;
-int vis[N];
+int a[N];
+int s[N];
 void solve() {
-    string s; cin >> s;
-    int n = s.size();
-    s = ' ' + s;
-    int mx = 0, p = 0;
-    vector<int> arr;
+    int n, m; cin >> n >> m;
     for (int i = 1; i <= n; i++) {
-        if (s[i] == '(' || s[i] == '[') {
-            arr.push_back(i);
-        }
-        else {
-            if (!arr.size()) {
-                arr.clear();
-                continue;
-            }
-            if (s[i] == ')') {
-                if (s[arr.back()] == '(') {
-                    vis[arr.back()] = 1;
-                    vis[i] = 1;
-                    arr.pop_back();
-                }
-                else {
-                    arr.clear();
-                }
-            }
-            else {
-                if (s[arr.back()] == '[') {
-                    vis[arr.back()] = 1;
-                    vis[i] = 1;
-                    arr.pop_back();
-                }
-                else {
-                    arr.clear();
-                }
-            }
-        }
+        int x; cin >> x;
+        s[i] = s[i - 1] + x;
     }
 
+    int ans = -1e18;
+    deque<int> dq;
+    dq.push_back(0);
     for (int i = 1; i <= n; i++) {
-        if (!vis[i]) continue;
-        int j = i;
-        while (j + 1 <= n && vis[j + 1]) j++;
-        int t = j - i + 1;
-        if (mx < t) {
-            mx = t;
-            p = i;
-        }
-        i = j;
+        while (dq.size() && i - dq.front() > m) dq.pop_front();
+        ans = max(ans, s[i] - s[dq.front()]);
+        while (dq.size() && s[i] <= s[dq.back()]) dq.pop_back();
+        dq.push_back(i);
     }
-
-    for (int i = p; i <= p + mx - 1; i++) cout << s[i];
+    cout << ans << '\n';
 }
 
 signed main() {
     ios::sync_with_stdio(false), cin.tie(0);
+    // int t; cin >> t;
+    // while (t--) 
+        solve();
 
+    return 0;
+}
+```
+
+## 单调栈
+栈是单调的
+
+单调栈：：擅长维护最近大于/小于关系，从左侧先入栈就是维护左侧最近关系，从右侧先入栈就是维护右侧最近关系
+```C++
+
+#include <bits/stdc++.h>
+using namespace std;
+#define int long long
+#define PII pair<int, int>
+#define all x.begin(), x.end()
+const int N = 1e6 + 10;
+int dp[N];
+int h[N];
+void solve() {
+    int n; cin >> n;
+    for (int i = 1; i <= n; i++) cin >> h[i];
+    h[0] = 1e9;
+    vector<int> arr;
+    arr.push_back(0);
+    for (int i = 1; i <= n; i++) {
+        while (arr.size() && h[i] > h[arr.back()]) arr.pop_back();
+        dp[i] = dp[arr.back()] + (i - arr.back()) * h[i];
+        arr.push_back(i);
+    }
+
+    for (int i = 1; i <= n; i++) cout << dp[i] + 1 << ' ';
+}
+
+signed main() {
+    ios::sync_with_stdio(false), cin.tie(0);
     // int t; cin >> t;
     // while (t--) 
         solve();
@@ -6921,6 +6859,22 @@ signed main() {
         solve();
 
     return 0;
+}
+```
+### 线性判定排列逆序数的奇偶性
+```c++
+int parity(const vector<int> &a) {
+    const int n = a.size();
+    vector<int> vis(n);
+    int p = n % 2;
+    for (int i = 0; i < n; i++) {
+        if (vis[i]) continue;
+        for (int j = i; !vis[j]; j = a[j]) {
+            vis[j] = 1;
+        }
+        p ^= 1;
+    }
+    return p;
 }
 ```
 
