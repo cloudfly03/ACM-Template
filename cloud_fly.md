@@ -7984,131 +7984,153 @@ signed main() {
 时间复杂度 O(n^(5/3))
 ```C++
 #include <iostream>
-#include <cstring>
 #include <algorithm>
 #include <cmath>
+#include <cstring>
 using namespace std;
 
 #define LL long long
-const int N=200005;
-int head[N],to[N],ne[N],idx;
-void link(int u,int v){ //连边
-  to[++idx]=v;ne[idx]=head[u];head[u]=idx;
+const int N = 200005;
+int head[N], to[N], ne[N], idx;
+void link(int u, int v) { // 连边
+    to[++idx] = v;
+    ne[idx] = head[u];
+    head[u] = idx;
 }
 
-int fa[N],son[N],siz[N],dep[N],top[N];
-int tim,in[N],out[N],a[N<<1];
-void dfs1(int u,int f){ //树链剖分
-    fa[u]=f;siz[u]=1;dep[u]=dep[f]+1;
-    for(int i=head[u];i;i=ne[i]){
-      int v=to[i];
-      if(v==f) continue;
-      dfs1(v,u);
-      siz[u]+=siz[v];
-      if(siz[son[u]]<siz[v])son[u]=v;
+int fa[N], son[N], siz[N], dep[N], top[N];
+int tim, in[N], out[N], a[N << 1];
+void dfs1(int u, int f) { // 树链剖分
+    fa[u] = f;
+    siz[u] = 1;
+    dep[u] = dep[f] + 1;
+    for (int i = head[u]; i; i = ne[i]) {
+        int v = to[i];
+        if (v == f)
+            continue;
+        dfs1(v, u);
+        siz[u] += siz[v];
+        if (siz[son[u]] < siz[v])
+            son[u] = v;
     }
 }
-void dfs2(int u,int t){
-    in[u]=++tim; //进u时刻
-    a[tim]=u;    //括号序
-    top[u]=t;
-    if(son[u]) dfs2(son[u],t);
-    for(int i=head[u];i;i=ne[i]){
-      int v=to[i];
-      if(v==fa[u]||v==son[u])continue;
-      dfs2(v,v);
+void dfs2(int u, int t) {
+    in[u] = ++tim; // 进u时刻
+    a[tim] = u;    // 括号序
+    top[u] = t;
+    if (son[u])
+        dfs2(son[u], t);
+    for (int i = head[u]; i; i = ne[i]) {
+        int v = to[i];
+        if (v == fa[u] || v == son[u])
+            continue;
+        dfs2(v, v);
     }
-    out[u]=++tim; //出u时刻
-    a[tim]=u;     //括号序  
+    out[u] = ++tim; // 出u时刻
+    a[tim] = u;     // 括号序
 }
-int LCA(int u,int v){
-    while(top[u]!=top[v]){
-      if(dep[top[u]]<dep[top[v]])swap(u,v);
-      u=fa[top[u]];
+int LCA(int u, int v) {
+    while (top[u] != top[v]) {
+        if (dep[top[u]] < dep[top[v]])
+            swap(u, v);
+        u = fa[top[u]];
     }
-    return dep[u]<dep[v]?u:v;
+    return dep[u] < dep[v] ? u : v;
 }
 
-int n,m,k,B,tot,V[N],W[N],C[N];
-int pos[N],newC[N],vis[N],cnt[N];
-LL ans[N],sum;
-struct Q{
-    int l,r,t,id,lca;
-    bool operator<(Q &b){
-        if(l/B!=b.l/B)return l<b.l;
-        if(r/B!=b.r/B)return r<b.r;
-        return t<b.t;
+int n, m, k, B, tot, V[N], W[N], C[N];
+int pos[N], newC[N], vis[N], cnt[N];
+LL ans[N], sum;
+struct Q {
+    int l, r, t, id, lca;
+    bool operator<(Q &b) {
+        if (l / B != b.l / B)
+            return l < b.l;
+        if (r / B != b.r / B)
+            return r < b.r;
+        return t < b.t;
     }
-}q[N];
+} q[N];
 
-void add(int x){
-    vis[x]^=1;  //访问x点的次数
+void add(int x) {
+    vis[x] ^= 1; // 访问x点的次数
     // 一次扩展 加上贡献，两次扩展 减去贡献
-    if(vis[x]) sum+=1ll*W[++cnt[C[x]]]*V[C[x]];
-    else       sum-=1ll*W[cnt[C[x]]--]*V[C[x]];
+    if (vis[x])
+        sum += 1ll * W[++cnt[C[x]]] * V[C[x]];
+    else
+        sum -= 1ll * W[cnt[C[x]]--] * V[C[x]];
 }
-int main(){
-    scanf("%d%d%d",&n,&m,&k); //点,糖果种类,操作
-    for(int i=1;i<=m;++i)scanf("%d",&V[i]);//美味
-    for(int i=1;i<=n;++i)scanf("%d",&W[i]);//新奇
-    for(int i=1,u,v;i<n;++i) //连边
-      scanf("%d%d",&u,&v),link(u,v),link(v,u);
+int main() {
+    scanf("%d%d%d", &n, &m, &k); // 点,糖果种类,操作
+    for (int i = 1; i <= m; ++i)
+        scanf("%d", &V[i]); // 美味
+    for (int i = 1; i <= n; ++i)
+        scanf("%d", &W[i]);           // 新奇
+    for (int i = 1, u, v; i < n; ++i) // 连边
+        scanf("%d%d", &u, &v), link(u, v), link(v, u);
     // 预处理括号序和LCA
-    dfs1(1,0);dfs2(1,1);
-    for(int i=1;i<=n;++i)scanf("%d",&C[i]);//糖果类型
+    dfs1(1, 0);
+    dfs2(1, 1);
+    for (int i = 1; i <= n; ++i)
+        scanf("%d", &C[i]); // 糖果类型
     // 预处理操作
-    for(int i=1,t=0,Type,x,y;i<=k;++i){
-      scanf("%d%d%d",&Type,&x,&y); 
-      if(Type==1){ //区查
-        int lca=LCA(x,y);
-        q[++tot].t=t;
-        q[tot].id=tot; 
-        if(in[x]>in[y])swap(x,y); //先x后y
-        if(lca==x){ //直链情况
-            q[tot].l=in[x];
-            q[tot].r=in[y];
+    for (int i = 1, t = 0, Type, x, y; i <= k; ++i) {
+        scanf("%d%d%d", &Type, &x, &y);
+        if (Type == 1) { // 区查
+            int lca = LCA(x, y);
+            q[++tot].t = t;
+            q[tot].id = tot;
+            if (in[x] > in[y])
+                swap(x, y); // 先x后y
+            if (lca == x) { // 直链情况
+                q[tot].l = in[x];
+                q[tot].r = in[y];
+            } else { // 折链情况
+                q[tot].l = out[x];
+                q[tot].r = in[y];
+                q[tot].lca = lca; // 以便补偿
+            }
+        } else {          // 点修
+            pos[++t] = x; // 位置
+            newC[t] = y;  // 修改值
         }
-        else{ //折链情况
-            q[tot].l=out[x];
-            q[tot].r=in[y];
-            q[tot].lca=lca; //以便补偿
-        }
-      }
-      else{ //点修
-            pos[++t]=x; //位置
-            newC[t]=y;  //修改值
-      }
     }
     // 树上带修莫队
-    B=pow(2*n,0.66);
-    sort(q+1,q+tot+1);
-    for(int i=1,l=1,r=0,t=0;i<=tot;++i){
-        while(l>q[i].l)add(a[--l]);
-        while(r<q[i].r)add(a[++r]);
-        while(l<q[i].l)add(a[l++]);
-        while(r>q[i].r)add(a[r--]);
-        while(t<q[i].t){ //时间戳变大则替换
+    B = pow(2 * n, 0.66);
+    sort(q + 1, q + tot + 1);
+    for (int i = 1, l = 1, r = 0, t = 0; i <= tot; ++i) {
+        while (l > q[i].l)
+            add(a[--l]);
+        while (r < q[i].r)
+            add(a[++r]);
+        while (l < q[i].l)
+            add(a[l++]);
+        while (r > q[i].r)
+            add(a[r--]);
+        while (t < q[i].t) { // 时间戳变大则替换
             ++t;
-            if(vis[pos[t]]){
-              add(pos[t]);
-              swap(C[pos[t]],newC[t]); //换成修改值
-              add(pos[t]);
-            }
-            else swap(C[pos[t]],newC[t]);
-        }    
-        while(t>q[i].t){ //时间戳变小则还原
-            if(vis[pos[t]]){
-              add(pos[t]);
-              swap(C[pos[t]],newC[t]); //还原修改值
-              add(pos[t]);
-            }
-            else swap(C[pos[t]],newC[t]);
+            if (vis[pos[t]]) {
+                add(pos[t]);
+                swap(C[pos[t]], newC[t]); // 换成修改值
+                add(pos[t]);
+            } else
+                swap(C[pos[t]], newC[t]);
+        }
+        while (t > q[i].t) { // 时间戳变小则还原
+            if (vis[pos[t]]) {
+                add(pos[t]);
+                swap(C[pos[t]], newC[t]); // 还原修改值
+                add(pos[t]);
+            } else
+                swap(C[pos[t]], newC[t]);
             t--;
         }
-        ans[q[i].id]=sum;
-        if(q[i].lca) ans[q[i].id]+= //补上lca的
-            1ll*W[cnt[C[q[i].lca]]+1]*V[C[q[i].lca]];
-    }   
-    for(int i=1;i<=tot;++i) printf("%lld\n",ans[i]);
+        ans[q[i].id] = sum;
+        if (q[i].lca)
+            ans[q[i].id] += // 补上lca的
+                1ll * W[cnt[C[q[i].lca]] + 1] * V[C[q[i].lca]];
+    }
+    for (int i = 1; i <= tot; ++i)
+        printf("%lld\n", ans[i]);
 }
 ```
