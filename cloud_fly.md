@@ -1936,7 +1936,7 @@ bool spfa() {
         q.pop();
         vis[u] = 0;
         for (auto [v, w]: e[u]) {
-            if (dist[v] < dist[u] + w) continue;
+            if (dist[v] < dist[u] + w) continue;//最短路
             dist[v] = dist[u] + w;
             if (!vis[v]) {
                 tot[v]++;
@@ -1953,7 +1953,7 @@ void solve() {
 
     for (int i = 1; i <= m; i++) {
         int v = read(), u = read(), w = read();
-        e[u].push_back({v, w});
+        e[u].push_back({v, w});// v <= u + w
     }
     for (int i = 1; i <= n; i++) {
         e[0].push_back({i, 0});
