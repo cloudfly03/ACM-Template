@@ -1830,6 +1830,8 @@ SPFA 也可以用于判断 s 点是否能抵达一个负环，只需记录最短
 
 #### 差分约束
 核心：dist_v >= dist_v + w or dist_v <= dist_u + w
+
+1.spfa
 ```c++
 #include <bits/stdc++.h>
 using namespace std;
@@ -1980,6 +1982,219 @@ signed main() {
 }
 ```
 
+2.tarjan + 拓扑 dag
+```c++
+#include <bits/stdc++.h>
+using namespace std;
+#define int long long
+#define ull unsigned long long
+#define all(x) x.begin(), x.end()
+#define vi vector
+#define pb push_back
+#define pii pair<int, int>
+#define x first
+#define y second
+#define endl '\n'
+
+// 快读
+// inline int read() {
+//     register int x = 0, t = 1;
+//     register char ch = getchar(); 
+//     while (ch < '0'|| ch > '9'){
+//         if (ch == '-')
+//             t = -1;
+//         ch = getchar();
+//     }
+//     while (ch >= '0' && ch <= '9'){
+//         x = (x << 1) + (x << 3) + (ch ^ 48);  
+//         ch = getchar();
+//     }
+//     return x * t;
+// }
+
+inline int read() {
+    int c;
+    cin >> c;
+    return c;
+}
+inline void readn(int a[], int n) {
+    for_each(a + 1, a + n + 1, [](int &x) { cin >> x; });
+}
+inline void printn(int a[], int n) {
+    for_each(a + 1, a + n + 1, [](int &x) { cout << x << ' '; });
+    cout << endl;
+}
+template <typename T, typename... Args>
+void print(const T &first, const Args &...args) {
+    cout << first;
+    ((cout << ' ' << args), ...);
+    cout << endl;
+}
+template <typename T, typename... Args>
+void eprint(const T &first, const Args &...args) {
+    cerr << '*';
+    cerr << first;
+    ((cerr << ' ' << args), ...);
+    cerr << endl;
+}
+#define eprintn(a, n)                                                          \
+    {                                                                          \
+        cerr << #a << ' ';                                                     \
+        for (int i = 1; i <= n; i++)                                           \
+            cerr << (a)[i] << ' ';                                             \
+        cerr << endl;                                                          \
+    }
+
+void print128(__int128 x) {
+    if (x < 0)
+        putchar('-'), x = -x;
+    if (x > 9)
+        print128(x / 10);
+    putchar(x % 10 + '0');
+}
+
+int Sqrt(int x) {
+    assert(x >= 0);
+    int t = sqrt(x);
+    while ((t + 1) * (t + 1) <= x)
+        t++;
+    while (t * t > x)
+        t--;
+    return t;
+}
+
+char out[2][10] = {"NO", "YES"};
+const double eps = 1e-6;
+const int inf = 1e18;
+const int N = 1e6 + 10;
+const int M = N << 1;
+const int mod = 998244353;
+
+vector<pii> e[N];
+
+void addEdge(int x, int y, int w) {
+    e[x].push_back({y, w});
+} 
+
+int dfn[N];
+int low[N];
+int scc[N];
+int tot;
+int instk[N];
+int sz[N];
+stack<int> stk;
+int cnt;
+
+int dp[N];
+void tarjan(int u) {
+    dfn[u] = low[u] = ++tot;
+    stk.push(u);
+    instk[u] = 1;
+    for (auto [v, w]: e[u]) {
+        if (!dfn[v]) {
+            tarjan(v);
+            low[u] = min(low[u], low[v]);
+        }
+        else if (instk[v]) {
+            low[u] = min(low[u], dfn[v]);
+        }
+    }
+    if (dfn[u] == low[u]) {
+        int v;
+        cnt++;
+        do {    
+            v = stk.top();
+            stk.pop();
+            instk[v] = 0;
+            scc[v] = cnt;
+            sz[cnt]++;
+        }while (v != u);
+    }
+}
+
+vector<pii> E[N];
+
+int indeg[N];
+
+void solve() {
+    int n = read(), m = read();
+    for (int i = 1; i <= m; i++) {
+        int op = read(), x = read(), y = read();
+        if (op == 1) {
+            addEdge(x, y, 0);
+            addEdge(y, x, 0);
+        }
+        else if (op == 2) {
+            addEdge(x, y, 1);
+        }
+        else if (op == 3) {
+            addEdge(y, x, 0);
+        }
+        else if (op == 4) {
+            addEdge(y, x, 1);
+        }
+        else {
+            addEdge(x, y, 0);
+        }
+    }
+
+    for (int i = 1; i <= n; i++) {
+        if (!dfn[i]) tarjan(i);
+    }
+
+    for (int u = 0; u <= n; u++) {
+        for (auto [v, w]: e[u]) {
+            if (scc[u] == scc[v] && w) {
+                print(-1);
+                return ;
+            }
+            else if (scc[u] == scc[v]) continue;
+            E[scc[u]].push_back({scc[v], w});
+            indeg[scc[v]]++;
+        }
+    }
+
+    queue<int> q;
+    for (int i = 1; i <= cnt; i++) {
+        dp[i] = -inf;
+        if (!indeg[i]) {
+            q.push(i);
+            dp[i] = 1;
+        }
+    }
+
+    while (q.size()) {
+        auto u = q.front();
+        q.pop();
+
+        for (auto [v, w]: E[u]) {
+            dp[v] = max(dp[v], dp[u] + w);
+            indeg[v]--;
+            if (!indeg[v]) {
+                q.push(v);
+            }
+        }
+    }
+
+    int ans = 0;
+    for (int i = 1; i <= cnt; i++) {
+        ans += sz[i] * dp[i];
+    }
+
+    print(ans);
+}
+
+signed main() {
+    ios::sync_with_stdio(false), cin.tie(nullptr);
+    // int T = 1;
+    // T = read();
+    // while (T--)
+        solve();
+
+    return 0;
+}
+
+```
 ### floyd
 全源最短路，插点法
 
