@@ -7162,6 +7162,127 @@ signed main() {
 }
 ```
 
+## 01分数规划
+分数规划顾名思义就是求一个分数表达式的最大（小）值。
+分数规划是一项不常用到的（但还蛮实用的）算法，一般来讲就是求一个最优比率。
+### 二分法
+```c++
+#include <bits/stdc++.h>
+using namespace std;
+#define int long long
+#define ull unsigned long long
+#define all(x) x.begin(), x.end()
+#define vi vector
+#define pb push_back
+#define pii pair<int, int>
+#define x first
+#define y second
+#define endl '\n'
+
+inline int read() {
+    int c;
+    cin >> c;
+    return c;
+}
+inline void readn(int a[], int n) {
+    for_each(a + 1, a + n + 1, [](int &x) { cin >> x; });
+}
+inline void printn(int a[], int n) {
+    for_each(a + 1, a + n + 1, [](int &x) { cout << x << ' '; });
+    cout << endl;
+}
+template <typename T, typename... Args>
+void print(const T &first, const Args &...args) {
+    cout << first;
+    ((cout << ' ' << args), ...);
+    cout << endl;
+}
+template <typename T, typename... Args>
+void eprint(const T &first, const Args &...args) {
+    cerr << '*';
+    cerr << first;
+    ((cerr << ' ' << args), ...);
+    cerr << endl;
+}
+#define eprintn(a, n)                                                          \
+    {                                                                          \
+        cerr << #a << ' ';                                                     \
+        for (int i = 1; i <= n; i++)                                           \
+            cerr << (a)[i] << ' ';                                             \
+        cerr << endl;                                                          \
+    }
+
+char out[2][10] = {"NO", "YES"};
+const double eps = 1e-6;
+const int inf = 1e18;
+const int N = 1e6 + 10;
+const int M = N << 1;
+const int mod = 998244353;
+
+void print128(__int128 x) {
+    if (x < 0)
+        putchar('-'), x = -x;
+    if (x > 9)
+        print128(x / 10);
+    putchar(x % 10 + '0');
+}
+
+int Sqrt(int x) {
+    assert(x >= 0);
+    int t = sqrt(x);
+    while ((t + 1) * (t + 1) <= x)
+        t++;
+    while (t * t > x)
+        t--;
+    return t;
+}
+int n, k;
+int v[N], w[N];
+double a[N];
+bool cmp(double x, double y) {
+    return x > y;
+} 
+bool check(double mid) {
+    for (int i = 1; i <= n; i++) a[i] = w[i] - mid * v[i];
+    sort(a + 1, a + 1 + n, cmp);
+    double sum = 0;
+    for (int i = 1; i <= k; i++) {
+        sum += a[i];
+    }
+    return sum > 0;
+}
+
+void solve() {
+    n = read(), k = read();
+    for (int i = 1; i <= n; i++) {
+        v[i] = read();
+        w[i] = read();
+    }
+    
+    double l = 0, r = 1e9;
+    while (r - l > eps) {
+        double mid = (l + r) / 2;
+        if (check(mid)) l = mid;
+        else r = mid;
+    }
+
+    printf("%.2lf\n", l);
+}
+
+signed main() {
+    ios::sync_with_stdio(false), cin.tie(nullptr);
+    int T = 1;
+    T = read();
+    while (T--)
+        solve();
+
+    return 0;
+}
+```
+
+### Dinkelbach
+Dinkelbach 算法的大概思想是每次用上一轮的答案当做新的 L 来输入，不断地迭代，直至答案收敛。
+
 # 离线算法
 ## 莫队
 
