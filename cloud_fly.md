@@ -61,13 +61,6 @@ void eprint(const T &first, const Args &...args) {
         cerr << endl;                                                          \
     }
 
-char out[2][10] = {"NO", "YES"};
-const double eps = 1e-6;
-const int inf = 1e18;
-const int N = 1e6 + 10;
-const int M = N << 1;
-const int mod = 998244353;
-
 void print128(__int128 x) {
     if (x < 0)
         putchar('-'), x = -x;
@@ -85,6 +78,13 @@ int Sqrt(int x) {
         t--;
     return t;
 }
+
+char out[2][10] = {"NO", "YES"};
+const double eps = 1e-6;
+const int inf = 1e18;
+const int N = 1e6 + 10;
+const int M = N << 1;
+const int mod = 998244353;
 
 void solve() {}
 
@@ -1796,7 +1796,8 @@ int dijkstra(int s){
 }
 ```
 
-### bellmanford
+### spfa
+前言-bellmanford:
 单源，且可含负权边的最短路问题，可以判断负环
 
 时间复杂度为 O(n * m)。
@@ -1810,45 +1811,12 @@ int dijkstra(int s){
 Bellman–Ford 算法所做的，就是不断尝试对图上每一条边进行松弛。我们每进行一轮循环，就对图上所有的边都尝试进行一次松弛操作，当一次循环中没有成功的松弛操作时，算法停止。
 
 每次循环是 O(m) 的，那么最多会循环多少次呢？
+
 在最短路存在的情况下，由于一次松弛操作会使最短路的边数至少 + 1，而最短路的边数最多为 n - 1，因此整个算法最多执行 n - 1 轮松弛操作。故总时间复杂度为 O( n * m)。
 
 但还有一种情况，如果从 S 点出发，抵达一个负环时，松弛操作会无休止地进行下去。注意到前面的论证中已经说明了，对于最短路存在的图，松弛操作最多只会执行 $n-1$ 轮，因此如果第 $n$ 轮循环时仍然存在能松弛的边，说明从 $S$ 点出发，能够抵达一个负环。
-```c++
 
-struct Edge {
-  int u, v, w;
-};
-vector<Edge> edge;
-int dis[MAXN], u, v, w;
-const int INF = 0x3f3f3f3f;
-bool bellmanford(int n, int s) {
-    memset(dis, 0x3f, sizeof(dis));
-    dis[s] = 0;
-    bool flag = false;  // 判断一轮循环过程中是否发生松弛操作
-    for (int i = 1; i <= n; i++) {
-      flag = false;
-      for (int j = 0; j < edge.size(); j++) {
-        u = edge[j].u, v = edge[j].v, w = edge[j].w;
-        if (dis[u] == INF) continue;
-        // 无穷大与常数加减仍然为无穷大
-        // 因此最短路长度为 INF 的点引出的边不可能发生松弛操作
-        if (dis[v] > dis[u] + w) {
-          dis[v] = dis[u] + w;
-          flag = true;
-        }
-      }
-      // 没有可以松弛的边时就停止算法
-      if (!flag) {
-        break;
-      }
-    }
-    // 第 n 轮循环仍然可以松弛时说明 s 点可以抵达一个负环
-    return flag;
-}
-```
-
-### spfa（优化的bellmanford）
-可以处理负权值，但是不能处理负环。可以判断是否有环以及负环
+**可以处理负权值，但是不能处理负环。可以判断是否有环以及负环**
 
 SPFA算法的时间复杂度取决于边的数量和图的结构。在一般情况下，SPFA算法的时间复杂度为O(kE)，其中k是一个常数（一般在2到3之间），E是边的数量。然而，在最坏情况下，SPFA算法的时间复杂度可以达到O(VE)，其中V是点的数量，E是边的数量。
 
@@ -1859,37 +1827,10 @@ SPFA算法的时间复杂度取决于边的数量和图的结构。在一般情�
 那么我们用队列来维护「哪些结点可能会引起松弛操作」，就能只访问必要的边了。
 
 SPFA 也可以用于判断 s 点是否能抵达一个负环，只需记录最短路经过了多少条边，当经过了至少 n 条边时，说明 s 点可以抵达一个负环。
+
+#### 差分约束
 ```c++
 
-struct edge {
-  int v, w;
-};
-
-vector<edge> e[maxn];
-int dis[maxn], cnt[maxn], vis[maxn];
-queue<int> q;
-
-bool spfa(int n, int s) {
-    memset(dis, 63, sizeof(dis));
-    dis[s] = 0, vis[s] = 1;
-    q.push(s);
-    while (!q.empty()) {
-      int u = q.front();
-      q.pop(), vis[u] = 0;
-      for (auto ed : e[u]) {
-        int v = ed.v, w = ed.w;
-        if (dis[v] > dis[u] + w) {
-          dis[v] = dis[u] + w;
-          cnt[v] = cnt[u] + 1;  // 记录最短路经过的边数
-          if (cnt[v] >= n) return false;
-          // 在不经过负环的情况下，最短路至多经过 n - 1 条边
-          // 因此如果经过了多于 n 条边，一定说明经过了负环
-          if (!vis[v]) q.push(v), vis[v] = 1;
-        }
-      }
-    }
-    return true;
-}
 ```
 
 ### floyd
