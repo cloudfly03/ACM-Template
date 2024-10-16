@@ -1,17 +1,3 @@
-<head>
-    <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-    <script type="text/x-mathjax-config">
-        MathJax.Hub.Config({
-            tex2jax: {
-            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
-            inlineMath: [['$','$']]
-            }
-        });
-    </script>
-</head>
-
-<body>
-
 # 起手式
 ```C++
 #include <bits/stdc++.h>
@@ -7527,7 +7513,7 @@ $a * a ^ {φ(p) - 1} ≡ 1(mod \ p)$
 由于 $a * a^{-1} ≡ 1(mod \ p)$ 
 在这里的 $a^{-1}$ 不就是上面的 $a ^ {φ(p) -1}$ 吗？，所以求出 $a ^ {φ(p) - 1}$ 就好了。
 
-补充：其实如果$p$是质数的话，可以用费马小定理，与欧拉定理是完全一样的，费马小定理在p不是质数时，则只能用欧拉定理。
+补充：其实如果${p}$是质数的话，可以用费马小定理，与欧拉定理是完全一样的，费马小定理在p不是质数时，则只能用欧拉定理。
 怎么弄呢？费马小定理 $a ^ {p - 1} ≡ 1(mod \ p)$ $p$ 是质数，且 $a$, $p$ 互质，
 然后将上面的式子变一下, $a * a ^ {p - 2} ≡ 1(mod \ p)$ 
 再变一下
@@ -8993,5 +8979,3 @@ int main() {
         printf("%lld\n", ans[i]);
 }
 ```
-
-</body>
