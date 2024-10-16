@@ -6601,6 +6601,59 @@ int main() {
 }
 ```
 
+### pb_ds
+```c++
+// Common Header Simple over C++11
+#include <iostream>
+using namespace std;
+using ll = long long;
+using ull = unsigned long long;
+using ld = long double;
+using pii = pair<int, int>;
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+template <typename T = std::pair<int, int>>
+using Rb_tree = __gnu_pbds::tree<T, __gnu_pbds::null_type, std::less<T>,
+                                 __gnu_pbds::rb_tree_tag,
+                                 __gnu_pbds::tree_order_statistics_node_update>;
+using rb_tree = Rb_tree<>;
+
+int main() {
+    int cnt = 0;
+    rb_tree trr;
+    trr.insert(make_pair(1, cnt++));
+    trr.insert(make_pair(5, cnt++));
+    trr.insert(make_pair(4, cnt++));
+    trr.insert(make_pair(3, cnt++));
+    trr.insert(make_pair(2, cnt++));
+    // 树上元素 {{1,0},{2,4},{3,3},{4,2},{5,1}}
+    auto it = trr.lower_bound(make_pair(2, 0));
+    trr.erase(it);
+    // 树上元素 {{1,0},{3,3},{4,2},{5,1}}
+    auto it2 = trr.find_by_order(1);
+    cout << (*it2).first << endl;
+    // 输出排名 0 1 2 3 中的排名 1 的元素的 first:1
+    int pos = trr.order_of_key(*it2);
+    cout << pos << endl;
+    // 输出排名
+    decltype(trr) newtr;
+    trr.split(*it2, newtr);
+    for (auto i = newtr.begin(); i != newtr.end(); ++i) {
+        cout << (*i).first << ' ';
+    }
+    cout << endl;
+    // {4,2},{5,1} 被放入新树
+    trr.join(newtr);
+    for (auto i = trr.begin(); i != trr.end(); ++i) {
+        cout << (*i).first << ' ';
+    }
+    cout << endl;
+    cout << newtr.size() << endl;
+    // 将 newtr 树并入 trr 树，newtr 树被删除。
+    return 0;
+}
+```
+
 
 # 取模类（MLong & MInt）
 ```c++
