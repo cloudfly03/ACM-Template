@@ -1,3 +1,5 @@
+$`
+
 # 起手式
 ```C++
 #include <bits/stdc++.h>
@@ -261,7 +263,7 @@ void merge(int l, int r) {
 
 ## 基本线性dp
 
-### 最长上升子序列I  $` O(n ^ 2) `$
+### 最长上升子序列I O(n ^ 2) 
 ```c++
 int f[N];
 int a[N];
@@ -282,7 +284,7 @@ void solve() {
 }
 ```
 
-### 最长上升子序列II $` O(nlogn) `$ 贪心+二分
+### 最长上升子序列II O(nlogn) 贪心+二分
 
 ```C++
 int a[N];
@@ -309,7 +311,7 @@ int LIS() {
 
 ### 最长公共子序列
 1.
-朴素，n <= 1e3, m <= 1e3 时间复杂度 $` O(n * m) `$
+朴素，n <= 1e3, m <= 1e3 时间复杂度 O(n * m) 
 ```c++
 int f[N][N];//f[i][j]：a中前i个字符， b中前j个字符的最长公共子序列的最大长度
 char a[N], b[N];
@@ -8983,3 +8985,5 @@ int main() {
         printf("%lld\n", ans[i]);
 }
 ```
+
+`$
