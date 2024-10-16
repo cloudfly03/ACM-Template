@@ -7243,7 +7243,6 @@ int phi(int x) {
 #### 埃式筛
 
 ```c++
-const int N = 1e7 + 10;
 int pr[N];
 void sieve(int n) {
     for (int i = 2; i <= n; i++) {
@@ -7297,6 +7296,33 @@ void sieve(int n) {
                 break;
             }
             phi[i * primes[j]] = phi[i] * (primes[j] - 1);
+        }
+    }
+}
+```
+
+#### 线性筛求莫比乌斯函数
+```c++
+int p[N], vis[N];
+int mu[N];
+int tot;
+void sieve(int n) {
+    mu[1] = 1;
+    for (int i = 2; i <= n; i++) {
+        if (!vis[i]) {
+            p[++tot] = i;
+            mu[i] = -1;
+        } 
+        for (int j = 1; i * p[j] <= n; j++) {
+            int m = i * p[j];
+            vis[m] = 1;
+            if (i % p[j] == 0) {
+                mu[m] = 0;
+                break;
+            }
+            else {
+                mu[m] = -mu[i];
+            }
         }
     }
 }
