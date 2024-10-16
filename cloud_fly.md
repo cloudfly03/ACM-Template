@@ -1,5 +1,3 @@
-$`
-
 # 起手式
 ```C++
 #include <bits/stdc++.h>
@@ -8985,5 +8983,3 @@ int main() {
         printf("%lld\n", ans[i]);
 }
 ```
-
-`$
