@@ -7562,7 +7562,7 @@ int inv(int x) {
 ### 线性同余方程
 ${a * x ≡ b (mod\  m) \iff a * x (mod\  m) m ≡ b}$
 
-当 $b = 1$时，${x}$ 为 ${a}$ 的乘法逆元
+当 $b = 1$时，$ {x} $ 为 ${a}$ 的乘法逆元
 
 ```c++
 void solve() {
