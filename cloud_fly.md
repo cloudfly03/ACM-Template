@@ -10,6 +10,7 @@
     </script>
 </head>
 
+<body>
 
 # 起手式
 ```C++
@@ -8992,3 +8993,5 @@ int main() {
         printf("%lld\n", ans[i]);
 }
 ```
+
+</body>
