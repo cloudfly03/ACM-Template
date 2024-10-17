@@ -2324,8 +2324,8 @@ signed main() {
 }
 ```
 
-## kruskal最小生成树
-时间复杂度 $O(n * logn)$
+## $kruskal$最小生成树
+时间复杂度 $O(n  logn)$
 ```c++
 //并查集贪心
 struct edge{
@@ -2351,7 +2351,7 @@ bool kruskal() {
 }
 ```
 
-## 换根dp
+## 换根$dp$
 也叫二次扫描法。先处理以每个节点为根节点的$f$。显然， 最终要求的并不是只包括子节点，还包括父节点。但是在第一次$dfs$中我们可以知道  $ans[1] = f[1] $
 我们可以再次$dfs2$， 从$u$节点的答案转换到$v$节点
 
@@ -2556,7 +2556,7 @@ int lca(int x, int y) {
 
 ```
 
-### Tarjan算法
+### $Tarjan$算法
 
 ```C++
 #include<bits/stdc++.h>
@@ -8697,8 +8697,425 @@ int main() {
 
 ### 容斥原理
 
+#### 不定方程非负整数解计数(方程解有上界)
+
+[HAOI2008] 硬币购物
+
+题目描述
+
+共有 $4$ 种硬币。面值分别为 $c_1,c_2,c_3,c_4$。
+
+某人去商店买东西，去了 $n$ 次，对于每次购买，他带了 $d_i$ 枚 $i$ 种硬币，想购买 $s$ 的价值的东西。请问每次有多少种付款方法。
+
+* 对于 $100\%$ 的数据，保证 $1 \leq c_i, d_i, s \leq 10^5$，$1 \leq n \leq 1000$。
+
 ```c++
+#include <bits/stdc++.h>
+using namespace std;
+#define int long long
+#define ull unsigned long long
+#define all(x) x.begin(), x.end()
+#define vi vector
+#define pb push_back
+#define pii pair<int, int>
+#define x first
+#define y second
+#define endl '\n'
+
+// inline int read() {
+//     register int x = 0, t = 1;
+//     register char ch = getchar();
+//     while (ch < '0'|| ch > '9'){
+//         if (ch == '-')
+//             t = -1;
+//         ch = getchar();
+//     }
+//     while (ch >= '0' && ch <= '9'){
+//         x = (x << 1) + (x << 3) + (ch ^ 48);
+//         ch = getchar();
+//     }
+//     return x * t;
+// }
+
+// void print128(__int128_t x) {
+//     if (x < 0)
+//         putchar('-'), x = -x;
+//     if (x > 9)
+//         print128(x / 10);
+//     putchar(x % 10 + '0');
+// }
+
+inline int read() {
+    int c;
+    cin >> c;
+    return c;
+}
+
+inline void readn(int a[], int n) {
+    for_each(a + 1, a + n + 1, [](int &x) { cin >> x; });
+}
+inline void printn(int a[], int n) {
+    for_each(a + 1, a + n + 1, [](int &x) { cout << x << ' '; });
+    cout << endl;
+}
+template <typename T, typename... Args>
+void print(const T &first, const Args &...args) {
+    cout << first;
+    ((cout << ' ' << args), ...);
+    cout << endl;
+}
+template <typename T, typename... Args>
+void eprint(const T &first, const Args &...args) {
+    cerr << '*';
+    cerr << first;
+    ((cerr << ' ' << args), ...);
+    cerr << endl;
+}
+#define eprintn(a, n)                                                          \
+    {                                                                          \
+        cerr << #a << ' ';                                                     \
+        for (int i = 1; i <= n; i++)                                           \
+            cerr << (a)[i] << ' ';                                             \
+        cerr << endl;                                                          \
+    }
+
+int Sqrt(int x) {
+    assert(x >= 0);
+    int t = sqrt(x);
+    while ((t + 1) * (t + 1) <= x)
+        t++;
+    while (t * t > x)
+        t--;
+    return t;
+}
+
+char out[2][10] = {"NO", "YES"};
+const double eps = 1e-6;
+const int inf = 1e18;
+const int N = 1e6 + 10;
+const int M = N << 1;
+const int mod = 998244353;
+
+int c[5];
+int d[5];
+
+int dp[N];
+void init() {
+    dp[0] = 1;
+    for (int i = 0; i < 4; i++) {
+        for (int j = c[i]; j <= 1e5; j++) {
+            dp[j] += dp[j - c[i]];
+        }
+    }
+}
+void solve() {
+    for (int i = 0; i < 4; i++) d[i] = read();
+    int s = read();
+
+    int ans = dp[s];
+    for (int i = 1; i < 16; i++) {
+        int t = 0, sgn = 1;
+        for (int j = 0; j < 4; j++) {
+            if (i >> j & 1) {
+                t += c[j] * (d[j] + 1);
+                sgn *= -1;
+            }
+        }
+        if (s >= t) ans += sgn * dp[s - t];
+    }
+    print(ans);
+}
+
+signed main() {
+    ios::sync_with_stdio(false), cin.tie(nullptr);
+    for (int i = 0; i < 4; i++) c[i] = read();
+    init();
+    int T = 1;
+    T = read();
+    while (T--)
+        solve();
+
+    return 0;
+}
 ```
+
+#### 数论中的容斥
+
+P2398 GCD SUM
+
+求$$\sum_{i=1}^n \sum_{j=1}^n \gcd(i, j)$$
+
+对于 $30\%$ 的数据，$n\leq 3000$。
+
+对于 $60\%$ 的数据，$7000\leq n\leq 7100$。
+
+对于 $100\%$ 的数据，$n\leq 10^5$。
+
+```c++
+#include <bits/stdc++.h>
+using namespace std;
+#define int long long
+#define ull unsigned long long
+#define all(x) x.begin(), x.end()
+#define vi vector
+#define pb push_back
+#define pii pair<int, int>
+#define x first
+#define y second
+#define endl '\n'
+
+// inline int read() {
+//     register int x = 0, t = 1;
+//     register char ch = getchar();
+//     while (ch < '0'|| ch > '9'){
+//         if (ch == '-')
+//             t = -1;
+//         ch = getchar();
+//     }
+//     while (ch >= '0' && ch <= '9'){
+//         x = (x << 1) + (x << 3) + (ch ^ 48);
+//         ch = getchar();
+//     }
+//     return x * t;
+// }
+
+// void print128(__int128_t x) {
+//     if (x < 0)
+//         putchar('-'), x = -x;
+//     if (x > 9)
+//         print128(x / 10);
+//     putchar(x % 10 + '0');
+// }
+
+inline int read() {
+    int c;
+    cin >> c;
+    return c;
+}
+
+inline void readn(int a[], int n) {
+    for_each(a + 1, a + n + 1, [](int &x) { cin >> x; });
+}
+inline void printn(int a[], int n) {
+    for_each(a + 1, a + n + 1, [](int &x) { cout << x << ' '; });
+    cout << endl;
+}
+template <typename T, typename... Args>
+void print(const T &first, const Args &...args) {
+    cout << first;
+    ((cout << ' ' << args), ...);
+    cout << endl;
+}
+template <typename T, typename... Args>
+void eprint(const T &first, const Args &...args) {
+    cerr << '*';
+    cerr << first;
+    ((cerr << ' ' << args), ...);
+    cerr << endl;
+}
+#define eprintn(a, n)                                                          \
+    {                                                                          \
+        cerr << #a << ' ';                                                     \
+        for (int i = 1; i <= n; i++)                                           \
+            cerr << (a)[i] << ' ';                                             \
+        cerr << endl;                                                          \
+    }
+
+int Sqrt(int x) {
+    assert(x >= 0);
+    int t = sqrt(x);
+    while ((t + 1) * (t + 1) <= x)
+        t++;
+    while (t * t > x)
+        t--;
+    return t;
+}
+
+char out[2][10] = {"NO", "YES"};
+const double eps = 1e-6;
+const int inf = 1e18;
+const int N = 1e6 + 10;
+const int M = N << 1;
+const int mod = 998244353;
+
+int f[N];// gcd(i, j) = k的个数
+
+void solve() {
+    int n = read();
+    int ans = 0;
+    for (int i = n; i >= 1; i--) {
+        f[i] = (n / i) * (n / i);
+        for (int j = 2 * i; j <= n; j += i) {
+            f[i] -= f[j];
+        }
+        ans += i * f[i];
+    }
+    print(ans);
+}
+
+signed main() {
+    ios::sync_with_stdio(false), cin.tie(nullptr);
+    // int T = 1;
+    // T = read();
+    // while (T--)
+    solve();
+
+    return 0;
+}
+```
+
+[SDOI2008] 仪仗队
+
+作为体育委员，C 君负责这次运动会仪仗队的训练。仪仗队是由学生组成的 $N \times N$ 的方阵，为了保证队伍在行进中整齐划一，C 君会跟在仪仗队的左后方，根据其视线所及的学生人数来判断队伍是否整齐（如下图）。
+
+![](https://cdn.luogu.com.cn/upload/pic/1149.png)
+
+现在，C 君希望你告诉他队伍整齐时能看到的学生人数。
+
+对于 $100 \%$ 的数据，$1 \le N \le 40000$。
+
+```c++
+ #include <bits/stdc++.h>
+using namespace std;
+#define int long long
+#define ull unsigned long long
+#define all(x) x.begin(), x.end()
+#define vi vector
+#define pb push_back
+#define pii pair<int, int>
+#define x first
+#define y second
+#define endl '\n'
+
+// inline int read() {
+//     register int x = 0, t = 1;
+//     register char ch = getchar();
+//     while (ch < '0'|| ch > '9'){
+//         if (ch == '-')
+//             t = -1;
+//         ch = getchar();
+//     }
+//     while (ch >= '0' && ch <= '9'){
+//         x = (x << 1) + (x << 3) + (ch ^ 48);
+//         ch = getchar();
+//     }
+//     return x * t;
+// }
+
+// void print128(__int128_t x) {
+//     if (x < 0)
+//         putchar('-'), x = -x;
+//     if (x > 9)
+//         print128(x / 10);
+//     putchar(x % 10 + '0');
+// }
+
+inline int read() {
+    int c;
+    cin >> c;
+    return c;
+}
+
+inline void readn(int a[], int n) {
+    for_each(a + 1, a + n + 1, [](int &x) { cin >> x; });
+}
+inline void printn(int a[], int n) {
+    for_each(a + 1, a + n + 1, [](int &x) { cout << x << ' '; });
+    cout << endl;
+}
+template <typename T, typename... Args>
+void print(const T &first, const Args &...args) {
+    cout << first;
+    ((cout << ' ' << args), ...);
+    cout << endl;
+}
+template <typename T, typename... Args>
+void eprint(const T &first, const Args &...args) {
+    cerr << '*';
+    cerr << first;
+    ((cerr << ' ' << args), ...);
+    cerr << endl;
+}
+#define eprintn(a, n)                                                          \
+    {                                                                          \
+        cerr << #a << ' ';                                                     \
+        for (int i = 1; i <= n; i++)                                           \
+            cerr << (a)[i] << ' ';                                             \
+        cerr << endl;                                                          \
+    }
+
+int Sqrt(int x) {
+    assert(x >= 0);
+    int t = sqrt(x);
+    while ((t + 1) * (t + 1) <= x)
+        t++;
+    while (t * t > x)
+        t--;
+    return t;
+}
+
+char out[2][10] = {"NO", "YES"};
+const double eps = 1e-6;
+const int inf = 1e18;
+const int N = 1e6 + 10;
+const int M = N << 1;
+const int mod = 998244353;
+int primes[N], cnt;
+int phi[N];
+bool st[N];
+void sieve(int n) {
+    st[1] = true;
+    phi[1] = 1;
+
+    for (int i = 2; i <= n; i++) {
+        if (!st[i]) {
+            primes[cnt++] = i;
+            phi[i] = i - 1;
+        }
+        for (int j = 0; primes[j] <= n / i; j++) {
+            st[i * primes[j]] = true;
+            if (i % primes[j] == 0) {
+                phi[i * primes[j]] = phi[i] * primes[j];
+                break;
+            }
+            phi[i * primes[j]] = phi[i] * (primes[j] - 1);
+        }
+    }
+}
+void solve() {
+    int n = read();
+    if (n == 1) {
+        print(0);
+        return ;
+    }
+    sieve(n);
+    int ans = 0;
+    for (int i = 1; i < n; i++) {
+        ans += phi[i];
+    }
+    print(ans * 2 + 1);
+}
+
+signed main() {
+    ios::sync_with_stdio(false), cin.tie(nullptr);
+    // int T = 1;
+    // T = read();
+    // while (T--)
+    solve();
+
+    return 0;
+}
+```
+
+### 康托展开
+
+康托展开可以用来求一个 $1 - n$![1\sim n](data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7)的任意排列的排名。
+
+什么是排列的排名?
+
+把 $1 - n$ 的所有排列按字典序排序，这个排列的位次就是它的排名。
+
+康托展开可以在 $O(n ^ 2)$ 的复杂度内求出一个排列的排名，在用到 [树状数组](https://oi-wiki.org/ds/fenwick/) 优化时可以做到 $O(nlogn) $
 
 
 
@@ -8724,7 +9141,7 @@ struct mat {
                 for (int k = 0; k < col; k++) {
                     c.a[i][j] = (c.a[i][j] + a[i][k] * b.a[k][j] % mod) % mod;
                 }
-            }
+            }s
         }
         return c;
     }
