@@ -14,20 +14,20 @@ using namespace std;
 
 // inline int read() {
 //     register int x = 0, t = 1;
-//     register char ch = getchar(); 
+//     register char ch = getchar();
 //     while (ch < '0'|| ch > '9'){
 //         if (ch == '-')
 //             t = -1;
 //         ch = getchar();
 //     }
 //     while (ch >= '0' && ch <= '9'){
-//         x = (x << 1) + (x << 3) + (ch ^ 48);  
+//         x = (x << 1) + (x << 3) + (ch ^ 48);
 //         ch = getchar();
 //     }
 //     return x * t;
 // }
 
-// void print128(__int128 x) {
+// void print128(__int128_t x) {
 //     if (x < 0)
 //         putchar('-'), x = -x;
 //     if (x > 9)
@@ -69,7 +69,6 @@ void eprint(const T &first, const Args &...args) {
         cerr << endl;                                                          \
     }
 
-
 int Sqrt(int x) {
     assert(x >= 0);
     int t = sqrt(x);
@@ -91,10 +90,10 @@ void solve() {}
 
 signed main() {
     ios::sync_with_stdio(false), cin.tie(nullptr);
-    int T = 1;
-    T = read();
-    while (T--)
-        solve();
+    // int T = 1;
+    // T = read();
+    // while (T--)
+    solve();
 
     return 0;
 }
@@ -259,7 +258,7 @@ void merge(int l, int r) {
 
 # 动态规划
 
-## 基本线性dp
+## 基本线性$dp$
 
 ### 最长上升子序列I $O(n ^ 2)$ 
 ```c++
@@ -1561,7 +1560,7 @@ signed main() {
 }
 ```
 
-## manacher
+## $manacher$
 马拉车算法：求最长回文子串的算法
 
 注意：这里的$N$要开三倍
@@ -1600,7 +1599,7 @@ int manacher() {
 }
 ```
 
-## kmp
+## $kmp$
 Knuth–Morris–Pratt 算法：给定一个文本$ t $和一个字符串$ s$，我们尝试找到并展示$ s $在$ t $中的所有出现位置
 
 为了简便起见，我们用$ n$ 表示字符串$ s$ 的长度，用 $m $表示文本$ t $的长度。
@@ -1618,7 +1617,7 @@ vector<int> find_occurrences(string text, string pattern) {
 }
 ```
 
-## AC自动机
+## $AC$自动机
 ```c++
 #include <bits/stdc++.h>
 using namespace std;
@@ -1799,7 +1798,7 @@ int dijkstra(int s){
 }
 ```
 
-### spfa
+### $spfa$
 前言-bellmanford:
 单源，且可含负权边的最短路问题，可以判断负环
 
@@ -2202,7 +2201,7 @@ signed main() {
 }
 
 ```
-### floyd
+### $floyd$
 全源最短路，插点法
 
 时间复杂度$O(n^3)$
@@ -2218,7 +2217,7 @@ void floyd() {
 }
 ```
 
-### Johnson
+### $Johnson$
 全源最短路径算法
 
 时间复杂度$ O(n * m * logm + n * m)$
@@ -2978,7 +2977,7 @@ signed main() {
 
 ```
 
-## 欧拉路径（Hierholzer算法）
+## 欧拉路径（$Hierholzer$算法）
 如何判断一个图是否有欧拉路径呢？显然，与一笔画问题相同，一个图有欧拉路径需要以下几个条件：
 
 首先，这是一个连通图
@@ -3043,7 +3042,7 @@ int main() {
 
 ## Tarjan
 
-### 强连通分量(SCC)
+### 强连通分量($SCC$)
 强连通的定义是：有向图 $G$ 强连通是指，$G $中任意两个结点连通。
 
 强连通分量（Strongly Connected Components，SCC）的定义是：极大的强连通子图。(极大不是最大)
@@ -3082,7 +3081,7 @@ void tarjan(int x) {
 }
 ```
 
-### SCC缩点
+### $SCC$缩点
 缩点：把一个强连通分量缩成一个点
 ```C++
 void solve() {
@@ -3196,7 +3195,7 @@ void tarjan(int u, int fa) {
 }
 ```
 
-### eDCC缩点
+### $eDCC$缩点
 边双连通分量，指的是原图中一个极大的连通子图（该子图没有桥）
 ```C++
 #include<bits/stdc++.h>
@@ -3250,7 +3249,7 @@ void solve() {
 }
 ```
 
-### vDCC缩点
+### $vDCC$缩点
 点双连通分量：边双连通分量，指的是原图中一个极大的连通子图（该子图没有割点）
 ```C++
 #include<bits/stdc++.h>
@@ -4040,7 +4039,7 @@ signed main() {
 
 ## 高级图论
 
-### 最大流(EK算法)
+### 最大流($EK$算法)
 在一个有向图$G=(V,E)$中：
 
 有一个唯一的源点$S$， 有一个唯一的汇点$T$
@@ -4165,7 +4164,7 @@ signed main() {
 }
 ```
 
-### 最大流(Dinic算法)
+### 最大流($Dinic$算法)
 时间复杂度O($n^2 \cdot m$)
 ```C++
 #include <bits/stdc++.h>
@@ -4293,7 +4292,7 @@ signed main() {
 }
 ```
 
-### 最大流(ISAP算法)
+### 最大流($ISAP$算法)
 ```c++
 #include<bits/stdc++.h>
 using namespace std;
@@ -4408,7 +4407,7 @@ signed main() {
 }
 ```
 
-### 最小割(Dinic算法)
+### 最小割($Dinic$算法)
 最大流 = 最小割
 
 求最小割的最小边数：
@@ -4561,7 +4560,7 @@ signed main() {
 }
 ```
 
-### 费用流(EK算法)
+### 费用流($EK$算法)
 即最小费用最大流
 ```c++
 #include <bits/stdc++.h>
@@ -4725,7 +4724,7 @@ signed main() {
 ```
 
 ### 二分图判定（染色法）
-时间复杂度 O($n$)
+时间复杂度$ O(n)$
 
 该算法可以用来判断一个图是不是二分图以及是否含有奇环
 
@@ -5044,7 +5043,7 @@ signed main() {
 }
 ```
 
-## ST表（静态RMQ问题）
+## ST表（静态$RMQ$问题）
 
 ```C++
 #include <bits/stdc++.h>
@@ -5203,7 +5202,7 @@ ll query(int L, int R) {//区间查询
 }
 ```
 
-## 对顶堆（动态求第k大）
+## 对顶堆（动态求第$k$大）
 例题：https://codeforces.com/contest/1945/problem/F
 ```C++
 #include <bits/stdc++.h>
@@ -7167,7 +7166,7 @@ int main()
 }
 ```
 
-### 高精度乘高精度（O（n^2））
+### 高精度乘高精度$O(n^2)$
 
 ```C++
 #include<bits/stdc++.h>
@@ -7209,7 +7208,7 @@ int main()
 }
 ```
 
-### 高精度乘高精度O(nlogn)
+### 高精度乘高精度$O(nlogn)$
 luogu P1919 【模板】A*B Problem 升级版（FFT 快速傅里叶变换）
 ```C++
 const int N = 1e7 + 10;
@@ -7490,11 +7489,11 @@ void get_divisors(int n)
 ```
 
 ### 威尔逊定理
-$` (p - 1)! ≡ -1 (mod\ p) `$是p为质数的充分必要条件
+$(p - 1)! ≡ -1 (mod\ p) $是p为质数的充分必要条件
 
 推论：
-1. 若$` p `$是质数，$` (p - 1)! + 1 ≡ 0 (mod\ p) `$
-2. 若$` p `$是大于4的合数，$` (p - 1)! ≡ 0 (mod\ p) `$
+1. 若$ p $是质数，$ (p - 1)! + 1 ≡ 0 (mod\ p) $
+2. 若$ p $是大于4的合数，$ (p - 1)! ≡ 0 (mod\ p) $
 
 hdu 2973
 ```c++
@@ -7624,14 +7623,14 @@ signed main() {
 
 ### 裴蜀定理
 特别地，一定存在整数 $x$ 和 $y$ 的解，使得 $ax+by=gcd(a,b)$ 成立。
-它的一个重要推论为：a,b互质的充分必要条件是存在整数 $x$ , $y$ 使 $ax+by=1$ ; 
+它的一个重要推论为：$a$,$b$互质的充分必要条件是存在整数 $x$ , $y$ 使 $ax+by=1$ ; 
 或者说对于方程 $ax+by=1$ 只有整数 $a$ 和 $b$ 互质时，方程才有整数解 $x,y$ 
 
 
 ### 欧拉定理&费马小定理
 
 
-定义：对任意两个正整数 $a$ , $n$ ,如果两者互质，那么 $a^{φ(n)} ≡ 1(mod \ n)$
+定义：对任意两个正整数 $a$ , $n$ ,如果两者互质 $gcd(a, p) = 1$，那么 $a^{φ(n)} ≡ 1(mod \ n)$
 
 若存在整数 $a$ , $p$
 
@@ -7643,7 +7642,10 @@ $p$ 为质数, 那么 $a^{p-1}≡ 1(mod \ p)$
 ### 乘法逆元
 
 欧拉定理 $a^{p-1} ≡ 1(mod \ p)$
-对于任意互质的 $a$ , $p$ 恒成立。
+对于任意互质的 $a$ , $p$ 恒成立。$gcd(a, p) = 1$
+
+否则没有逆元！
+
 欧拉定理用来求逆元用的是欧拉定理的一个推论：
 $a * a ^ {φ(p) - 1} ≡ 1(mod \ p)$
 由于 $a * a^{-1} ≡ 1(mod \ p)$ 
@@ -7674,7 +7676,9 @@ $φ(p) = p - 1$
 
     若 $b >= φ(p)$ , $a ^ {b} \ mod \ p = a ^ {b \ mod \ φ(p) + φ(p)} \ mod \ p$
 
-### 除法取模
+### 除法取模($gcd(a, p) = 1$)
+
+#### 快速幂（$p$是质数）
 
 ```C++
 int qmi(int a, int b, int p){
@@ -7693,12 +7697,27 @@ int inv(int x) {
 }
 ```
 
+#### exgcd($p$是一般数)
+
+```c++
+void Exgcd(ll a, ll b, ll &x, ll &y) {
+    if (!b) x = 1, y = 0$
+    else Exgcd(b, a % b, y, x), y -= a / b * x;
+}
+int main() {
+    ll x, y;
+    Exgcd (a, p, x, y);
+    x = (x % p + p) % p;
+    printf ("%d\n", x); //x是a在mod p下的逆元
+}
+```
+
 
 
 ### 线性同余方程
-${a * x ≡ b (mod\  m) \iff a * x (mod\  m) m ≡ b}$
+${a * x ≡ b (mod\  m) \iff a  x (mod\  m) \ m ≡ b}$
 
-当 $b = 1$时，$` x `$ 为 ${a}$ 的乘法逆元
+当 $b = 1$时，$ x $ 为 ${a}$ 的乘法逆元
 
 ```c++
 void solve() {
@@ -7712,11 +7731,313 @@ void solve() {
 }
 ```
 
+### 线性同余方程组
+
+求解线性同余方程组$x$的最小非负整数解
+
+#### 中国剩余定理（CRT)
+
+$m_{1}, m_{2},...,m_{i}$两两互质
+
+```c++
+#include <bits/stdc++.h>
+using namespace std;
+#define int long long
+#define ull unsigned long long
+#define all(x) x.begin(), x.end()
+#define vi vector
+#define pb push_back
+#define pii pair<int, int>
+#define x first
+#define y second
+#define endl '\n'
+
+// inline int read() {
+//     register int x = 0, t = 1;
+//     register char ch = getchar(); 
+//     while (ch < '0'|| ch > '9'){
+//         if (ch == '-')
+//             t = -1;
+//         ch = getchar();
+//     }
+//     while (ch >= '0' && ch <= '9'){
+//         x = (x << 1) + (x << 3) + (ch ^ 48);  
+//         ch = getchar();
+//     }
+//     return x * t;
+// }
+
+void print128(__int128_t x) {
+    if (x < 0)
+        putchar('-'), x = -x;
+    if (x > 9)
+        print128(x / 10);
+    putchar(x % 10 + '0');
+}
+
+inline int read() {
+    int c;
+    cin >> c;
+    return c;
+}
+
+inline void readn(int a[], int n) {
+    for_each(a + 1, a + n + 1, [](int &x) { cin >> x; });
+}
+inline void printn(int a[], int n) {
+    for_each(a + 1, a + n + 1, [](int &x) { cout << x << ' '; });
+    cout << endl;
+}
+template <typename T, typename... Args>
+void print(const T &first, const Args &...args) {
+    cout << first;
+    ((cout << ' ' << args), ...);
+    cout << endl;
+}
+template <typename T, typename... Args>
+void eprint(const T &first, const Args &...args) {
+    cerr << '*';
+    cerr << first;
+    ((cerr << ' ' << args), ...);
+    cerr << endl;
+}
+#define eprintn(a, n)                                                          \
+    {                                                                          \
+        cerr << #a << ' ';                                                     \
+        for (int i = 1; i <= n; i++)                                           \
+            cerr << (a)[i] << ' ';                                             \
+        cerr << endl;                                                          \
+    }
+
+
+int Sqrt(int x) {
+    assert(x >= 0);
+    int t = sqrt(x);
+    while ((t + 1) * (t + 1) <= x)
+        t++;
+    while (t * t > x)
+        t--;
+    return t;
+}
+
+char out[2][10] = {"NO", "YES"};
+const double eps = 1e-6;
+const int inf = 1e18;
+const int N = 1e6 + 10;
+const int M = N << 1;
+const int mod = 998244353;
+
+
+int exgcd(__int128_t a, int b, int &x, int &y) {
+    if (!b) {
+        x = 1;
+        y = 0;
+        return a;
+    }
+    int d, x1, y1;
+    d = exgcd(b, a % b, x1, y1);
+    x = y1,  y = x1 - a / b * y1;
+    return d;
+}
+
+int n;
+__int128_t crt(int m[], int r[]) {
+    __int128_t M = 1;
+    __int128_t ans = 0;
+    for (int i = 1; i <= n; i++) M *= m[i];
+    for (int i = 1; i <= n; i++) {
+        __int128_t c = M / m[i];
+        int x, y;
+        exgcd(c, m[i], x, y);
+        ans = (ans + r[i] * c * x % M) % M;
+    }
+    return (ans % M + M) % M;
+}
+
+int a[N], b[N];
+void solve() {
+    n = read();
+    for (int i = 1; i <= n; i++) {
+        cin >> a[i] >> b[i];
+    }
+
+    __int128_t x = crt(a, b);
+    print128(x);
+}
+
+signed main() {
+    ios::sync_with_stdio(false), cin.tie(nullptr);
+    // int T = 1;
+    // T = read();
+    // while (T--)
+        solve();
+
+    return 0;
+}
+```
+
+
+
+#### 扩展中国剩余定理（EXCRT）
+
+$m_{1}, m_{2},...,m_{i}$不一定两两互质
+
+```c++
+#include <bits/stdc++.h>
+using namespace std;
+#define int long long
+#define ull unsigned long long
+#define all(x) x.begin(), x.end()
+#define vi vector
+#define pb push_back
+#define pii pair<int, int>
+#define x first
+#define y second
+#define endl '\n'
+
+// inline int read() {
+//     register int x = 0, t = 1;
+//     register char ch = getchar();
+//     while (ch < '0'|| ch > '9'){
+//         if (ch == '-')
+//             t = -1;
+//         ch = getchar();
+//     }
+//     while (ch >= '0' && ch <= '9'){
+//         x = (x << 1) + (x << 3) + (ch ^ 48);
+//         ch = getchar();
+//     }
+//     return x * t;
+// }
+
+void print128(__int128_t x) {
+    if (x < 0)
+        putchar('-'), x = -x;
+    if (x > 9)
+        print128(x / 10);
+    putchar(x % 10 + '0');
+}
+
+inline int read() {
+    int c;
+    cin >> c;
+    return c;
+}
+
+inline void readn(int a[], int n) {
+    for_each(a + 1, a + n + 1, [](int &x) { cin >> x; });
+}
+inline void printn(int a[], int n) {
+    for_each(a + 1, a + n + 1, [](int &x) { cout << x << ' '; });
+    cout << endl;
+}
+template <typename T, typename... Args>
+void print(const T &first, const Args &...args) {
+    cout << first;
+    ((cout << ' ' << args), ...);
+    cout << endl;
+}
+template <typename T, typename... Args>
+void eprint(const T &first, const Args &...args) {
+    cerr << '*';
+    cerr << first;
+    ((cerr << ' ' << args), ...);
+    cerr << endl;
+}
+#define eprintn(a, n)                                                          \
+    {                                                                          \
+        cerr << #a << ' ';                                                     \
+        for (int i = 1; i <= n; i++)                                           \
+            cerr << (a)[i] << ' ';                                             \
+        cerr << endl;                                                          \
+    }
+
+int Sqrt(int x) {
+    assert(x >= 0);
+    int t = sqrt(x);
+    while ((t + 1) * (t + 1) <= x)
+        t++;
+    while (t * t > x)
+        t--;
+    return t;
+}
+
+char out[2][10] = {"NO", "YES"};
+const double eps = 1e-6;
+const int inf = 1e18;
+const int N = 1e6 + 10;
+const int M = N << 1;
+const int mod = 998244353;
+int exgcd(__int128_t a, __int128_t b, __int128_t &x, __int128_t &y) {
+    if (!b) {
+        x = 1;
+        y = 0;
+        return a;
+    }
+    __int128_t d, x1, y1;
+    d = exgcd(b, a % b, x1, y1);
+    x = y1,  y = x1 - a / b * y1;
+    return d;
+}
+
+int n;
+
+__int128_t excrt(__int128_t m[], __int128_t r[]) {
+    __int128_t m1, m2, r1, r2, p, q;
+    m1 = m[1], r1 = r[1];
+    for (int i = 2; i <= n; i++) {
+        m2 = m[i], r2 = r[i];
+        int d = exgcd(m1, m2, p, q);
+        if ((r2 - r1) % d) return -1;
+        p = p * (r2 - r1) / d;
+        p = (p % (m2 / d) + m2 / d) % (m2 / d);
+        r1 = m1 * p + r1;
+        m1 = m1 * m2 / d; 
+    }
+    return (r1 % m1 + m1) % m1;
+}
+
+__int128_t a[N], b[N];
+void solve() {
+    n = read();
+    for (int i = 1; i <= n; i++) {
+        a[i] = read();
+        b[i] = read();
+    }
+    print128(excrt(a, b));
+}
+
+signed main() {
+    ios::sync_with_stdio(false), cin.tie(nullptr);
+    // int T = 1;
+    // T = read();
+    // while (T--)
+    solve();
+
+    return 0;
+}
+```
+
+### bsgs
+
+```c++
+```
+
+### exbsgs
+
+```c++
+```
+
+
+
 ## 组合数学
 
 ### 排列组合
 #### 组合数
 ##### $dp$
+
+$O(n^2)$
+
 ```C++
 const int N = 1e3 + 10;
 const int mod = 998244353;
@@ -7731,7 +8052,10 @@ void init() {
 }
 ```
 
-##### 预处理法
+##### 快速幂
+
+$O(nlogp)$
+
 ```C++
 const int N = 1e6 + 10;
 const int mod = 998244353;
@@ -7762,7 +8086,10 @@ int C(int n, int r) {
 }
 ```
 
-##### Lucas定理
+##### $Lucas$定理
+
+$n <= 1e5, m <= 1e5, p <= 1e5$
+
 模板题：https://www.luogu.com.cn/problem/P3807
 ```C++
 #include <bits/stdc++.h>
@@ -7828,136 +8155,264 @@ signed main() {
 } 
 ```
 
-##### 十二重计数法
+#### 十二重计数法
 ```C++
 #include <bits/stdc++.h>
+
 using namespace std;
-#define IOS ios::sync_with_stdio(false),cin.tie(nullptr)
-#define rep(i, x, y) for(int i=(x), _=(y);i<=_;i++)
-#define rrep(i, x, y) for(int i=(x), _=(y);i>=_;i--)
-#define all(x) x.begin(),x.end()
-#define PII pair<int, int>
-#define x first
-#define y second
-#define ll long long
-#define int long long
-#define endl '\n'
-using i64 = long long;
-int n, m; 
-const int N = 2e5 + 10;
+
+typedef long long ll;
+
+//{{{ FAST IO
+const int __SIZE = 1 << 18;
+char ibuf[__SIZE], *iS, *iT;
+
+#define ge (iS == iT ? (iT = (iS = ibuf) + fread(ibuf, 1, __SIZE, stdin), (iS == iT ? EOF : *iS++)) : *iS++)
+#define ri read_int()
+#define rl read_ll()
+#define FILE(s) freopen(s"in", "r", stdin), freopen(s"out", "w", stdout)
+
+template<typename T>
+inline void read(T &x) {
+	char ch, t = 0; x = 0;
+	while(!isdigit(ch = ge)) t |= ch == '-';
+	while(isdigit(ch)) x = x * 10 + (ch ^ 48), ch = ge;
+	x = t ? -x : x;
+}
+inline int read_int() { int x; return read(x), x; }
+inline ll read_ll() { ll x; return read(x), x; }
+//}}}
+
+template<typename T> inline void chkmin(T&a, T b) { a = a < b ? a : b; }
+template<typename T> inline void chkmax(T&a, T b) { a = a > b ? a : b; }
+
+const int MAXN = 530010;
 const int mod = 998244353;
-int fac[N], invfac[N];
-int qmi(int a, int b, int p){
-    a %= p;
-    int res = 1;
-    while (b) {     
-        if(b & 1) res = res * a % p;
-        b >>= 1;
-        a = a * a % p;
-    }
-    return res;
+
+inline int Mod(int x) { return x >= mod ? x - mod : x; }
+inline void Add(int &x, int y) { x += y, x -= x >= mod ? mod : 0; }
+
+int n, m;
+
+int fac[MAXN];
+int inv[MAXN];
+int ifac[MAXN];
+
+int tN;
+int N, InvN;
+int p[MAXN];
+int G[MAXN];
+int S[MAXN];
+int F[MAXN];
+
+int A[MAXN];
+int B[MAXN];
+int tA[MAXN];
+int tB[MAXN];
+int tC[MAXN];
+int tD[MAXN];
+
+//{{{ Math And Prework
+inline int fsp(int x, int k = mod - 2) {
+	int s = 1;
+	while(k) {
+		if(k & 1) s = 1LL * s * x % mod;
+		x = 1LL * x * x % mod, k >>= 1;
+	} return s;
 }
-int inv(int x) {
-    return qmi(x, mod - 2, mod);
-}
-void init() {
-    fac[0] = invfac[0] = 1;
-    for (int i = 1; i < N; i++) {
-        fac[i] = fac[i - 1] * i % mod;
-        invfac[i] = invfac[i - 1] * inv(i) % mod;
-    }
-}
-int C(int n, int r) {
-    if (r > n) return 0;
-    return fac[n] * invfac[r] % mod * invfac[n - r] % mod;
+
+inline int C(int n, int m) { return n < m ? 0 : 1LL * fac[n] * ifac[m] % mod * ifac[n - m] % mod; }
+
+inline void Combine_init(int n) {
+	fac[0] = ifac[0] = fac[1] = ifac[1] = inv[1] = 1;
+	for(int i = 2; i <= n; i++) {
+		fac[i] = 1LL * fac[i - 1] * i % mod;
+		inv[i] = 1LL * (mod - mod / i) * inv[mod % i] % mod;
+		ifac[i] = 1LL * ifac[i - 1] * inv[i] % mod;
+	}
 }
 
-//I：球之间互不相同，盒子之间互不相同。
-void solve1(){
-    int ans = qmi(m, n, mod);
-    cout << ans << '\n';
-}   
+inline void Prework() {
+	tN = 524288;
+	int mul = (G[0] = 1, G[1] = fsp(3, (mod - 1) / tN));
+	for(int i = 2; i < tN; i++) G[i] = 1LL * G[i - 1] * mul % mod;
+}
 
+inline void NTT_init(int n) {
+	N = 1; while(N <= (n << 1)) N <<= 1; InvN = fsp(N);
+	for(int i = 1; i < N; i++) p[i] = (p[i >> 1] >> 1) | (i & 1 ? N >> 1 : 0);
+}
 
-//II：球之间互不相同，盒子之间互不相同，每个盒子至多装一个球
-void solve2(){
-    int ans = 1;
-    for (int i = 0; i < n; i++) {
-        ans = ans * (m - i) % mod;
-    }
-    cout << ans << '\n';
-}   
+inline void NTT(int a[], int k) {
+	for(int i = 1; i < N; i++)
+		if(i < p[i]) swap(a[i], a[p[i]]);
+	for(int l = 2, delta = tN >> 1; l <= N; l <<= 1, delta >>= 1) {
+		int len = l >> 1;
+		for(int i = 0; i < N; i += l) {
+			int *g = G;
+			for(int j = i; j < i + len; j++) {
+				int tmp = 1LL * (*g) * a[j + len] % mod;
+				a[j + len] = Mod(a[j] + mod - tmp);
+				a[j] = Mod(a[j] + tmp);
+				g += delta;
+			}
+		}
+	} if(k == 1) return ; reverse(a + 1, a + N);
+	for(int i = 0; i < N; i++) a[i] = 1LL * a[i] * InvN % mod;
+}
 
+inline void GetInv(int A[], int B[], int n) {
+	if(n == 1) return B[0] = fsp(A[0]), void();
+	GetInv(A, B, (n + 1) >> 1), NTT_init(n);
+	for(int i = 0; i < n; i++) tA[i] = A[i];
+	for(int i = n; i < N; i++) tA[i] = 0;
+	NTT(tA, 1), NTT(B, 1);
+	for(int i = 0; i < N; i++)
+		B[i] = 1LL * (2 + 1LL * (mod - tA[i]) * B[i]) % mod * B[i] % mod;
+	NTT(B, -1); for(int i = n; i < N; i++) B[i] = 0;
+}
 
-//III：球之间互不相同，盒子之间互不相同，每个盒子至少装一个球。
-//考虑容斥：枚举多少个盒子空了，然后剩下的部分就是第一个部分了。
-void solve3(){
-    int ans = 0;
-    for (int i = 0; i < m; i++) {
-        ans += ((i & 1? mod - C(m, i): C(m, i)) * qmi(m - i, n, mod)) % mod;
-        ans %= mod;
-    }
-    cout << ans << '\n';
-}   
+inline void GetDao(int A[], int B[], int n) {
+	for(int i = 1; i < n; i++) B[i - 1] = 1LL * A[i] * i % mod; B[n - 1] = 0;
+}
 
-//IV：球之间互不相同，盒子全部相同。
-//考虑第二类斯特林数
-int Stirling[N];
-void solve4(){
-    
-}   
-void solve5(){
+inline void GetInt(int A[], int B[], int n) {
+	for(int i = n - 1; i; --i) B[i] = 1LL * A[i - 1] * inv[i] % mod; B[0] = 0;
+}
 
-}   
-void solve6(){
+inline void GetLn(int A[], int B[], int n) {
+	GetDao(A, B, n), GetInv(A, tB, n), NTT(B, 1), NTT(tB, 1);
+	for(int i = 0; i < N; i++) tB[i] = 1LL * B[i] * tB[i] % mod;
+	NTT(tB, -1), GetInt(tB, B, n); for(int i = n; i < N; i++) B[i] = 0;
+	for(int i = 0; i < N; i++) tB[i] = 0;
+}
 
-}   
-void solve7(){
+inline void GetExp(int A[], int B[], int n) {
+	if(n == 1) return B[0] = 1, void();
+	GetExp(A, B, (n + 1) >> 1), GetLn(B, tC, n), NTT_init(n);
+	for(int i = 0; i < n; i++) tD[i] = A[i];
+	for(int i = n; i < N; i++) tD[i] = 0;
+	NTT(B, 1), NTT(tC, 1), NTT(tD, 1);
+	for(int i = 0; i < N; i++) B[i] = 1LL * B[i] * (mod + 1 + tD[i] - tC[i]) % mod;
+	NTT(B, -1); for(int i = n; i < N; i++) B[i] = 0;
+	for(int i = 0; i < N; i++) tC[i] = 0;
+}
 
-}   
-void solve8(){
+inline void init(int n, int m) {
+	Prework(), Combine_init(n + m), NTT_init(max(n, m));
+	for(int i = 0; i <= n; i++) {
+		A[i] = i & 1 ? mod - ifac[i] : ifac[i];
+		B[i] = 1LL * fsp(i, n) * ifac[i] % mod;
+	} NTT(A, 1), NTT(B, 1);
+	for(int i = 0; i < N; i++) A[i] = 1LL * A[i] * B[i] % mod;
+	NTT(A, -1);
+	for(int i = 0; i <= n; i++) S[i] = A[i];
+	memset(A, 0, sizeof(A));
+	for(int i = 1; i <= m; i++)
+		for(int j = i; j <= n; j += i)
+			Add(A[j], mod - inv[j / i]);
+	memset(B, 0, sizeof(B)), GetExp(A, B, n + 1);
+	memset(A, 0, sizeof(A)), GetInv(B, A, n + 1);
+	for(int i = 0; i <= n; i++) F[i] = A[i];
+}
+//}}}
 
-}   
-void solve9(){
+//{{{ solve01
+inline int solve01() { return fsp(m, n); }
+//}}}
 
-}   
-void solve10(){
+//{{{ solve02
+inline int solve02() {
+	int res = 1;
+	for(int i = 0; i < n; i++)
+		res = 1LL * res * (m - i) % mod;
+	return res;
+}
+//}}}
 
-}   
-void solve11(){
+//{{{ solve03
+inline int solve03() {
+	int res = 0;
+	for(int i = 0; i < m; i++)
+		res = (res + 1LL * (i & 1 ? mod - C(m, i) : C(m, i)) * fsp(m - i, n)) % mod;
+	return res;
+}
+//}}}
 
-}   
+//{{{ solve04
+inline int solve04() {
+	int res = 0;
+	for(int i = 1; i <= m; i++) Add(res, S[i]);
+	return res;
+}
+//}}}
 
-void solve12(){
+//{{{ solve05
+inline int solve05() { return n <= m; }
+//}}}
 
-}   
+//{{{ solve06
+inline int solve06() { return S[m]; }
+//}}}
 
-signed main() {
-    IOS;
-    init();
-    cin >> n >> m;
-    solve1();
-    solve2();
-    solve3();
-    solve4();
-    solve5();
-    solve6();
-    solve7();
-    solve8();
-    solve9();
-    solve10();
-    solve11();
-    solve12();
+//{{{ solve07
+inline int solve07() { return C(n + m - 1, m - 1); }
+//}}}
 
-    return 0;
-} 
+//{{{ solve08
+inline int solve08() { return C(m, n); }
+//}}}
+
+//{{{ solve09
+inline int solve09() { return C(n - 1, m - 1); }
+//}}}
+
+//{{{ solve10
+inline int solve10() { return F[n]; }
+//}}}
+
+//{{{ solve11
+inline int solve11() { return n <= m; }
+//}}}
+
+//{{{ solve12
+inline int solve12() { return n >= m ? F[n - m] : 0; }
+//}}}
+
+int main() {
+#ifdef LOCAL
+	FILE("");
+#endif
+	n = ri, m = ri, init(n, m);
+	cout << solve01() << endl;
+	cout << solve02() << endl;
+	cout << solve03() << endl;
+	cout << solve04() << endl;
+	cout << solve05() << endl;
+	cout << solve06() << endl;
+	cout << solve07() << endl;
+	cout << solve08() << endl;
+	cout << solve09() << endl;
+	cout << solve10() << endl;
+	cout << solve11() << endl;
+	cout << solve12() << endl;
+	return 0;
+}
 ```
 
 ### 容斥原理与鸽巢原理
 
+```c++
+```
+
+
+
 ## 线性代数
 
 ### 矩阵快速幂加速递推
+
+将递推式转换成矩阵乘法形式
+
 例题： https://codeforces.com/group/mey3UXMrvB/contest/515223/problem/B
 ```C++
 struct mat {
@@ -8467,9 +8922,9 @@ void solve() {
     }
 }
 ```
-## bitset
+## $bitset$
 
-### bitset异或
+### $bitset$异或
 bitset计算一次的复杂度$ O( n / 32 )$
 ```C++
 #include <bits/stdc++.h>
@@ -8520,7 +8975,7 @@ signed main() {
  
 ```
 
-### bitset加速背包
+### $bitset$加速背包
 
 ```C++
 #include <bits/stdc++.h>
@@ -8680,7 +9135,7 @@ signed main() {
 }
 ```
 
-### Dinkelbach
+### $Dinkelbach$
 Dinkelbach 算法的大概思想是每次用上一轮的答案当做新的 L 来输入，不断地迭代，直至答案收敛。
 
 # 离线算法
@@ -8964,7 +9419,7 @@ signed main() {
 ```
 
 ### 树上莫队
-时间复杂度 O(n^(5/3))
+时间复杂度$ O(n^{3/5})$
 ```C++
 #include <iostream>
 #include <algorithm>
