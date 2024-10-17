@@ -118,6 +118,7 @@ Sum(子矩阵和) = b[x2][y2] - b[x2][y1- 1] - b[x1 - 1][y2] + b[x1 - 1][y1 - 1]
 
 二维差分：
 假设我们已经构建好了二维数组b[][] 的二维差分数组 a[][] ，现在要处理的是如何在a[][] 上加c,使其二维前缀和数组b[][]在指定的子矩阵内的所有元素都加上一个c 。
+
 ```c++
 #include <iostream>
 using namespace std;
@@ -8018,14 +8019,304 @@ signed main() {
 }
 ```
 
-### bsgs
+### 高次同余方程
+
+#### bsgs
+
+求解高次方程
+
+给定整数$a, b, p$   
+
+ $gcd(a, p) = 1$
+
+求满足$ a^x ≡ b (mod\ p) $的最小负非整数$x$
 
 ```c++
+#include <bits/stdc++.h>
+using namespace std;
+#define int long long
+#define ull unsigned long long
+#define all(x) x.begin(), x.end()
+#define vi vector
+#define pb push_back
+#define pii pair<int, int>
+#define x first
+#define y second
+#define endl '\n'
+
+// inline int read() {
+//     register int x = 0, t = 1;
+//     register char ch = getchar();
+//     while (ch < '0'|| ch > '9'){
+//         if (ch == '-')
+//             t = -1;
+//         ch = getchar();
+//     }
+//     while (ch >= '0' && ch <= '9'){
+//         x = (x << 1) + (x << 3) + (ch ^ 48);
+//         ch = getchar();
+//     }
+//     return x * t;
+// }
+
+// void print128(__int128_t x) {
+//     if (x < 0)
+//         putchar('-'), x = -x;
+//     if (x > 9)
+//         print128(x / 10);
+//     putchar(x % 10 + '0');
+// }
+
+inline int read() {
+    int c;
+    cin >> c;
+    return c;
+}
+
+inline void readn(int a[], int n) {
+    for_each(a + 1, a + n + 1, [](int &x) { cin >> x; });
+}
+inline void printn(int a[], int n) {
+    for_each(a + 1, a + n + 1, [](int &x) { cout << x << ' '; });
+    cout << endl;
+}
+template <typename T, typename... Args>
+void print(const T &first, const Args &...args) {
+    cout << first;
+    ((cout << ' ' << args), ...);
+    cout << endl;
+}
+template <typename T, typename... Args>
+void eprint(const T &first, const Args &...args) {
+    cerr << '*';
+    cerr << first;
+    ((cerr << ' ' << args), ...);
+    cerr << endl;
+}
+#define eprintn(a, n)                                                          \
+    {                                                                          \
+        cerr << #a << ' ';                                                     \
+        for (int i = 1; i <= n; i++)                                           \
+            cerr << (a)[i] << ' ';                                             \
+        cerr << endl;                                                          \
+    }
+
+int Sqrt(int x) {
+    assert(x >= 0);
+    int t = sqrt(x);
+    while ((t + 1) * (t + 1) <= x)
+        t++;
+    while (t * t > x)
+        t--;
+    return t;
+}
+
+char out[2][10] = {"NO", "YES"};
+const double eps = 1e-6;
+const int inf = 1e18;
+const int N = 1e6 + 10;
+const int M = N << 1;
+const int mod = 998244353;
+
+int bsgs(int a, int b, int p) {
+    a %= p;
+    b %= p;
+    if (b == 1) return 0;
+    int m = ceil(sqrt(p));
+    int t = b;
+    unordered_map<int, int> ump;
+    ump[b] = 0;
+    for (int j = 1; j < m; j++) {
+        t = t * a % p;
+        ump[t] = j;
+    }
+
+    int pw = 1;
+    for (int i = 1; i <= m; i++) pw = pw * a % p;
+    t = 1;
+    for (int i = 1; i <= m; i++) {
+        t = t * pw % p;
+        if (ump.count(t)) {
+            return i * m - ump[t];
+        }
+    }
+    return -1;
+}
+
+void solve() {
+    int p = read(), b = read(), n = read();
+    int ans = bsgs(b, n, p);
+    if (~ans) print(ans);
+    else print("no solution");
+}
+
+signed main() {
+    ios::sync_with_stdio(false), cin.tie(nullptr);
+    // int T = 1;
+    // T = read();
+    // while (T--)
+    solve();
+
+    return 0;
+}
 ```
 
-### exbsgs
+#### exbsgs
+
+$gcd(a, p) != 1$
 
 ```c++
+#include <bits/stdc++.h>
+using namespace std;
+#define int long long
+#define ull unsigned long long
+#define all(x) x.begin(), x.end()
+#define vi vector
+#define pb push_back
+#define pii pair<int, int>
+#define x first
+#define y second
+#define endl '\n'
+
+// inline int read() {
+//     register int x = 0, t = 1;
+//     register char ch = getchar();
+//     while (ch < '0'|| ch > '9'){
+//         if (ch == '-')
+//             t = -1;
+//         ch = getchar();
+//     }
+//     while (ch >= '0' && ch <= '9'){
+//         x = (x << 1) + (x << 3) + (ch ^ 48);
+//         ch = getchar();
+//     }
+//     return x * t;
+// }
+
+// void print128(__int128_t x) {
+//     if (x < 0)
+//         putchar('-'), x = -x;
+//     if (x > 9)
+//         print128(x / 10);
+//     putchar(x % 10 + '0');
+// }
+
+inline int read() {
+    int c;
+    cin >> c;
+    return c;
+}
+
+inline void readn(int a[], int n) {
+    for_each(a + 1, a + n + 1, [](int &x) { cin >> x; });
+}
+inline void printn(int a[], int n) {
+    for_each(a + 1, a + n + 1, [](int &x) { cout << x << ' '; });
+    cout << endl;
+}
+template <typename T, typename... Args>
+void print(const T &first, const Args &...args) {
+    cout << first;
+    ((cout << ' ' << args), ...);
+    cout << endl;
+}
+template <typename T, typename... Args>
+void eprint(const T &first, const Args &...args) {
+    cerr << '*';
+    cerr << first;
+    ((cerr << ' ' << args), ...);
+    cerr << endl;
+}
+#define eprintn(a, n)                                                          \
+    {                                                                          \
+        cerr << #a << ' ';                                                     \
+        for (int i = 1; i <= n; i++)                                           \
+            cerr << (a)[i] << ' ';                                             \
+        cerr << endl;                                                          \
+    }
+
+int Sqrt(int x) {
+    assert(x >= 0);
+    int t = sqrt(x);
+    while ((t + 1) * (t + 1) <= x)
+        t++;
+    while (t * t > x)
+        t--;
+    return t;
+}
+
+char out[2][10] = {"NO", "YES"};
+const double eps = 1e-6;
+const int inf = 1e18;
+const int N = 1e6 + 10;
+const int M = N << 1;
+const int mod = 998244353;
+
+int gcd(int a, int b) { return b == 0 ? a : gcd(b, a % b); }
+
+int exbsgs(int a, int b, int p) {
+    a %= p, b %= p;
+    if (b == 1 or p == 1)
+        return 0;
+    int d, k = 0, A = 1;
+    while (true) {
+        d = gcd(a, p);
+        if (d == 1)
+            break;
+        if (b % d)
+            return -1;
+        k++;
+        b /= d;
+        p /= d;
+        A = A * (a / d) % p;
+        if (A == b)
+            return k;
+    }
+
+    int m = ceil(sqrt(p));
+    int t = b;
+    unordered_map<int, int> ump;
+    ump[b] = 0;
+    for (int j = 1; j < m; j++) {
+        t = t * a % p;
+        ump[t] = j;
+    }
+
+    int pw = 1;
+    for (int i = 1; i <= m; i++)
+        pw = pw * a % p;
+    t = A;
+    for (int i = 1; i <= m; i++) {
+        t = t * pw % p;
+        if (ump.count(t)) {
+            return i * m - ump[t] + k;
+        }
+    }
+    return -1;
+}
+
+void solve(int a, int b, int p) {
+    int ans = exbsgs(a, b, p);
+    if (~ans)
+        print(ans);
+    else
+        print("No Solution");
+}
+
+signed main() {
+    ios::sync_with_stdio(false), cin.tie(nullptr);
+    // int T = 1;
+    // T = read();
+    // while (T--)
+    while (true) {
+        int a = read(), p = read(), b = read();
+        if (a + b + p == 0)
+            break;
+        solve(a, b, p);
+    }
+
+    return 0;
+}
 ```
 
 
@@ -8052,7 +8343,7 @@ void init() {
 }
 ```
 
-##### 快速幂
+##### 逆元
 
 $O(nlogp)$
 
@@ -8089,6 +8380,10 @@ int C(int n, int r) {
 ##### $Lucas$定理
 
 $n <= 1e5, m <= 1e5, p <= 1e5$
+
+$p$是质数
+
+时间复杂度$O(log_{p}n * log2_{2}p)$
 
 模板题：https://www.luogu.com.cn/problem/P3807
 ```C++
