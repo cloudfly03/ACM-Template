@@ -8452,246 +8452,229 @@ signed main() {
 
 #### 十二重计数法
 ```C++
-#include <bits/stdc++.h>
-
+#include<bits/stdc++.h>
 using namespace std;
+#define int long long
+#define uint unsigned long long
+#define ld long double
+#define pii pair<int,int>
+#define complex complex<ld>
+#define rand mt19937_64
+#define endl '\n'
+#define PI (ld)(3.141592653589793)
+#define INF (int)(1e8+1)
+#define MOD (int)(998244353)
+#define eps (ld)(1e-9)
+#define P (int)(998244353)
+#define G (int)(3)
+#define mpair(x,y) make_pair(x,y)
+#define all(x) x.begin(),x.end()
+#define lowbit(x) (x&-x)
 
-typedef long long ll;
-
-//{{{ FAST IO
-const int __SIZE = 1 << 18;
-char ibuf[__SIZE], *iS, *iT;
-
-#define ge (iS == iT ? (iT = (iS = ibuf) + fread(ibuf, 1, __SIZE, stdin), (iS == iT ? EOF : *iS++)) : *iS++)
-#define ri read_int()
-#define rl read_ll()
-#define FILE(s) freopen(s"in", "r", stdin), freopen(s"out", "w", stdout)
-
-template<typename T>
-inline void read(T &x) {
-	char ch, t = 0; x = 0;
-	while(!isdigit(ch = ge)) t |= ch == '-';
-	while(isdigit(ch)) x = x * 10 + (ch ^ 48), ch = ge;
-	x = t ? -x : x;
+int qpow(int base, int p) {
+    int ans = 1;
+    while (p) {
+        if (p & 1) ans = ans * base % P;
+        base = base * base % P;
+        p >>= 1;
+    }
+    return ans;
 }
-inline int read_int() { int x; return read(x), x; }
-inline ll read_ll() { ll x; return read(x), x; }
-//}}}
 
-template<typename T> inline void chkmin(T&a, T b) { a = a < b ? a : b; }
-template<typename T> inline void chkmax(T&a, T b) { a = a > b ? a : b; }
+int inv(int x) {
+    return qpow(x, P - 2);
+}
 
-const int MAXN = 530010;
-const int mod = 998244353;
+void NTT(vector<int>& A, const vector<int>& R, bool rev) {
+    int n = A.size();
+    for (int i = 0;i < n;++i)
+        if (i < R[i]) swap(A[i], A[R[i]]);
+    for (int m = 2;m <= n;m <<= 1) {
+        int g1 = qpow(rev ? inv(G) : G, (P - 1) / m);
+        for (int i = 0;i < n;i += m) {
+            int gk = 1;
+            for (int j = 0;j < m / 2;++j) {
+                int x = A[i + j], y = A[i + j + m / 2] * gk % P;
+                A[i + j] = (x + y) % P;
+                A[i + j + m / 2] = (x - y + P) % P;
+                gk = gk * g1 % P;
+            }
+        }
+    }
+    if (!rev) return;
+    int ni = inv(n);
+    for (auto& v : A) (v *= ni) %= P;
+}
 
-inline int Mod(int x) { return x >= mod ? x - mod : x; }
-inline void Add(int &x, int y) { x += y, x -= x >= mod ? mod : 0; }
+
+vector<int> polyadjust(const vector<int>& a) {
+    int n = 0;
+    for (int i = a.size();i >= 0;--i)
+        if (a[i]) { n = i;break; }
+    vector<int> ans;
+    ans.assign(a.begin(), a.begin() + n);
+    return ans;
+}
+
+vector<int> polymul(const vector<int>& a, const vector<int>& b) {
+    int n = 1;
+    while (n < a.size() + b.size()) n <<= 1;
+    vector<int> A(n), B(n), R(n);
+    for (int i = 0;i < n;++i) R[i] = R[i / 2] / 2 + (i & 1 ? n / 2 : 0);
+    for (int i = 0;i < a.size();++i) A[i] = a[i];
+    for (int i = 0;i < b.size();++i) B[i] = b[i];
+    NTT(A, R, 0);NTT(B, R, 0);
+    for (int i = 0;i < n;++i) A[i] = A[i] * B[i] % P;
+    NTT(A, R, 1);
+    A.resize(a.size() + b.size() - 1);
+    return A;
+}
+
+vector<int> polyinv(const vector<int>& f) {
+    int n = 1, ni, sz = f.size();
+    while (n < sz) n <<= 1;
+    vector<int> ans{ inv(f[0]) };
+    for (int m = 2; m <= n;m <<= 1) {
+        vector<int> R(m << 1), a(m << 1);
+        ans.resize(m << 1, 0);
+        for (int i = 0;i < m << 1;++i) R[i] = R[i / 2] / 2 + (i & 1 ? m : 0);
+        for (int i = 0;i < min(m, sz);++i) a[i] = f[i];
+        NTT(ans, R, 0), NTT(a, R, 0);
+        for (int i = 0; i < m << 1; ++i)
+            ans[i] = ans[i] * (2ll - ans[i] * a[i] % P + P) % P;
+        NTT(ans, R, 1);
+        ans.resize(m);
+    }
+    ans.resize(sz);
+    return ans;
+}
+
+vector<int> polydiff(const vector<int>& f) {
+    int n = f.size() - 1;
+    vector<int> ans(n);
+    for (int i = n;i;--i) ans[i - 1] = f[i] * i % P;
+    return ans;
+}
+
+vector<int> polyinte(const vector<int>& f) {
+    int n = f.size() + 1;
+    vector<int> ans(n);
+    for (int i = 0;i < n - 1;++i) ans[i + 1] = f[i] * inv(i + 1) % P;
+    return ans;
+}
+
+vector<int> polyln(const vector<int>& f) {
+    vector<int> ans = polymul(polydiff(f), polyinv(f));
+    ans.resize(f.size() - 1);
+    return polyinte(ans);
+}
+
+vector<int> polyexp(const vector<int>& f) {
+    int n = 1, ni, sz = f.size();
+    while (n < sz) n <<= 1;
+    vector<int> ans{ 1 };
+    for (int m = 2; m <= n;m <<= 1) {
+        vector<int> a(m << 1);
+        ans.resize(m << 1, 0);
+        for (int i = 0;i < min(m, sz);++i) a[i] = f[i];
+        vector<int> b = polyln(ans);
+        for (int i = 0;i < m << 1;++i) b[i] = -b[i] + a[i];
+        (b[0] += 1) %= P;
+        ans = polymul(ans, b);
+        ans.resize(m);
+    }
+    ans.resize(sz);
+    return ans;
+}
+
+vector<int> polypow(const vector<int>& f, int p, int sz) {
+    vector<int> ans = polyadjust(f);
+    ans.resize((ans.size() - 1) * p + 1);
+    ans = polyln(ans);
+    for (auto& v : ans) (v *= p) %= P;
+    ans = polyexp(ans);
+    return ans;
+}
+
+const int N = 2e5 + 1;
 
 int n, m;
+int p[N<<1];
 
-int fac[MAXN];
-int inv[MAXN];
-int ifac[MAXN];
+vector<int> alpha, bet;
 
-int tN;
-int N, InvN;
-int p[MAXN];
-int G[MAXN];
-int S[MAXN];
-int F[MAXN];
+void init() {
+    p[0] = 1;
+    for (int i = 1;i < N<<1;++i)
+        p[i] = p[i - 1] * i % MOD;
 
-int A[MAXN];
-int B[MAXN];
-int tA[MAXN];
-int tB[MAXN];
-int tC[MAXN];
-int tD[MAXN];
+    alpha.resize(N);
+    bet.resize(N);
 
-//{{{ Math And Prework
-inline int fsp(int x, int k = mod - 2) {
-	int s = 1;
-	while(k) {
-		if(k & 1) s = 1LL * s * x % mod;
-		x = 1LL * x * x % mod, k >>= 1;
-	} return s;
+    for (int i = 0;i < N;++i) {
+        alpha[i] = (i & 1 ? -1 : 1) * inv(p[i]) % P;
+        bet[i] = qpow(i, n) * inv(p[i]) % P;
+    }
+
+    alpha = polymul(alpha, bet);
 }
 
-inline int C(int n, int m) { return n < m ? 0 : 1LL * fac[n] * ifac[m] % mod * ifac[n - m] % mod; }
-
-inline void Combine_init(int n) {
-	fac[0] = ifac[0] = fac[1] = ifac[1] = inv[1] = 1;
-	for(int i = 2; i <= n; i++) {
-		fac[i] = 1LL * fac[i - 1] * i % mod;
-		inv[i] = 1LL * (mod - mod / i) * inv[mod % i] % mod;
-		ifac[i] = 1LL * ifac[i - 1] * inv[i] % mod;
-	}
+void solve() {
+    cin >> n >> m;
+    init();
+    //1 ok
+    cout << qpow(m, n) << endl;
+    //2 ok 组合数
+    if (n > m) cout << 0 << endl;
+    else cout << p[m] * inv(p[m - n]) % MOD << endl;
+    //3 ok 第二类斯特林数 + 排列
+    cout << alpha[m] * p[m] % MOD << endl;
+    //4 ok 第二类斯特林数 累和
+    int res4 = 0;
+    for (int i = 1;i <= m;++i)
+        res4 = (res4 + alpha[i]) % MOD;
+    cout << res4 << endl;
+    //5 ok 瞪眼
+    if (n > m) cout << 0 << endl;
+    else cout << 1 << endl;
+    //6 ok 第二类斯特林数
+    cout << alpha[m] << endl;
+    //7 ok 隔板法
+    cout << p[n + m - 1] * inv(p[m - 1]) % MOD * inv(p[n]) % MOD << endl;
+    //8 ok C(m,n)
+    if (n > m) cout << 0 << endl;
+    else cout << p[m] * inv(p[n]) % MOD * inv(p[m - n]) % MOD << endl;
+    //9 ok 隔板法
+    if (n < m) cout << 0 << endl;
+    else cout << p[n - 1] * inv(p[n - m]) % MOD * inv(p[m - 1]) % MOD << endl;
+    //10
+    vector<int> a(n + 1);
+    for (int i = 1;i <= m;++i)
+        for (int j = i;j <= n;j += i)
+            a[j] += inv(j / i);
+    vector<int> res = polyexp(a);
+    cout << res[n] << endl;
+    //11 ok 瞪眼
+    if (n > m) cout << 0 << endl;
+    else cout << 1 << endl;
+    //12
+    if (n < m) cout << 0 << endl;
+    else cout << res[n-m] << endl;
 }
 
-inline void Prework() {
-	tN = 524288;
-	int mul = (G[0] = 1, G[1] = fsp(3, (mod - 1) / tN));
-	for(int i = 2; i < tN; i++) G[i] = 1LL * G[i - 1] * mul % mod;
-}
+signed main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    cout.tie(nullptr);
 
-inline void NTT_init(int n) {
-	N = 1; while(N <= (n << 1)) N <<= 1; InvN = fsp(N);
-	for(int i = 1; i < N; i++) p[i] = (p[i >> 1] >> 1) | (i & 1 ? N >> 1 : 0);
-}
+    // freopen("test.in", "r", stdin);
+    // freopen("test.out", "w", stdout);
 
-inline void NTT(int a[], int k) {
-	for(int i = 1; i < N; i++)
-		if(i < p[i]) swap(a[i], a[p[i]]);
-	for(int l = 2, delta = tN >> 1; l <= N; l <<= 1, delta >>= 1) {
-		int len = l >> 1;
-		for(int i = 0; i < N; i += l) {
-			int *g = G;
-			for(int j = i; j < i + len; j++) {
-				int tmp = 1LL * (*g) * a[j + len] % mod;
-				a[j + len] = Mod(a[j] + mod - tmp);
-				a[j] = Mod(a[j] + tmp);
-				g += delta;
-			}
-		}
-	} if(k == 1) return ; reverse(a + 1, a + N);
-	for(int i = 0; i < N; i++) a[i] = 1LL * a[i] * InvN % mod;
-}
+    int t = 1;
+    //cin >> t;
+    while (t--) solve();
 
-inline void GetInv(int A[], int B[], int n) {
-	if(n == 1) return B[0] = fsp(A[0]), void();
-	GetInv(A, B, (n + 1) >> 1), NTT_init(n);
-	for(int i = 0; i < n; i++) tA[i] = A[i];
-	for(int i = n; i < N; i++) tA[i] = 0;
-	NTT(tA, 1), NTT(B, 1);
-	for(int i = 0; i < N; i++)
-		B[i] = 1LL * (2 + 1LL * (mod - tA[i]) * B[i]) % mod * B[i] % mod;
-	NTT(B, -1); for(int i = n; i < N; i++) B[i] = 0;
-}
-
-inline void GetDao(int A[], int B[], int n) {
-	for(int i = 1; i < n; i++) B[i - 1] = 1LL * A[i] * i % mod; B[n - 1] = 0;
-}
-
-inline void GetInt(int A[], int B[], int n) {
-	for(int i = n - 1; i; --i) B[i] = 1LL * A[i - 1] * inv[i] % mod; B[0] = 0;
-}
-
-inline void GetLn(int A[], int B[], int n) {
-	GetDao(A, B, n), GetInv(A, tB, n), NTT(B, 1), NTT(tB, 1);
-	for(int i = 0; i < N; i++) tB[i] = 1LL * B[i] * tB[i] % mod;
-	NTT(tB, -1), GetInt(tB, B, n); for(int i = n; i < N; i++) B[i] = 0;
-	for(int i = 0; i < N; i++) tB[i] = 0;
-}
-
-inline void GetExp(int A[], int B[], int n) {
-	if(n == 1) return B[0] = 1, void();
-	GetExp(A, B, (n + 1) >> 1), GetLn(B, tC, n), NTT_init(n);
-	for(int i = 0; i < n; i++) tD[i] = A[i];
-	for(int i = n; i < N; i++) tD[i] = 0;
-	NTT(B, 1), NTT(tC, 1), NTT(tD, 1);
-	for(int i = 0; i < N; i++) B[i] = 1LL * B[i] * (mod + 1 + tD[i] - tC[i]) % mod;
-	NTT(B, -1); for(int i = n; i < N; i++) B[i] = 0;
-	for(int i = 0; i < N; i++) tC[i] = 0;
-}
-
-inline void init(int n, int m) {
-	Prework(), Combine_init(n + m), NTT_init(max(n, m));
-	for(int i = 0; i <= n; i++) {
-		A[i] = i & 1 ? mod - ifac[i] : ifac[i];
-		B[i] = 1LL * fsp(i, n) * ifac[i] % mod;
-	} NTT(A, 1), NTT(B, 1);
-	for(int i = 0; i < N; i++) A[i] = 1LL * A[i] * B[i] % mod;
-	NTT(A, -1);
-	for(int i = 0; i <= n; i++) S[i] = A[i];
-	memset(A, 0, sizeof(A));
-	for(int i = 1; i <= m; i++)
-		for(int j = i; j <= n; j += i)
-			Add(A[j], mod - inv[j / i]);
-	memset(B, 0, sizeof(B)), GetExp(A, B, n + 1);
-	memset(A, 0, sizeof(A)), GetInv(B, A, n + 1);
-	for(int i = 0; i <= n; i++) F[i] = A[i];
-}
-//}}}
-
-//{{{ solve01
-inline int solve01() { return fsp(m, n); }
-//}}}
-
-//{{{ solve02
-inline int solve02() {
-	int res = 1;
-	for(int i = 0; i < n; i++)
-		res = 1LL * res * (m - i) % mod;
-	return res;
-}
-//}}}
-
-//{{{ solve03
-inline int solve03() {
-	int res = 0;
-	for(int i = 0; i < m; i++)
-		res = (res + 1LL * (i & 1 ? mod - C(m, i) : C(m, i)) * fsp(m - i, n)) % mod;
-	return res;
-}
-//}}}
-
-//{{{ solve04
-inline int solve04() {
-	int res = 0;
-	for(int i = 1; i <= m; i++) Add(res, S[i]);
-	return res;
-}
-//}}}
-
-//{{{ solve05
-inline int solve05() { return n <= m; }
-//}}}
-
-//{{{ solve06
-inline int solve06() { return S[m]; }
-//}}}
-
-//{{{ solve07
-inline int solve07() { return C(n + m - 1, m - 1); }
-//}}}
-
-//{{{ solve08
-inline int solve08() { return C(m, n); }
-//}}}
-
-//{{{ solve09
-inline int solve09() { return C(n - 1, m - 1); }
-//}}}
-
-//{{{ solve10
-inline int solve10() { return F[n]; }
-//}}}
-
-//{{{ solve11
-inline int solve11() { return n <= m; }
-//}}}
-
-//{{{ solve12
-inline int solve12() { return n >= m ? F[n - m] : 0; }
-//}}}
-
-int main() {
-#ifdef LOCAL
-	FILE("");
-#endif
-	n = ri, m = ri, init(n, m);
-	cout << solve01() << endl;
-	cout << solve02() << endl;
-	cout << solve03() << endl;
-	cout << solve04() << endl;
-	cout << solve05() << endl;
-	cout << solve06() << endl;
-	cout << solve07() << endl;
-	cout << solve08() << endl;
-	cout << solve09() << endl;
-	cout << solve10() << endl;
-	cout << solve11() << endl;
-	cout << solve12() << endl;
-	return 0;
+    return 0;
 }
 ```
 
