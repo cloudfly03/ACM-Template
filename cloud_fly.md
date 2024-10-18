@@ -117,7 +117,7 @@ Sum(子矩阵和) = b[x2][y2] - b[x2][y1- 1] - b[x1 - 1][y2] + b[x1 - 1][y1 - 1]
 ```
 
 二维差分：
-假设我们已经构建好了二维数组b[][] 的二维差分数组 a[][] ，现在要处理的是如何在a[][] 上加c,使其二维前缀和数组b[][]在指定的子矩阵内的所有元素都加上一个c 。
+假设我们已经构建好了二维数组$b$[][] 的二维差分数组 $a$[][] ，现在要处理的是如何在$a$[][] 上加$c$,使其二维前缀和数组b[][]在指定的子矩阵内的所有元素都加上一个$c$ 
 
 ```c++
 #include <iostream>
@@ -495,8 +495,8 @@ public:
 };
 ```
 
-### 超大背包问题（折半搜索）
-折半搜索
+### 超大背包问题（双端$dfs$）
+另一种叫法，折半搜索
 ```C++
 
 #include <bits/stdc++.h>
@@ -1759,7 +1759,7 @@ for (int i = h[u]; i; i = ne[i]) {
 ```
 
 ## 最短路算法
-### dijkstra
+### $dijkstra$
 单源、正权边的最短路问题
 
 时间复杂度：优先队列，$O(mlogm)$
@@ -4264,7 +4264,7 @@ int dfs(int u, int mf) {
 int dinic() {
     int flow = 0;
     while (bfs()) {
-        for (int i = 1; i <= tot; i++) cur[i] = h[i];
+        for (int i = 0; i <= tot; i++) cur[i] = h[i];
         flow += dfs(s, 1e18); 
     }
     return flow;
@@ -4412,7 +4412,8 @@ signed main() {
 最大流 = 最小割
 
 求最小割的最小边数：
-第一遍dinic后，重建边时应当把第一遍dinic中剩余容量为0的正向边的边权设为1，其他正向边设为无穷大，反向边都设为零，因为只有流满的边才是最小割中的边。
+第一遍$dinic$后，重建边时应当把第一遍$dinic$中剩余容量为0的正向边的边权设为1，其他正向边设为无穷大，反向边都设为零，因为只有流满的边才是最小割中的边。
+
 ```c++
 #include <bits/stdc++.h>
 using namespace std;
@@ -4510,7 +4511,7 @@ int dfs(int u, int mf) {
 int dinic() {
     int flow = 0;
     while (bfs()) {
-        for (int i = 1; i <= tot; i++) cur[i] = h[i];
+        for (int i = 0; i <= tot; i++) cur[i] = h[i];
         flow += dfs(s, 1e18); 
     }
     return flow;
@@ -4561,8 +4562,7 @@ signed main() {
 }
 ```
 
-### 费用流($EK$算法)
-即最小费用最大流
+### 最小费用最大流($EK$算法)
 ```c++
 #include <bits/stdc++.h>
 using namespace std;
@@ -4982,12 +4982,286 @@ signed main() {
 }
 ```
 
+### 二分图最大匹配（$Dinic$算法）
+
+建立一个虚拟源点和汇点，将源点连左边所有点，汇点连右边所有点, 容量皆为1，最大匹配是最大流
+
+时间复杂度 $\sqrt{n}m$
+
+```c++
+#include <bits/stdc++.h>
+using namespace std;
+#define int long long
+#define ull unsigned long long
+#define all(x) x.begin(), x.end()
+#define vi vector
+#define pb push_back
+#define pii pair<int, int>
+#define x first
+#define y second
+#define endl '\n'
+
+// inline int read() {
+//     register int x = 0, t = 1;
+//     register char ch = getchar();
+//     while (ch < '0'|| ch > '9'){
+//         if (ch == '-')
+//             t = -1;
+//         ch = getchar();
+//     }
+//     while (ch >= '0' && ch <= '9'){
+//         x = (x << 1) + (x << 3) + (ch ^ 48);
+//         ch = getchar();
+//     }
+//     return x * t;
+// }
+
+// void print128(__int128_t x) {
+//     if (x < 0)
+//         putchar('-'), x = -x;
+//     if (x > 9)
+//         print128(x / 10);
+//     putchar(x % 10 + '0');
+// }
+
+inline int read() {
+    int c;
+    cin >> c;
+    return c;
+}
+
+inline void readn(int a[], int n) {
+    for_each(a + 1, a + n + 1, [](int &x) { cin >> x; });
+}
+inline void printn(int a[], int n) {
+    for_each(a + 1, a + n + 1, [](int &x) { cout << x << ' '; });
+    cout << endl;
+}
+template <typename T, typename... Args>
+void print(const T &first, const Args &...args) {
+    cout << first;
+    ((cout << ' ' << args), ...);
+    cout << endl;
+}
+template <typename T, typename... Args>
+void eprint(const T &first, const Args &...args) {
+    cerr << '*';
+    cerr << first;
+    ((cerr << ' ' << args), ...);
+    cerr << endl;
+}
+#define eprintn(a, n)                                                          \
+    {                                                                          \
+        cerr << #a << ' ';                                                     \
+        for (int i = 1; i <= n; i++)                                           \
+            cerr << (a)[i] << ' ';                                             \
+        cerr << endl;                                                          \
+    }
+
+int Sqrt(int x) {
+    assert(x >= 0);
+    int t = sqrt(x);
+    while ((t + 1) * (t + 1) <= x)
+        t++;
+    while (t * t > x)
+        t--;
+    return t;
+}
+
+char out[2][10] = {"NO", "YES"};
+const double eps = 1e-6;
+const int inf = 1e18;
+const int N = 1e6 + 10;
+const int M = N << 1;
+const int mod = 998244353;
+
+struct edge{
+    int v, w, ne;
+}e[M];
+int h[N];
+int tot = 1;
+int dep[N], cur[N];
+int n, m, s, t;
+
+void add(int u, int v, int w) {
+    e[++tot] = {v, w, h[u]};
+    h[u] = tot;
+}
+
+bool bfs() {
+    for (int i = 0; i <= n + m + 1; i++) dep[i] = 0;
+    queue<int> q;
+    q.push(s);
+    dep[s] = 1;
+    while (q.size()) {
+        auto u = q.front();
+        q.pop();
+        for (int i = h[u]; i; i = e[i].ne) {
+            int v = e[i].v;
+            if (!dep[v] && e[i].w) {
+                dep[v] = dep[u] + 1;
+                q.push(v);
+                if (v == t) return true;
+            }
+        }
+    }
+    return false;
+}
+
+int dfs(int u, int mf) {
+    if (u == t) return mf;
+    int sum = 0;
+    for (int i = cur[u]; i; i = e[i].ne) {
+        cur[u] = i;
+        int v = e[i].v;
+        if (dep[v] == dep[u] + 1 && e[i].w) {
+            int f = dfs(v, min(mf, e[i].w));
+            e[i].w -= f;
+            e[i ^ 1].w += f;
+            sum += f;
+            mf -= f;
+            if (!mf) break;
+        }
+    }
+    if (!sum) dep[u] = 0;
+    return sum;
+}
+
+int dinic() {
+    int flow = 0;
+    while (bfs()) {
+        for (int i = 0; i <= tot; i++) cur[i] = h[i];
+        flow += dfs(s, 1e18); 
+    }
+    return flow;
+}
+
+void solve() {
+    n = read(), m = read();
+    int E = read();
+    for (int i = 1; i <= E; i++) {
+        int x = read(), y = read();
+        add(x, y + n, 1);
+        add(y + n, x, 0);
+    }
+    s = 0, t = n + m + 1;
+    for (int i = 1; i <= n; i++) {
+        add(s, i, 1);
+        add(i, s, 0);
+    }
+    for (int i = 1; i <= m; i++) {
+        add(i + n, t, 1);
+        add(t, i + n, 0);
+    }
+    print(dinic());
+}
+
+signed main() {
+    ios::sync_with_stdio(false), cin.tie(nullptr);
+    // int T;
+    // T = read();
+    // while (T--)
+    solve();
+
+    return 0;
+}
+```
+
+### 二分图最大权完美匹配($KM$算法)
+
+二分图完美匹配：左部和右部点的个数相同，并且二分图匹配数量为$n$
+
+二分图边权和最大的完美匹配是二分图最大权完美匹配
+
+时间复杂度$O(n^4)$
+
+```c++
+#include <cmath>
+#include <cstdio>
+#include <cstring>
+#include <iostream>
+using namespace std;
+#define LL long long
+#define N 510
+#define INF 1e12
+int n, m;
+int match[N];     // 右点匹配了哪个左点
+int va[N], vb[N]; // 标记是否在交替路中
+LL la[N], lb[N];  // 左顶标,右顶标
+LL w[N][N], d[N]; // 维护更新的delta值
+
+bool dfs(int x) {
+    va[x] = 1; // x在交替路中
+    for (int y = 1; y <= n; y++) {
+        if (!vb[y]) {
+            if (la[x] + lb[y] - w[x][y] == 0) { // 相等子图
+                vb[y] = 1;                      // y在交替路中
+                if (!match[y] || dfs(match[y])) {
+                    match[y] = x; // 配对
+                    return 1;
+                }
+            } else // 不是相等子图则记录最小的d[y]
+                d[y] = min(d[y], la[x] + lb[y] - w[x][y]);
+        }
+    }
+    return 0;
+}
+LL KM() {
+    // 左顶标取i的出边的最大边权
+    for (int i = 1; i <= n; i++)
+        la[i] = -INF;
+    for (int i = 1; i <= n; i++)
+        for (int j = 1; j <= n; j++)
+            la[i] = max(la[i], w[i][j]);
+    for (int i = 1; i <= n; i++)
+        lb[i] = 0;
+    for (int i = 1; i <= n; i++) {
+        while (true) { // 直到左点i找到匹配
+            fill(va + 1, va + n + 1, 0);
+            fill(vb + 1, vb + n + 1, 0);
+            fill(d + 1, d + n + 1, INF);
+            if (dfs(i))
+                break;
+            LL delta = INF;
+            for (int j = 1; j <= n; j++)
+                if (!vb[j])
+                    delta = min(delta, d[j]);
+            for (int j = 1; j <= n; j++) { // 修改顶标
+                if (va[j])
+                    la[j] -= delta;
+                if (vb[j])
+                    lb[j] += delta;
+            }
+        }
+    }
+    LL res = 0;
+    for (int i = 1; i <= n; i++)
+        res += w[match[i]][i];
+    return res;
+}
+int main() {
+    scanf("%d%d", &n, &m);
+    for (int i = 1; i <= n; i++)
+        for (int j = 1; j <= n; j++)
+            w[i][j] = -INF;
+    for (int i = 1; i <= m; i++) {
+        int x, y, z;
+        scanf("%d%d%d", &x, &y, &z);
+        w[x][y] = z;
+    }
+    printf("%lld\n", KM());
+    for (int i = 1; i <= n; i++)
+        printf("%d ", match[i]);
+    return 0;
+}
+```
+
 
 
 # 数据结构
 
 ## 单调队列
-如果一个选手比你小还比你强，你就可以退役了。”——单调队列
+**如果一个选手比你小还比你强，你就可以退役了。**——单调队列
 
 单调队列：擅长维护定长区间最大/最小值，最小值对应着递增队列，最大值对应着递减队列
 
@@ -5338,7 +5612,7 @@ ll query(int L, int R) {//区间查询
 }
 ```
 
-## 对顶堆（动态求第$k$大）
+## 对顶堆（动态求当前第$k$大）
 例题：https://codeforces.com/contest/1945/problem/F
 ```C++
 #include <bits/stdc++.h>
@@ -5948,7 +6222,7 @@ signed main() {
 
 ### 主席树
 
-#### 求区间第k大
+#### 求区间第$k$大
 ```C++
 #include <bits/stdc++.h>
 using namespace std;
@@ -6395,7 +6669,7 @@ signed main() {
 ```
 
 ## 平衡树
-### Splay
+### $Splay$
 #### 普通平衡树
 ```c++
 #include <iostream>
@@ -6645,7 +6919,7 @@ int main() {
 }
 ```
 
-### FHQ
+### $FHQ$
 #### 普通平衡树
 ```c++
 #include <iostream>
@@ -6856,7 +7130,7 @@ int main() {
 }
 ```
 
-### pb_ds
+### $pb$_$ds$
 ```c++
 // Common Header Simple over C++11
 #include <iostream>
@@ -6910,7 +7184,7 @@ int main() {
 ```
 
 
-# 取模类（MLong & MInt）
+# 取模类（$MLong$ & $MInt$）
 ```c++
 using i64 = long long;
 template<class T>
@@ -7174,7 +7448,7 @@ void solve() {
 }
 ```
 
-### N进制加法
+### $N$进制加法
 
 ```c++
 //luogu 1601
@@ -7871,7 +8145,7 @@ void solve() {
 
 求解线性同余方程组$x$的最小非负整数解
 
-#### 中国剩余定理（CRT)
+#### 中国剩余定理（$CRT$)
 
 $m_{1}, m_{2},...,m_{i}$两两互质
 
@@ -8014,7 +8288,7 @@ signed main() {
 
 
 
-#### 扩展中国剩余定理（EXCRT）
+#### 扩展中国剩余定理（$EXCRT$）
 
 $m_{1}, m_{2},...,m_{i}$不一定两两互质
 
@@ -8156,7 +8430,7 @@ signed main() {
 
 ### 高次同余方程
 
-#### bsgs
+#### $bsgs$
 
 求解高次方程
 
@@ -8296,7 +8570,7 @@ signed main() {
 }
 ```
 
-#### exbsgs
+#### $exbsgs$
 
 $gcd(a, p) != 1$
 
