@@ -4038,7 +4038,7 @@ signed main() {
 }
 ```
 
-## 高级图论
+## 网络流
 
 ### 最大流($EK$算法)
 在一个有向图$G=(V,E)$中：
@@ -4848,6 +4848,141 @@ signed main() {
     return 0;
 }
 ```
+
+### 二分图最大匹配（匈牙利算法）
+
+```c++
+ #include <bits/stdc++.h>
+using namespace std;
+#define int long long
+#define ull unsigned long long
+#define all(x) x.begin(), x.end()
+#define vi vector
+#define pb push_back
+#define pii pair<int, int>
+#define x first
+#define y second
+#define endl '\n'
+
+// inline int read() {
+//     register int x = 0, t = 1;
+//     register char ch = getchar();
+//     while (ch < '0'|| ch > '9'){
+//         if (ch == '-')
+//             t = -1;
+//         ch = getchar();
+//     }
+//     while (ch >= '0' && ch <= '9'){
+//         x = (x << 1) + (x << 3) + (ch ^ 48);
+//         ch = getchar();
+//     }
+//     return x * t;
+// }
+
+// void print128(__int128_t x) {
+//     if (x < 0)
+//         putchar('-'), x = -x;
+//     if (x > 9)
+//         print128(x / 10);
+//     putchar(x % 10 + '0');
+// }
+
+inline int read() {
+    int c;
+    cin >> c;
+    return c;
+}
+
+inline void readn(int a[], int n) {
+    for_each(a + 1, a + n + 1, [](int &x) { cin >> x; });
+}
+inline void printn(int a[], int n) {
+    for_each(a + 1, a + n + 1, [](int &x) { cout << x << ' '; });
+    cout << endl;
+}
+template <typename T, typename... Args>
+void print(const T &first, const Args &...args) {
+    cout << first;
+    ((cout << ' ' << args), ...);
+    cout << endl;
+}
+template <typename T, typename... Args>
+void eprint(const T &first, const Args &...args) {
+    cerr << '*';
+    cerr << first;
+    ((cerr << ' ' << args), ...);
+    cerr << endl;
+}
+#define eprintn(a, n)                                                          \
+    {                                                                          \
+        cerr << #a << ' ';                                                     \
+        for (int i = 1; i <= n; i++)                                           \
+            cerr << (a)[i] << ' ';                                             \
+        cerr << endl;                                                          \
+    }
+
+int Sqrt(int x) {
+    assert(x >= 0);
+    int t = sqrt(x);
+    while ((t + 1) * (t + 1) <= x)
+        t++;
+    while (t * t > x)
+        t--;
+    return t;
+}
+
+char out[2][10] = {"NO", "YES"};
+const double eps = 1e-6;
+const int inf = 1e18;
+const int N = 1e6 + 10;
+const int M = N << 1;
+const int mod = 998244353;
+
+int a[N];
+vector<int> e[N];
+
+int vis[N], match[N];
+
+bool dfs(int u) {
+    for (auto v: e[u]) {
+        if (vis[v]) continue;
+        vis[v] = 1;
+        if (!match[v] || dfs(match[v])) {
+            match[v] = u;
+            return true;
+        }
+    }
+    return false;
+}
+
+void solve() {
+    int n = read(), m = read(), ee = read();
+    for (int i = 1; i <= ee; i++) {
+        int u = read(), v = read();
+        e[u].pb(v + n);
+        e[v + n].pb(u);
+    }
+
+    int ans = 0;
+    for (int i = 1; i <= n; i++) {
+        for (int j = 1; j <= n + m; j++) vis[j] = 0;
+        if (dfs(i)) ans++;
+    }
+    print(ans);
+}
+
+signed main() {
+    ios::sync_with_stdio(false), cin.tie(nullptr);
+    // int T = 1;
+    // T = read();
+    // while (T--)
+    solve();
+
+    return 0;
+}
+```
+
+
 
 # 数据结构
 
@@ -9099,6 +9234,156 @@ signed main() {
 把 $1 - n$ 的所有排列按字典序排序，这个排列的位次就是它的排名。
 
 康托展开可以在 $O(n ^ 2)$ 的复杂度内求出一个排列的排名，在用到 [树状数组](https://oi-wiki.org/ds/fenwick/) 优化时可以做到 $O(nlogn) $
+
+```c++
+#include <bits/stdc++.h>
+using namespace std;
+#define int long long
+#define ull unsigned long long
+#define all(x) x.begin(), x.end()
+#define vi vector
+#define pb push_back
+#define pii pair<int, int>
+#define x first
+#define y second
+#define endl '\n'
+
+// inline int read() {
+//     register int x = 0, t = 1;
+//     register char ch = getchar();
+//     while (ch < '0'|| ch > '9'){
+//         if (ch == '-')
+//             t = -1;
+//         ch = getchar();
+//     }
+//     while (ch >= '0' && ch <= '9'){
+//         x = (x << 1) + (x << 3) + (ch ^ 48);
+//         ch = getchar();
+//     }
+//     return x * t;
+// }
+
+// void print128(__int128_t x) {
+//     if (x < 0)
+//         putchar('-'), x = -x;
+//     if (x > 9)
+//         print128(x / 10);
+//     putchar(x % 10 + '0');
+// }
+
+inline int read() {
+    int c;
+    cin >> c;
+    return c;
+}
+
+inline void readn(int a[], int n) {
+    for_each(a + 1, a + n + 1, [](int &x) {
+        cin >> x;
+    });
+}
+inline void printn(int a[], int n) {
+    for_each(a + 1, a + n + 1, [](int &x) {
+        cout << x << ' ';
+    });
+    cout << endl;
+}
+template <typename T, typename... Args>
+void print(const T &first, const Args &...args) {
+    cout << first;
+    ((cout << ' ' << args), ...);
+    cout << endl;
+}
+template <typename T, typename... Args>
+void eprint(const T &first, const Args &...args) {
+    cerr << '*';
+    cerr << first;
+    ((cerr << ' ' << args), ...);
+    cerr << endl;
+}
+#define eprintn(a, n)                                                          \
+    {                                                                          \
+        cerr << #a << ' ';                                                     \
+        for (int i = 1; i <= n; i++)                                           \
+            cerr << (a)[i] << ' ';                                             \
+        cerr << endl;                                                          \
+    }
+
+int Sqrt(int x) {
+    assert(x >= 0);
+    int t = sqrt(x);
+
+    while ((t + 1) * (t + 1) <= x)
+        t++;
+
+    while (t * t > x)
+        t--;
+
+    return t;
+}
+
+char out[2][10] = {"NO", "YES"};
+const double eps = 1e-6;
+const int inf = 1e18;
+const int N = 1e6 + 10;
+const int M = N << 1;
+const int mod = 998244353;
+
+int a[N];
+
+int tr[N];
+
+int lowbit(int x) {
+    return x & -x;
+}
+void add(int x, int k) {
+    for (int i = x; i < N; i += lowbit(i))
+        tr[i] += k;
+}
+
+int sum(int x) {
+    int ans = 0;
+
+    for (int i = x; i; i -= lowbit(i)) {
+        ans += tr[i];
+    }
+
+    return ans;
+}
+
+int fac[N];
+
+void solve() {
+    int n = read();
+    readn(a, n);
+
+    fac[0] = 1;
+
+    for (int i = 1; i <= n; i++) {
+        fac[i] = fac[i - 1] * i % mod;
+    }
+
+    int ans = 1;
+
+    for (int i = 1; i <= n; i++) {
+        ans = ans + (a[i] - sum(a[i]) - 1) * fac[n - i] % mod;
+        ans %= mod;
+        add(a[i], 1);
+    }
+
+    print(ans);
+}
+
+signed main() {
+    ios::sync_with_stdio(false), cin.tie(nullptr);
+    // int T = 1;
+    // T = read();
+    // while (T--)
+    solve();
+
+    return 0;
+}
+```
 
 
 
