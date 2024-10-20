@@ -7,8 +7,7 @@ using namespace std;
 #define endl '\n'
 #define MOD 998244353
 #define INF 1e14
-// #define lc (p<<1)
-// #define rc (p<<1|1)
+
 
 const int N = 1201;
 const int M = 1.2e5 + 5;

@@ -1,0 +1,8 @@
+vector<int> polyadjust(const vector<int>& a) {
+    int n = 0;
+    for (int i = a.size();i >= 0;--i)
+        if (a[i]) { n = i;break; }
+    vector<int> ans;
+    ans.assign(a.begin(), a.begin() + n);
+    return ans;
+}

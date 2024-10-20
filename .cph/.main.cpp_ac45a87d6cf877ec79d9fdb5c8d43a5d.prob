@@ -1,0 +1,1 @@
+{"name":"Local: main","url":"d:\\32211\\Documents\\VS Code Workspace\\C++20\\main.cpp","tests":[{"id":1729330882366,"input":"3 4\n1 2 3 4\n2 4 6 8 10","output":""}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"d:\\32211\\Documents\\VS Code Workspace\\C++20\\main.cpp","group":"local","local":true}

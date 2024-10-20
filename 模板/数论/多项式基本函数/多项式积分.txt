@@ -1,0 +1,6 @@
+vector<int> polyinte(const vector<int>& f) {
+    int n = f.size() + 1;
+    vector<int> ans(n);
+    for (int i = 0;i < n - 1;++i) ans[i + 1] = f[i] * inv(i + 1) % P;
+    return ans;
+}

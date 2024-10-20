@@ -1,0 +1,16 @@
+vector<int> polymul(const vector<int>& a, const vector<int>& b) {
+    int n = 1;
+    while (n < a.size() + b.size()) n <<= 1;
+    vector<complex> A(n), B(n);
+    vector<int> R(n);
+    for (int i = 0;i < n;++i) R[i] = R[i / 2] / 2 + (i & 1 ? n / 2 : 0);
+    for (int i = 0;i < a.size();++i) A[i] = a[i];
+    for (int i = 0;i < b.size();++i) B[i] = b[i];
+    FFT(A, R, 0);FFT(B, R, 0);
+    for (int i = 0;i < n;++i) A[i] = A[i] * B[i];
+    FFT(A, R, 1);
+    vector<int> ans(a.size() + b.size() - 1);
+    for (int i = 0;i < a.size() + b.size() - 1;++i)
+        ans[i] = round(A[i].real());
+    return ans;
+}

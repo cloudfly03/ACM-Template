@@ -1,15 +1,21 @@
 #include<bits/stdc++.h>
 using namespace std;
 #define int long long
+#define uint unsigned long long
 #define ld long double
 #define pii pair<int,int>
+#define complex complex<ld>
+#define rand mt19937_64
+#define endl '\n'
+#define PI (ld)(3.141592653589793)
+#define INF (int)(1e8)
+#define MOD (int)(1e8)
+#define eps (ld)(1e-9)
+#define P (int)(998244353)
+#define G (int)(3)
+#define mpair(x,y) make_pair(x,y)
 #define all(x) x.begin(),x.end()
 #define lowbit(x) (x&-x)
-#define endl '\n'
-#define INF 1e14
-#define MOD 998244353
-#define lc p<<1
-#define rc p<<1|1
 
 const int N = 1.2e3 + 1;
 const int M = 1.2e5 + 1;

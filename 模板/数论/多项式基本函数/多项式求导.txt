@@ -1,0 +1,6 @@
+vector<int> polydiff(const vector<int>& f) {
+    int n = f.size() - 1;
+    vector<int> ans(n);
+    for (int i = n;i;--i) ans[i - 1] = f[i] * i % P;
+    return ans;
+}

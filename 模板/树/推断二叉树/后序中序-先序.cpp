@@ -7,8 +7,6 @@ using namespace std;
 #define endl '\n'
 #define MOD 998244353
 #define INF ((1<<31) - 1)
-// #define lc (p<<1)
-// #define rc (p<<1|1)
 
 const int N = 1e5 + 1;
 string Lst, Mid;

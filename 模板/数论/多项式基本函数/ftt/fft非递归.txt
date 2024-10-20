@@ -1,0 +1,22 @@
+#define complex complex<ld>
+#define PI (ld)(3.141592653589793)
+
+void FFT(vector<complex>& A, const vector<int>& R, bool rev) {
+    int n = A.size();
+    for (int i = 0;i < n;++i)
+        if (i < R[i]) swap(A[i], A[R[i]]);
+    for (int m = 2;m <= n;m <<= 1) {
+        complex w1(cos(2 * PI / m), sin(2 * PI / m) * (rev ? -1 : 1));
+        for (int i = 0;i < n;i += m) {
+            complex wk(1, 0);
+            for (int j = 0;j < m / 2;++j) {
+                complex x = A[i + j], y = A[i + j + m / 2] * wk;
+                A[i + j] = x + y;
+                A[i + j + m / 2] = x - y;
+                wk *= w1;
+            }
+        }
+    }
+    if (!rev) return;
+    for (auto& v : A) v /= n;
+}

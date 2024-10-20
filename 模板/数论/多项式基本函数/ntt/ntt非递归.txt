@@ -1,0 +1,37 @@
+#define P (int)(998244353)
+#define G (int)(3)
+
+int qpow(int base, int p) {
+    int ans = 1;
+    while (p) {
+        if (p & 1) ans = ans * base % P;
+        base = base * base % P;
+        p >>= 1;
+    }
+    return ans;
+}
+
+int inv(int x) {
+    return qpow(x, P - 2);
+}
+
+void NTT(vector<int>& A, const vector<int>& R, bool rev) {
+    int n = A.size();
+    for (int i = 0;i < n;++i)
+        if (i < R[i]) swap(A[i], A[R[i]]);
+    for (int m = 2;m <= n;m <<= 1) {
+        int g1 = qpow(rev ? inv(G) : G, (P - 1) / m);
+        for (int i = 0;i < n;i += m) {
+            int gk = 1;
+            for (int j = 0;j < m / 2;++j) {
+                int x = A[i + j], y = A[i + j + m / 2] * gk % P;
+                A[i + j] = (x + y) % P;
+                A[i + j + m / 2] = (x - y + P) % P;
+                gk = gk * g1 % P;
+            }
+        }
+    }
+    if (!rev) return;
+    int ni = inv(n);
+    for (auto& v : A) (v *= ni) %= P;
+}

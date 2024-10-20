@@ -1,0 +1,243 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+#define uint unsigned long long
+#define ld long double
+#define pii pair<int,int>
+#define complex complex<ld>
+#define rand mt19937_64
+#define endl '\n'
+#define PI (ld)(3.141592653589793)
+#define INF (int)(1e8+1)
+#define MOD (int)(998244353)
+#define eps (ld)(1e-9)
+#define P (int)(998244353)
+#define G (int)(3)
+#define mpair(x,y) make_pair(x,y)
+#define all(x) x.begin(),x.end()
+#define lowbit(x) (x&-x)
+rand rnd(clock());
+
+int qpow(int base, int p) {
+    int ans = 1;
+    while (p) {
+        if (p & 1) ans = ans * base % P;
+        base = base * base % P;
+        p >>= 1;
+    }
+    return ans;
+}
+
+int inv(int x) {
+    return qpow(x, P - 2);
+}
+
+void NTT(vector<int>& A, const vector<int>& R, bool rev) {
+    int n = A.size();
+    for (int i = 0;i < n;++i)
+        if (i < R[i]) swap(A[i], A[R[i]]);
+    for (int m = 2;m <= n;m <<= 1) {
+        int g1 = qpow(rev ? inv(G) : G, (P - 1) / m);
+        for (int i = 0;i < n;i += m) {
+            int gk = 1;
+            for (int j = 0;j < m / 2;++j) {
+                int x = A[i + j], y = A[i + j + m / 2] * gk % P;
+                A[i + j] = (x + y) % P;
+                A[i + j + m / 2] = (x - y + P) % P;
+                gk = gk * g1 % P;
+            }
+        }
+    }
+    if (!rev) return;
+    int ni = inv(n);
+    for (auto& v : A) (v *= ni) %= P;
+}
+
+vector<int> polymul(const vector<int>& a, const vector<int>& b) {
+    int n = 1;
+    while (n < a.size() + b.size()) n <<= 1;
+    vector<int> A(n), B(n), R(n);
+    for (int i = 0;i < n;++i) R[i] = R[i / 2] / 2 + (i & 1 ? n / 2 : 0);
+    for (int i = 0;i < a.size();++i) A[i] = a[i];
+    for (int i = 0;i < b.size();++i) B[i] = b[i];
+    NTT(A, R, 0);NTT(B, R, 0);
+    for (int i = 0;i < n;++i) A[i] = A[i] * B[i] % P;
+    NTT(A, R, 1);
+    A.resize(a.size() + b.size() - 1);
+    return A;
+}
+
+vector<int> polyinv(const vector<int>& f) {
+    int n = 1, ni, sz = f.size();
+    while (n < sz) n <<= 1;
+    vector<int> ans{ inv(f[0]) };
+    for (int m = 2; m <= n;m <<= 1) {
+        vector<int> R(m << 1), a(m << 1);
+        ans.resize(m << 1, 0);
+        for (int i = 0;i < m << 1;++i) R[i] = R[i / 2] / 2 + (i & 1 ? m : 0);
+        for (int i = 0;i < min(m, sz);++i) a[i] = f[i];
+        NTT(ans, R, 0), NTT(a, R, 0);
+        for (int i = 0; i < m << 1; ++i)
+            ans[i] = ans[i] * (2ll - ans[i] * a[i] % P + P) % P;
+        NTT(ans, R, 1);
+        ans.resize(m);
+    }
+    ans.resize(sz);
+    return ans;
+}
+
+vector<int> polyadjust(const vector<int>& a) {
+    int n = 0;
+    for (int i = a.size();i >= 0;--i)
+        if (a[i]) { n = i;break; }
+    vector<int> ans;
+    ans.assign(a.begin(), a.begin() + n);
+    return ans;
+}
+
+vector<int> polydiff(const vector<int>& f) {
+    int n = f.size() - 1;
+    vector<int> ans(n);
+    for (int i = n;i;--i) ans[i - 1] = f[i] * i % P;
+    return ans;
+}
+
+vector<int> polyinte(const vector<int>& f) {
+    int n = f.size() + 1;
+    vector<int> ans(n);
+    for (int i = 0;i < n - 1;++i) ans[i + 1] = f[i] * inv(i + 1) % P;
+    return ans;
+}
+
+vector<int> polyln(const vector<int>& f) {
+    vector<int> ans = polymul(polydiff(f), polyinv(f));
+    ans.resize(f.size() - 1);
+    return polyinte(ans);
+}
+
+vector<int> polyexp(const vector<int>& f) {
+    int n = 1, ni, sz = f.size();
+    while (n < sz) n <<= 1;
+    vector<int> ans{ 1 };//f[0] = 0
+    for (int m = 2; m <= n;m <<= 1) {
+        vector<int> a(m << 1);
+        ans.resize(m << 1, 0);
+        for (int i = 0;i < min(m, sz);++i) a[i] = f[i];
+        vector<int> b = polyln(ans);
+        for (int i = 0;i < m << 1;++i) b[i] = (P - b[i] + a[i]) % P;
+        (b[0] += 1) %= P;
+        ans = polymul(ans, b);
+        ans.resize(m);
+    }
+    ans.resize(sz);
+    return ans;
+}
+
+// 指数为高精度时 输入为字符串
+vector<int> polypow(const vector<int>& f, string p, int sz) {
+    vector<int> ans = f;
+    ans.resize(sz);
+    int a = 1, b = 0, k1 = 0, k2 = 0;//a * x ^ b
+    while (b < sz && !ans[b]) ++b;
+    for (auto ch : p) {
+        k1 = k1 * 10 % P;
+        k1 = (k1 + ch - '0') % P;
+        k2 = k2 * 10 % (P - 1);
+        k2 = (k2 + ch - '0') % (P - 1);
+        if (b && k1 * b >= sz) {
+            fill(all(ans), 0);
+            return ans;
+        }
+    }
+    if (b) {
+        for (int i = 0;i + b < sz;++i) ans[i] = ans[i + b];
+        for (int i = sz - b;i < sz;++i) ans[i] = 0;
+    }
+    if (ans[0] != 1) {
+        a = qpow(ans[0], k2);
+        int inva = inv(ans[0]);
+        for (int i = 0;i < sz;++i) (ans[i] *= inva) %= P;
+    }
+    b *= k1;
+    ans = polyln(ans);
+    for (auto& v : ans) (v *= k1) %= P;
+    ans = polyexp(ans);
+    if (b) {
+        for (int i = sz;i >= b;--i)ans[i] = ans[i - b];
+        for (int i = 0;i < min(b, sz);++i) ans[i] = 0;
+    }
+    if (a != 1)
+        for (int i = b;i < sz;++i) (ans[i] *= a) %= P;
+    return ans;
+}
+
+int complexpow(int x, int y, int ipow2, int p) {
+    int a = 1, b = 0, t1, t2;
+    while (p) {
+        if (p & 1) {
+            t1 = a, t2 = b;
+            a = (t1 * x + t2 * y % P * ipow2) % P;
+            b = (t1 * y + t2 * x) % P;
+        }
+        t1 = x, t2 = y;
+        x = (t1 * t1 + t2 * t2 % P * ipow2 % P) % P;
+        y = t1 * t2 % P * 2 % P;
+        p >>= 1;
+    }
+    return a;
+}
+
+int Cipolla(int n) {
+    n %= P;
+    if (!n || n == 1) return n;
+    if (qpow(n, (P - 1) / 2) == P - 1) return -1;
+    int a = rnd() % P;
+    while (!a || qpow((a * a + P - n) % P, (P - 1) / 2) == 1) a = rnd() % P;
+    return complexpow(a, 1, (a * a + P - n) % P, (P + 1) / 2);
+}
+
+vector<int> polysqrt(const vector<int>& f) {
+    int n = 1, ni, sz = f.size(), inv2 = inv(2);
+    while (n < sz) n <<= 1;
+    int ci = Cipolla(f[0]);
+    assert(ci != -1);
+    vector<int> ans{ ci };
+    for (int m = 2; m <= n;m <<= 1) {
+        vector<int> R(m << 1), a(m << 1);
+        ans.resize(m << 1, 0);
+        for (int i = 0;i < m << 1;++i) R[i] = R[i / 2] / 2 + (i & 1 ? m : 0);
+        for (int i = 0;i < min(m, sz);++i) a[i] = f[i];
+        a = polymul(polyinv(ans), a);
+        a.resize(m << 1);
+        for (int i = 0;i < m << 1;++i) (((ans[i] += a[i]) %= P) *= inv2) %= P;
+        ans.resize(m);
+    }
+    ans.resize(sz);
+    return ans;
+}
+
+int n;
+
+void solve() {
+    cin >> n;
+    vector<int> f(n);
+    for (int i = 0;i < n;++i) cin >> f[i];
+    vector<int> ans = polysqrt(f);
+    for (auto v : ans) cout << v << ' ';
+}
+
+signed main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    cout.tie(nullptr);
+
+    // freopen("test.in", "r", stdin);
+    // freopen("test.out", "w", stdout);
+    // freopen("test.err", "w", stderr);
+
+    int t = 1;
+    //cin >> t;
+    while (t--) solve();
+
+    return 0;
+}

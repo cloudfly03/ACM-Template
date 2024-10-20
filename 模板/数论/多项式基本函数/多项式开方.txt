@@ -1,0 +1,45 @@
+int complexpow(int x, int y, int ipow2, int p) {
+    int a = 1, b = 0, t1, t2;
+    while (p) {
+        if (p & 1) {
+            t1 = a, t2 = b;
+            a = (t1 * x + t2 * y % P * ipow2) % P;
+            b = (t1 * y + t2 * x) % P;
+        }
+        t1 = x, t2 = y;
+        x = (t1 * t1 + t2 * t2 % P * ipow2 % P) % P;
+        y = t1 * t2 % P * 2 % P;
+        p >>= 1;
+    }
+    return a;
+}
+
+int Cipolla(int n) {
+    n %= P;
+    if (!n || n == 1) return n;
+    if (qpow(n, (P - 1) / 2) == P - 1) return -1;
+    int a = rnd() % P;
+    while (!a || qpow((a * a + P - n) % P, (P - 1) / 2) == 1) a = rnd() % P;
+    int ret = complexpow(a, 1, (a * a + P - n) % P, (P + 1) / 2);
+    return min(P - ret, ret);
+}
+
+vector<int> polysqrt(const vector<int>& f) {
+    int n = 1, ni, sz = f.size(), inv2 = inv(2);
+    while (n < sz) n <<= 1;
+    int ci = Cipolla(f[0]);
+    assert(ci != -1);
+    vector<int> ans{ ci };
+    for (int m = 2; m <= n;m <<= 1) {
+        vector<int> R(m << 1), a(m << 1);
+        ans.resize(m << 1, 0);
+        for (int i = 0;i < m << 1;++i) R[i] = R[i / 2] / 2 + (i & 1 ? m : 0);
+        for (int i = 0;i < min(m, sz);++i) a[i] = f[i];
+        a = polymul(polyinv(ans), a);
+        a.resize(m << 1);
+        for (int i = 0;i < m << 1;++i) (((ans[i] += a[i]) %= P) *= inv2) %= P;
+        ans.resize(m);
+    }
+    ans.resize(sz);
+    return ans;
+}

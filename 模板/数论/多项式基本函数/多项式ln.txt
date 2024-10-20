@@ -1,0 +1,5 @@
+vector<int> polyln(const vector<int>& f) {
+    vector<int> ans = polymul(polydiff(f), polyinv(f));
+    ans.resize(f.size() - 1);
+    return polyinte(ans);
+}
